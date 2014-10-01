@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <title>{{ title }}</title>
+  </head>
+
+
+<body>
+
+<div id="heading"><h1>The Insolvency Solver</h1></div>
+
+<div id="current_balance"><h2>Current Balance: {{ balance }}</h2></div>
+
+<div id="entry_forms">
+    <form action="/submit" method="post">
+        Rent: <input type="text" name="rent" value="{{ rent }}">
+        Bills: <input type="text" name="bills" value="{{ bills }}">
+        Daily Spending: <input type="text" name="daily_spend" value="{{ daily }}">
+        <input type="submit" value="Update">
+    </form>
+
+</div>
+
+
+  </body>
+</html>
