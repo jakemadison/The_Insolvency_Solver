@@ -37,13 +37,8 @@ def total_savings():
 @app.route('/submit', methods=['POST'])
 def submit():
 
-    rent = int(request.form['rent'])
-    bills = int(request.form['bills'])
-    daily = int(request.form['daily'])
-
-    print('received values, rent: {0}, bills: {1}, daily: {2}'.format(rent, bills, daily))
-
-    updates_rates_dict = {"rent": rent, "bills": bills, "daily": daily}
+    updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems()}
+    print('update received with values: {0}'.format(updates_rates_dict))
 
     result = update_rates(updates_rates_dict)
 
