@@ -9,6 +9,10 @@ class CurrentRates(db.Model):
     type = db.Column(db.String(64), unique=True)
     amount = db.Column(db.Integer, default=0)
 
+    def __repr__(self):
+        r = str({"type": self.type, "amount": self.amount})
+        return r
+
 
 class DailyHistory(db.Model):
 

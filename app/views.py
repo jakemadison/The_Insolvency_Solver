@@ -1,20 +1,16 @@
 from __future__ import print_function
 from app import app
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify, redirect, url_for
+from controller import get_current_rates, update_rates
 
 
 @app.route('/')
 @app.route('/index')
 def index():
 
-    balance = 30
-    rent = 400
-    bills = 450
-    daily = 30
-
+    rates = get_current_rates()
     return render_template('index.html', title='Insolvency_Solver',
-                           balance=balance, rent=rent,
-                           bills=bills, daily=daily)
+                           rates=rates)
 
 
 @app.route('/submit', methods=['POST'])
@@ -26,4 +22,8 @@ def submit():
 
     print('received values, rent: {0}, bills: {1}, daily: {2}'.format(rent, bills, daily))
 
-    return jsonify({"success": True})
+    updates_rates_dict = {"rent": rent, "bills": bills, "daily": daily}
+
+    result = update_rates(updates_rates_dict)
+
+    return redirect(url_for('index'))
