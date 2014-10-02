@@ -9,9 +9,21 @@
 
 <body>
 
-<div id="heading" class="center_div"><h1>The Insolvency Solver</h1>
+<div id="heading" class="center_div"><h2>The Insolvency Solver</h2>
 
-    <div id="current_balance"><h2>Current Balance: {{ rates.balance }}</h2></div>
+    <div id="description">
+        <p>The Insolvency Solver is a tool to help save money.  It functions by taking your rent, bills,
+        and other fixed costs, subtracting them from your monthly pay, and applying a daily
+        spending amount. </p>
+
+        <p>Think of it as a mini bank and daily wage within your larger, actual wage and bank account.
+            Major purchases require you to save up your daily wage.
+            Meanwhile, your actual wage is being turned into savings (hopefully).</p>
+    </div>
+
+
+
+    <div id="current_balance"><h1>Current Balance: ${{ rates.balance }}</h1></div>
 
     <div id="entry_forms">
         <form action="/submit" method="post">
@@ -22,6 +34,7 @@
         </form>
     </div>
 
+    <hr>
 
     <div id="transaction_forms">
         <form action="/submit_transaction" method="post">

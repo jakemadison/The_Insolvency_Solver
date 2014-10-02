@@ -10,6 +10,11 @@ To Do:
 --> i.e. treat this as your actual day-to-day wage and bank, the savings will then acrue outside of that.
 
 
+- add tabs: main, transaction history (with the ability to delete transactions), and actual accounts.
+- all tabs should still retain a D3 analysis portion for their bottom half.
+
+- add a bootstrap "x" button to get rid of description
+
 ====
 Down the line:
 - multi-tabbed for different views
