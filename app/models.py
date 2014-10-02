@@ -23,3 +23,11 @@ class DailyHistory(db.Model):
     credits = db.Column(db.Integer, default=0)
     debits = db.Column(db.Integer, default=0)
     balance = db.Column(db.Integer, default=0)
+
+
+class TransactionHistory(db.Model):
+
+    __tablename__ = 'transaction_history'
+
+    id = db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Integer, default=0)

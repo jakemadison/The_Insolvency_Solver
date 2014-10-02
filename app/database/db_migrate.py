@@ -1,4 +1,4 @@
-#!../Development/is_env/bin/python
+#!../../../is_env/bin/python
 import imp
 from migrate.versioning import api
 from app import db
