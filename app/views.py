@@ -39,7 +39,7 @@ def submit():
 
     rent = int(request.form['rent'])
     bills = int(request.form['bills'])
-    daily = int(request.form['daily_spend'])
+    daily = int(request.form['daily'])
 
     print('received values, rent: {0}, bills: {1}, daily: {2}'.format(rent, bills, daily))
 
@@ -47,7 +47,7 @@ def submit():
 
     result = update_rates(updates_rates_dict)
 
-    return redirect(url_for('index'))
+    return redirect(url_for('settings'))
 
 
 @app.route('/submit_transaction', methods=['POST'])

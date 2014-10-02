@@ -5,13 +5,23 @@
 
     <div id="entry_forms">
         <form action="/submit" method="post">
-            Rent: <input type="text" name="rent" value="{{ rates.rent }}">
-            Bills: <input type="text" name="bills" value="{{ rates.bills }}">
-            Daily: <input type="text" name="daily_spend" value="{{ rates.daily }}">
+            <p>Rent:  $ <input type="text" name="rent" value="{{ rates.rent }}"></p>
+            <p>Bills:  $ <input type="text" name="bills" value="{{ rates.bills }}"></p>
+            <p>Other Fixed Costs per Month:  $ <input type="text" name="bills" value=""></p>
+            <p>Income per Month:  $ <input type="text" name="income_per_month" value=""></p>
+            <p>Savings per Month:  $ <input type="text" name="savings_per_month" value=""></p>
+            <p>Daily:  $ <input type="text" name="daily" value="{{ rates.daily }}"></p>
             <input type="submit" value="Update">
         </form>
     </div>
 
+    <hr>
 
+    <div id="direct_balance_form">
+        <form action="/direct_balance" method="post">
+            <p>Directly Update my Running Balance to:  $ <input type="text" name="rent" value="{{ rates.balance }}"></p>
+            <input type="submit" value="Update">
+        </form>
+    </div>
 
 {% endblock %}
