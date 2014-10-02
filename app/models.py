@@ -31,3 +31,6 @@ class TransactionHistory(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Integer, default=0)
+
+    def __init__(self, amount):
+        self.amount = amount

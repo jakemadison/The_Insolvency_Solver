@@ -18,5 +18,5 @@ def _set_direct_balance(amt):
 
 
 if __name__ == "__main__":
-    # daily_increase()
-    _set_direct_balance(30)
+    daily_increase()
+    # _set_direct_balance(30)

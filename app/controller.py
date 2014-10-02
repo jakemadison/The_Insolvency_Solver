@@ -1,6 +1,6 @@
 from __future__ import print_function
 from app import db
-from app.models import CurrentRates
+from app.models import CurrentRates, TransactionHistory
 
 
 def get_current_rates():
@@ -27,6 +27,21 @@ def update_rates(new_rates_dict):
 
     return True
 
+
+def execute_transaction(amount):
+
+    # insert a transaction & update balance.
+
+    new_transaction = TransactionHistory(amount)
+    db.session.add(new_transaction)
+    db.session.commit()
+
+    current_rates = get_current_rates()
+    current_rates['balance'] -= amount  # at this point, all transactions are debits.
+    update_rates(current_rates)
+
+
 if __name__ == "__main__":
-    rates = get_current_rates()
-    update_rates(rates)
+    # rates = get_current_rates()
+    # update_rates(rates)
+    execute_transaction(13)
