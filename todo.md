@@ -12,10 +12,17 @@ To Do:
 
 - add tabs: main, transaction history (with the ability to delete transactions), and actual accounts.
 - all tabs should still retain a D3 analysis portion for their bottom half.
+- on "actual account" should show projected savings.
+- actual account is like "peeking behind the curtain" at what's actually going on with your money.
+- main page should show daily amounts, balance, how good you've been.
+- transaction page should be... more detailed maybe? showing your clustering of transactions/day?
 
 - add a bootstrap "x" button to get rid of description
 
-====
+---
+
 Down the line:
+
 - multi-tabbed for different views
 - the ability to move from mini bank account/wage to larger picture (savings, actual wage, etc)
+
