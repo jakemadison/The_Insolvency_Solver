@@ -16,6 +16,9 @@ def index():
 @app.route('/settings')
 def settings():
     rates = get_current_rates()
+
+    rates['monthly_balance'] = rates['income_per_month'] - (rates['rent'] + rates['bills'] + rates['other_costs'])
+
     return render_template('settings.html', rates=rates)
 
 
@@ -33,9 +36,40 @@ def total_savings():
 
 
 # POST ROUTES:
+@app.route('/submit_monthly', methods=['POST'])
+def submit_monthly():
 
-@app.route('/submit', methods=['POST'])
-def submit():
+    updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems()}
+    print('update received with values: {0}'.format(updates_rates_dict))
+
+    current_rates = get_current_rates()
+
+    monthly_balance = updates_rates_dict['income_per_month'] - (updates_rates_dict['rent'] +
+                                                                updates_rates_dict['bills'] +
+                                                                updates_rates_dict['other_costs'])
+
+    monthly_spending = current_rates['daily'] * 30
+
+    updates_rates_dict['savings_per_month'] = monthly_balance - monthly_spending
+
+    result = update_rates(updates_rates_dict)
+
+    return redirect(url_for('settings'))
+
+
+@app.route('/submit_savings', methods=['POST'])
+def submit_savings():
+
+    updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems()}
+    print('update received with values: {0}'.format(updates_rates_dict))
+
+    result = update_rates(updates_rates_dict)
+
+    return redirect(url_for('settings'))
+
+
+@app.route('/submit_spending', methods=['POST'])
+def submit_spending():
 
     updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems()}
     print('update received with values: {0}'.format(updates_rates_dict))

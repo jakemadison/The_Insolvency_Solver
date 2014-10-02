@@ -4,23 +4,42 @@
         <hr>
 
     <div id="entry_forms">
-        <form action="/submit" method="post">
+        <form action="/submit_monthly" method="post">
             <p>Rent:  $ <input type="text" name="rent" value="{{ rates.rent }}"></p>
             <p>Bills:  $ <input type="text" name="bills" value="{{ rates.bills }}"></p>
             <p>Other Fixed Costs per Month:  $ <input type="text" name="other_costs" value="{{ rates.other_costs }}"></p>
             <p>Income per Month:  $ <input type="text" name="income_per_month" value="{{ rates.income_per_month }}"></p>
-            <p>Savings per Month:  $ <input type="text" name="savings_per_month" value="{{ rates.savings_per_month }}"></p>
-            <p>Daily:  $ <input type="text" name="daily" value="{{ rates.daily }}"></p>
             <input type="submit" value="Update">
+         </form>
+    </div>
+
+     <p><b>Total Monthly Balance:  ${{ rates.monthly_balance }}</b></p>
+
+    <hr>
+
+    <div id="savings_forms">
+        <form action="/submit_savings" method="post">
+            <p>Savings per Month:  $ <input type="text" name="savings_per_month" value="{{ rates.savings_per_month }}">
+            <input type="submit" value="Update"></p>
         </form>
     </div>
 
     <hr>
 
+    <div id="spending_forms">
+        <form action="/submit_spending" method="post">
+            <p>Daily:  $ <input type="text" name="daily" value="{{ rates.daily }}">
+            <input type="submit" value="Update"></p>
+        </form>
+    </div>
+
+    <hr>
+
+
     <div id="direct_balance_form">
         <form action="/direct_balance" method="post">
-            <p>Directly Update my Running Balance to:  $ <input type="text" name="balance" value="{{ rates.balance }}"></p>
-            <input type="submit" value="Update">
+            <p>Directly Update my Running Balance to:  $ <input type="text" name="balance" value="{{ rates.balance }}">
+            <input type="submit" value="Update"></p>
         </form>
     </div>
 

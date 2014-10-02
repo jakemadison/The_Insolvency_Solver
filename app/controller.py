@@ -28,6 +28,10 @@ def update_rates(new_rates_dict):
     return True
 
 
+def calculate_relative_rates(new_rates_dict):
+    pass
+
+
 def execute_transaction(amount):
 
     # insert a transaction & update balance.
