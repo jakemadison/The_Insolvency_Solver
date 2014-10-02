@@ -1,7 +1,7 @@
 from __future__ import print_function
 from app import app
 from flask import render_template, request, jsonify, redirect, url_for
-from controller import get_current_rates, update_rates
+from controller import get_current_rates, update_rates, execute_transaction
 
 
 @app.route('/')
@@ -25,5 +25,16 @@ def submit():
     updates_rates_dict = {"rent": rent, "bills": bills, "daily": daily}
 
     result = update_rates(updates_rates_dict)
+
+    return redirect(url_for('index'))
+
+
+@app.route('/submit_transaction', methods=['POST'])
+def submit_transaction():
+
+    transaction_amount = int(request.form['transaction'])
+    print('received a new transaction in the amount of: {0}'.format(transaction_amount))
+
+    execute_transaction(transaction_amount)
 
     return redirect(url_for('index'))

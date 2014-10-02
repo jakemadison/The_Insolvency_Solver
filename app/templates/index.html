@@ -11,18 +11,29 @@
 
 <div id="heading" class="center_div"><h1>The Insolvency Solver</h1>
 
-<div id="current_balance"><h2>Current Balance: {{ rates.balance }}</h2></div>
+    <div id="current_balance"><h2>Current Balance: {{ rates.balance }}</h2></div>
 
-<div id="entry_forms">
-    <form action="/submit" method="post">
-        Rent: <input type="text" name="rent" value="{{ rates.rent }}">
-        Bills: <input type="text" name="bills" value="{{ rates.bills }}">
-        Daily Spending: <input type="text" name="daily_spend" value="{{ rates.daily }}">
-        <input type="submit" value="Update">
-    </form>
+    <div id="entry_forms">
+        <form action="/submit" method="post">
+            Rent: <input type="text" name="rent" value="{{ rates.rent }}">
+            Bills: <input type="text" name="bills" value="{{ rates.bills }}">
+            Daily Spending: <input type="text" name="daily_spend" value="{{ rates.daily }}">
+            <input type="submit" value="Update">
+        </form>
+    </div>
+
+
+    <div id="transaction_forms">
+        <form action="/submit_transaction" method="post">
+            Amount: <input type="text" name="transaction">
+            <input type="submit" value="Submit Transaction">
+        </form>
+    </div>
 
 </div>
-</div>
+
+
+
 
   </body>
 </html>
