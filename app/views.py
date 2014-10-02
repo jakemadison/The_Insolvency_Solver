@@ -63,6 +63,10 @@ def submit_savings():
     updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems()}
     print('update received with values: {0}'.format(updates_rates_dict))
 
+    monthly_balance = updates_rates_dict['income_per_month'] - (updates_rates_dict['rent'] +
+                                                            updates_rates_dict['bills'] +
+                                                            updates_rates_dict['other_costs'])
+
     result = update_rates(updates_rates_dict)
 
     return redirect(url_for('settings'))
