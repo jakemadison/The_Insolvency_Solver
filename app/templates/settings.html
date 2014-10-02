@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+
+        <hr>
+
+    <div id="entry_forms">
+        <form action="/submit" method="post">
+            Rent: <input type="text" name="rent" value="{{ rates.rent }}">
+            Bills: <input type="text" name="bills" value="{{ rates.bills }}">
+            Daily: <input type="text" name="daily_spend" value="{{ rates.daily }}">
+            <input type="submit" value="Update">
+        </form>
+    </div>
+
+
+
+{% endblock %}

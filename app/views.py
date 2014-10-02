@@ -13,6 +13,27 @@ def index():
                            rates=rates)
 
 
+@app.route('/settings')
+def settings():
+    rates = get_current_rates()
+    return render_template('settings.html', rates=rates)
+
+
+@app.route('/daily_summary')
+def daily_summary():
+    rates = get_current_rates()
+    return render_template('daily_summary.html', rates=rates)
+
+
+@app.route('/total_savings')
+def total_savings():
+    rates = get_current_rates()
+    return render_template('total_savings.html', rates=rates)
+
+
+
+# POST ROUTES:
+
 @app.route('/submit', methods=['POST'])
 def submit():
 

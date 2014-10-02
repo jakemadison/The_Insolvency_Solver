@@ -31,6 +31,7 @@ def update_rates(new_rates_dict):
 def execute_transaction(amount):
 
     # insert a transaction & update balance.
+    #This should include adding system time when button was pressed, which can then be gathered for Daily View
 
     new_transaction = TransactionHistory(amount)
     db.session.add(new_transaction)
