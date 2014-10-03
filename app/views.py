@@ -1,7 +1,7 @@
 from __future__ import print_function
 from app import app
 from flask import render_template, request, jsonify, redirect, url_for
-from controller import get_current_rates, update_rates, execute_transaction
+from controller import get_current_rates, update_rates, execute_transaction, get_recent_transactions
 
 
 @app.route('/')
@@ -9,8 +9,9 @@ from controller import get_current_rates, update_rates, execute_transaction
 def index():
 
     rates = get_current_rates()
+    transactions = get_recent_transactions()
     return render_template('index.html', title='Insolvency_Solver',
-                           rates=rates)
+                           rates=rates, transactions=transactions)
 
 
 @app.route('/settings')

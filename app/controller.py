@@ -46,7 +46,22 @@ def execute_transaction(amount):
     update_rates(current_rates)
 
 
+def get_recent_transactions():
+
+    recent_transactions = db.session.query(TransactionHistory).order_by(TransactionHistory.timestamp.desc()).all()
+
+    transaction_list = []
+    for e in recent_transactions:
+        transaction = {"id": e.id,
+                       "timestamp": e.timestamp.strftime("%d-%m-%Y %H:%M:%S"),
+                       "amount": '$'+str(e.amount)+'.00'}
+        transaction_list.append(transaction)
+
+    return transaction_list
+
+
 if __name__ == "__main__":
     # rates = get_current_rates()
     # update_rates(rates)
-    execute_transaction(13)
+    # execute_transaction(13)
+    get_recent_transactions()
