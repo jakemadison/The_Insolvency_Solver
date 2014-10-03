@@ -78,7 +78,6 @@ def submit_spending():
 
     updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems()}
     print('update received with values: {0}'.format(updates_rates_dict))
-
     result = update_rates(updates_rates_dict)
 
     return redirect(url_for('settings'))
