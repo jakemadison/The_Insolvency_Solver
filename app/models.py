@@ -17,6 +17,11 @@ class CurrentRates(db.Model):
 
 class DailyHistory(db.Model):
 
+    """
+    Note, the model expects credits to come in as LESS THAN ZERO
+    while expecting debits to come in as >= 0
+    """
+
     __tablename__ = 'daily_history'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -24,6 +29,28 @@ class DailyHistory(db.Model):
     credits = db.Column(db.Integer, default=0)
     debits = db.Column(db.Integer, default=0)
     balance = db.Column(db.Integer, default=0)
+
+    def __init__(self, day, amount):
+
+        self.day = day
+
+        if amount >= 0:
+            self.debits = amount
+            self.credits = 0
+        else:
+            self.credits = amount
+            self.debits = 0
+
+        self.balance = self.credits - self.debits
+
+    def update_day(self, amount):
+
+        if amount >= 0:
+            self.debits += amount
+        else:
+            self.credits += amount
+
+        self.balance = self.credits - self.debits
 
 
 class TransactionHistory(db.Model):
