@@ -1,4 +1,4 @@
-<html>
+<html xmlns="http://www.w3.org/1999/html">
   <head>
 
     <meta charset="utf-8">
@@ -94,14 +94,42 @@
 
 
     <!--<hr>-->
+{#<div class="input-group">#}
+{#  <span class="input-group-addon">$</span>#}
+{#  <input type="text" class="form-control">#}
+{#  <span class="input-group-addon">.00</span>#}
+{#</div>#}
 
-    <div id="transaction_forms">
-        <form action="/submit_transaction" method="post">
-            Amount:  $ <input type="text" name="transaction">
-            <input type="submit" value="Submit Transaction">
-        </form>
-    </div>
+<div class="row">
+<div id="transaction_forms" class="col-lg-6">
+  <div class="input-group">
+    <span class="input-group-addon">$</span>
+    <input type="text" name="transaction" class="form-control">
+    <span class="input-group-addon">.00</span>
 
+
+    <div class="input-group-btn">
+        <button type="button" class="btn btn-primary">Submit Transaction</button>
+
+
+
+{#        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">#}
+{#          <span class="caret"></span>#}
+{#        </button>#}
+{##}
+{#        <ul class="dropdown-menu dropdown-menu-right" role="menu">#}
+{#          <li><a href="#">Deposit Money</a></li>#}
+{#        </ul>#}
+
+    </div><!-- /btn-group -->
+
+
+  </div>
+</div>
+</div>
+
+
+{#<input type="submit" value="Submit Transaction">#}
 
             {% block content %}{% endblock %}
 
