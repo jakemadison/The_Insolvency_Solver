@@ -1,5 +1,5 @@
 from app import db
-from time import strftime
+from datetime import datetime
 
 
 class CurrentRates(db.Model):
@@ -36,4 +36,4 @@ class TransactionHistory(db.Model):
 
     def __init__(self, amount):
         self.amount = amount
-        self.timestamp = strftime("%d-%m-%Y %H:%M:%S")
+        self.timestamp = datetime.now()
