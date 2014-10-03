@@ -32,12 +32,12 @@ def calculate_relative_rates(new_rates_dict):
     pass
 
 
-def execute_transaction(amount):
+def execute_transaction(amount, purchase_type):
 
     # insert a transaction & update balance.
     #This should include adding system time when button was pressed, which can then be gathered for Daily View
 
-    new_transaction = TransactionHistory(amount)
+    new_transaction = TransactionHistory(amount, purchase_type)
     db.session.add(new_transaction)
     db.session.commit()
 
@@ -54,7 +54,8 @@ def get_recent_transactions():
     for e in recent_transactions:
         transaction = {"id": e.id,
                        "timestamp": e.timestamp.strftime("%d-%m-%Y %H:%M:%S"),
-                       "amount": '$'+str(e.amount)+'.00'}
+                       "amount": '$'+str(e.amount)+'.00',
+                       "purchase_type": e.purchase_type}
         transaction_list.append(transaction)
 
     return transaction_list
@@ -64,4 +65,4 @@ if __name__ == "__main__":
     # rates = get_current_rates()
     # update_rates(rates)
     # execute_transaction(13)
-    get_recent_transactions()
+    print(get_recent_transactions())

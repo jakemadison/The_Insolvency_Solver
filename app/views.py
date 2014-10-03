@@ -88,14 +88,18 @@ def submit_transaction():
 
     try:
         transaction_amount = int(request.form['transaction'])
+        purchase_type = request.form['purchase']
     except ValueError:
         return redirect(url_for('index'))
 
-    print('received a new transaction in the amount of: {0}'.format(transaction_amount))
+    print('received a new transaction in the amount of: {0}, type of: {1}'.format(transaction_amount, purchase_type))
 
     if transaction_amount == 0:
         return redirect(url_for('index'))
 
-    execute_transaction(transaction_amount)
+    if purchase_type:
+        purchase_type = purchase_type.title()
+
+    execute_transaction(transaction_amount, purchase_type)
 
     return redirect(url_for('index'))
