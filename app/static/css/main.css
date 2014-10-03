@@ -3,3 +3,11 @@
     margin-right: auto;
     width: 70%;
 }
+
+.positive_balance {
+    color: green;
+}
+
+.negative_balance {
+    color: red;
+}

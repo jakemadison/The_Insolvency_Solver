@@ -89,11 +89,13 @@
     </div>
 
 
+{% if rates.balance >= 0 %}
+    <div id="current_balance" class="positive_balance"><h1>Current Balance: ${{ rates.balance }}</h1></div>
+{% else %}
+    <div id="current_balance" class="negative_balance"><h1>Current Balance: ${{ rates.balance }}</h1></div>
+{% endif %}
 
-    <div id="current_balance"><h1>Current Balance: ${{ rates.balance }}</h1></div>
-
-
-    <!--<hr>-->
+            <!--<hr>-->
 {#<div class="input-group">#}
 {#  <span class="input-group-addon">$</span>#}
 {#  <input type="text" class="form-control">#}
