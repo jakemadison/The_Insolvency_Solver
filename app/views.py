@@ -87,8 +87,15 @@ def submit_spending():
 @app.route('/submit_transaction', methods=['POST'])
 def submit_transaction():
 
-    transaction_amount = int(request.form['transaction'])
+    try:
+        transaction_amount = int(request.form['transaction'])
+    except ValueError:
+        return redirect(url_for('index'))
+
     print('received a new transaction in the amount of: {0}'.format(transaction_amount))
+
+    if transaction_amount == 0:
+        return redirect(url_for('index'))
 
     execute_transaction(transaction_amount)
 

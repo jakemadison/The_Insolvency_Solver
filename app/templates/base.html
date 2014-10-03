@@ -106,12 +106,12 @@
 <div id="transaction_forms" class="col-lg-6">
   <div class="input-group">
     <span class="input-group-addon">$</span>
-    <input type="text" name="transaction" class="form-control">
+    <input type="text" name="transaction" class="form-control" id="transaction_amount">
     <span class="input-group-addon">.00</span>
 
 
     <div class="input-group-btn">
-        <button type="button" class="btn btn-primary">Submit Transaction</button>
+        <button type="button" class="btn btn-primary" onclick="submit_transaction()">Submit Transaction</button>
 
 
 
@@ -158,6 +158,7 @@
     <script src="../static/js/bootstrap.min.js"></script>
     <script src="../static/js/docs.min.js"></script>
 
+    <script src="../static/js/main.js"></script>
 
 
   </body>
