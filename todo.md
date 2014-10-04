@@ -26,3 +26,5 @@ Down the line:
 - multi-tabbed for different views
 - the ability to move from mini bank account/wage to larger picture (savings, actual wage, etc)
 
+- add "planned transactions" for future things needing to buy (separate table). should
+make for easier planning of wage vs debits.

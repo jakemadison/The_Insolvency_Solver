@@ -31,6 +31,12 @@ def daily_summary():
     return render_template('daily_summary.html', rates=rates, daily_summary=daily_summary)
 
 
+@app.route('/metrics')
+def metrics():
+    rates = get_current_rates()
+    return render_template('metrics.html', rates=rates)
+
+
 @app.route('/total_savings')
 def total_savings():
     rates = get_current_rates()
