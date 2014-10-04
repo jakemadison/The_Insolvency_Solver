@@ -30,25 +30,16 @@ def update_rates(new_rates_dict):
     return True
 
 
-def calculate_relative_rates(new_rates_dict):
-    pass
-
-
 def update_daily_history(transaction):
     # discover if we already have a day record.  If we do, update that one =+ transaction
     # if we do not, then add a new one.  Should be able to use this to populate existing records
     # transaction = TransactionHistory(10, 'Booze')
 
-    existing_day = db.session.query(DailyHistory)
-    existing_day = existing_day.filter(DailyHistory.day == (func.DATE(transaction.timestamp)))
-    existing_day = existing_day.first()
+    existing_day = get_day_row(func.DATE(transaction.timestamp))
 
     if not existing_day:
         print('inserting new row for day')
-
-        new_day_row = DailyHistory(func.DATE(transaction.timestamp), transaction.amount)
-        db.session.add(new_day_row)
-        db.session.commit()
+        insert_new_day(func.DATE(transaction.timestamp))
         return True
 
     else:
@@ -58,7 +49,11 @@ def update_daily_history(transaction):
         return True
 
 
-def execute_transaction(amount, purchase_type):
+def execute_transaction(amount, purchase_type, timestamp=None):
+
+    # transaction needs to take in a date param optionally, and modify model defaults.
+
+    print('received transaction for timestamp: {0}'.format(timestamp))
 
     # insert a transaction & update balance.
     #This should include adding system time when button was pressed, which can then be gathered for Daily View
@@ -76,6 +71,8 @@ def execute_transaction(amount, purchase_type):
 
 def get_recent_transactions():
 
+    """get all recent transactions"""
+
     recent_transactions = db.session.query(TransactionHistory).order_by(TransactionHistory.timestamp.desc()).all()
 
     transaction_list = []
@@ -90,6 +87,7 @@ def get_recent_transactions():
 
 
 def get_daily_summary():
+    """retrieve a full summary of all days"""
 
     daily_summary = db.session.query(DailyHistory).order_by(DailyHistory.day.desc()).all()
 
@@ -103,11 +101,13 @@ def get_daily_summary():
 
 
 def get_day_row(date):
+    """check for the existence of a day row for date"""
     day_row = db.session.query(DailyHistory).filter(DailyHistory.day == date).first()
     return day_row
 
 
 def insert_new_day(date=None):
+    """insert a new day row at specified date"""
 
     if date is None:
         date = datetime.now()

@@ -35,9 +35,7 @@ def _set_direct_balance(amt):
 if __name__ == "__main__":
 
     # increase current rates:
-    # daily_increase()
+    daily_increase()
 
-    # insert a new day row in summary:
+    # insert a new day row in daily summary:
     create_new_day()
-
-    # _set_direct_balance(60)
