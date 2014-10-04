@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../static/css/main.css">
    <!-- Bootstrap core CSS -->
     <link href="../static/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="../static/css/datepicker.css" rel="stylesheet" type="text/css">
 
 
     <!-- Custom styles for this template -->
@@ -113,6 +114,11 @@
 {#  <span class="input-group-addon">.00</span>#}
 {#</div>#}
 
+
+
+
+
+
 <div class="row">
 <div id="transaction_forms" class="col-lg-8">
   <div class="input-group">
@@ -141,9 +147,25 @@
 {#        </ul>#}
 
     </div><!-- /btn-group -->
-
-
   </div>
+
+    <div class="row">
+
+        <div class="col-lg-4">
+            Change effective date of Transaction:
+        </div>
+
+
+        <div class="col-lg-4 pull-right">
+
+            <div class="input-group date">
+            <input type="text" class="form-control"><span class="input-group-addon">
+            <i class="glyphicon glyphicon-th"></i></span>
+            </div>
+        </div>
+
+        </div>
+
 </div>
 </div>
 
@@ -174,6 +196,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="../static/js/bootstrap.min.js"></script>
     <script src="../static/js/docs.min.js"></script>
+
+    <script src="../static/js/bootstrap-datepicker.js"></script>
 
     <script src="../static/js/main.js"></script>
 

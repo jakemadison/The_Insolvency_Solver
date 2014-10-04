@@ -13,6 +13,6 @@ var submit_transaction = function() {
         window.location.reload(true);
     });
 
-
-
 };
+
+$('.date').datepicker();
