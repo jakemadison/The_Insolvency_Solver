@@ -49,12 +49,20 @@ class DailyHistory(db.Model):
         self.balance += current_rate
 
     def update_day(self, amount):
+        """update values for summary on day of transaction"""
 
         if amount >= 0:
             self.debits += amount
             self.balance -= amount
         else:
             self.credits += amount
+            self.balance += amount
+
+    def update_historical_days(self, amount):
+        """update all days' balance after historical transaction"""
+        if amount >= 0:
+            self.balance -= amount
+        else:
             self.balance += amount
 
 

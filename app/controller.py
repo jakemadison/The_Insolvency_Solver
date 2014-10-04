@@ -38,8 +38,14 @@ def update_daily_history(transaction, start_date):
     existing_days = get_day_rows(start_date)
 
     for day in existing_days:
+
         print('updating existing row: {0}'.format(day.day))
-        day.update_day(transaction.amount)
+
+        if day.day == start_date:
+            day.update_day(transaction.amount)
+        else:
+            day.update_historical_days(transaction.amount)
+
         db.session.commit()
 
     return True
