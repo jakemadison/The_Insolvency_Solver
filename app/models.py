@@ -1,6 +1,7 @@
 from __future__ import print_function
 from app import db
 from datetime import datetime, timedelta
+from sqlalchemy import func
 
 
 class CurrentRates(db.Model):
@@ -31,23 +32,21 @@ class DailyHistory(db.Model):
     debits = db.Column(db.Integer, default=0)
     balance = db.Column(db.Integer, default=0)
 
-    def __init__(self, day, amount):
+    def __init__(self, day):
 
         self.day = day
 
-        if amount >= 0:
-            self.debits = amount
-            self.credits = 0  # + daily amount
-        else:
-            self.credits = amount
-            self.debits = 0  # + daily amount
+        current_rate = db.session.query(CurrentRates).filter(CurrentRates.type == 'daily').first().amount
+        self.credits = current_rate
 
-        opening_balance = self._get_opening_balance()
+        prev_day = day - timedelta(days=1)
+        print(prev_day)
+        print(current_rate)
+        prev_balance = db.session.query(DailyHistory).filter(DailyHistory.day == func.DATE(prev_day)).first().balance
 
-        self.balance = opening_balance  # this doesn't actually deal with no spending days at all.
-
-        self.balance += self.credits
-        self.balance -= self.debits
+        print(prev_balance)
+        self.balance = prev_balance
+        self.balance += current_rate
 
     def update_day(self, amount):
 
@@ -57,16 +56,6 @@ class DailyHistory(db.Model):
         else:
             self.credits += amount
             self.balance += amount
-
-    def _get_opening_balance(self):
-
-        my_day = db.session.query(DailyHistory).filter(DailyHistory.day == self.day).first().day
-        delta = my_day - timedelta(days=1)
-
-        prev_balance = db.session.query(DailyHistory)
-        prev_balance = prev_balance.filter(DailyHistory.day == delta).first().balance
-
-        return prev_balance
 
 
 class TransactionHistory(db.Model):

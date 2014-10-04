@@ -79,7 +79,9 @@
 
 
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">The Insolvency Solver</h1>
+
+            <div class="col-lg-8">
+            <h1 class="page-header">The Insolvency Solver</h1>
 
              <div id="description">
         <p>The Insolvency Solver is a tool to help save money.  It functions by taking your rent, bills,
@@ -91,15 +93,15 @@
             Meanwhile, your actual wage is being turned into savings (hopefully).</p>
     </div>
 
-        <hr>
+{#        <hr>#}
 
 {% if rates.balance >= 0 %}
     <div id="current_balance" class="positive_balance"><h1>Current Balance: ${{ rates.balance }}</h1></div>
 {% else %}
     <div id="current_balance" class="negative_balance"><h1>Current Balance: ${{ rates.balance }}</h1></div>
 {% endif %}
-
-            <!--<hr>-->
+</div>
+            <hr>
 {#<div class="input-group">#}
 {#  <span class="input-group-addon">$</span>#}
 {#  <input type="text" class="form-control">#}

@@ -11,3 +11,7 @@
 .negative_balance {
     color: red;
 }
+
+#description {
+    text-align: justify;
+}

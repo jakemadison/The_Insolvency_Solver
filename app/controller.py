@@ -2,6 +2,7 @@ from __future__ import print_function
 from app import db
 from app.models import CurrentRates, TransactionHistory, DailyHistory
 from sqlalchemy import func
+from datetime import datetime
 
 
 def get_current_rates():
@@ -44,6 +45,7 @@ def update_daily_history(transaction):
 
     if not existing_day:
         print('inserting new row for day')
+
         new_day_row = DailyHistory(func.DATE(transaction.timestamp), transaction.amount)
         db.session.add(new_day_row)
         db.session.commit()
@@ -100,6 +102,22 @@ def get_daily_summary():
     return daily_list
 
 
+def get_day_row(date):
+    day_row = db.session.query(DailyHistory).filter(DailyHistory.day == date).first()
+    return day_row
+
+
+def insert_new_day(date=None):
+
+    if date is None:
+        date = datetime.now()
+
+    new_day = DailyHistory(date)
+    db.session.add(new_day)
+    db.session.commit()
+    print('created new row for day: {0}'.format(new_day))
+
+
 if __name__ == "__main__":
     # rates = get_current_rates()
     # update_rates(rates)
@@ -107,7 +125,8 @@ if __name__ == "__main__":
     # print(get_recent_transactions())
 
     transaction = TransactionHistory(10, 'Booze')
-    new_day_row = DailyHistory(func.DATE(transaction.timestamp), transaction.amount)
+    print(func.DATE(transaction.timestamp).execute())
+
 
 
 

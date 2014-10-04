@@ -1,5 +1,6 @@
 from __future__ import print_function
-from controller import get_current_rates, update_rates
+from controller import get_current_rates, update_rates, get_day_row, insert_new_day
+from datetime import datetime
 
 
 def daily_increase():
@@ -11,6 +12,20 @@ def daily_increase():
         update_rates(current_rates)
 
 
+def create_new_day():
+    # check for the existence of a day row as a precaution.  If it doesn't exist, create a new row
+    today = datetime.now()
+    existing = get_day_row(today)
+
+    if not existing:
+        print('no existing record found.  Inserting a new day.')
+        insert_new_day(today)
+        return True
+
+    else:
+        return False
+
+
 def _set_direct_balance(amt):
     current_rates = get_current_rates()
     current_rates['balance'] = amt
@@ -18,5 +33,11 @@ def _set_direct_balance(amt):
 
 
 if __name__ == "__main__":
-    daily_increase()
+
+    # increase current rates:
+    # daily_increase()
+
+    # insert a new day row in summary:
+    create_new_day()
+
     # _set_direct_balance(60)
