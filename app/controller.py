@@ -79,7 +79,7 @@ def get_recent_transactions():
     transaction_list = []
     for e in recent_transactions:
         transaction = {"id": e.id,
-                       "timestamp": e.timestamp.strftime("%d-%m-%Y %H:%M:%S"),
+                       "timestamp": e.timestamp.strftime("%b %d %Y: %I:%M:%S %p"),
                        "amount": '$'+str(e.amount)+'.00',
                        "purchase_type": e.purchase_type}
         transaction_list.append(transaction)
@@ -93,7 +93,8 @@ def get_daily_summary():
 
     daily_list = []
     for d in daily_summary:
-        day = {"id": d.id, "date": d.day, "credits": d.credits, "debits": d.debits, "balance": d.balance}
+        day = {"id": d.id, "date": d.day.strftime("%b %d %Y"),
+               "credits": d.credits, "debits": d.debits, "balance": d.balance}
         daily_list.append(day)
 
     return daily_list
