@@ -19,3 +19,18 @@
 .title {
     margin-top: 0px;
 }
+
+/*.date {*/
+    /*position: absolute;*/
+    /*top: 50%;*/
+    /*height:10em;*/
+    /*margin-top:-5em*/
+/*}*/
+
+/*.date_container {*/
+    /*position: relative;*/
+/*}*/
+
+.date {
+    margin-top: 0px;
+}

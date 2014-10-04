@@ -17,6 +17,8 @@ def create_new_day():
     today = datetime.now()
     existing = get_day_row(today)
 
+    print('check for existence of day revealed: {0}'.format(existing))
+
     if not existing:
         print('no existing record found.  Inserting a new day.')
         insert_new_day(today)

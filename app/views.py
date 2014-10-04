@@ -2,7 +2,7 @@ from __future__ import print_function
 from app import app
 from flask import render_template, request, jsonify, redirect, url_for
 from controller import get_current_rates, update_rates, execute_transaction, get_recent_transactions, get_daily_summary
-
+from datetime import datetime
 
 @app.route('/')
 @app.route('/index')
@@ -88,20 +88,39 @@ def submit_spending():
 @app.route('/submit_transaction', methods=['POST'])
 def submit_transaction():
 
+    print('transaction submitted.')
+
     try:
-        transaction_amount = int(request.form['transaction'])
+        transaction_amount = request.form['transaction']
+
+        if transaction_amount == '':  # this can die after date is finished.  value error will catch ''
+            transaction_amount = 0
+        else:
+            transaction_amount = int(transaction_amount)
+
         purchase_type = request.form['purchase']
-    except ValueError:
+        transaction_date = request.form['transaction_date']
+    except ValueError, e:
+        print('value error on input: {0}'.format(str(e)))
         return redirect(url_for('index'))
 
-    print('received a new transaction in the amount of: {0}, type of: {1}'.format(transaction_amount, purchase_type))
-
-    if transaction_amount == 0:
-        return redirect(url_for('index'))
+    print('received a new transaction, amount: {0}, type: {1}, date: {2}'.format(transaction_amount,
+                                                                                 purchase_type,
+                                                                                 transaction_date))
 
     if purchase_type:
         purchase_type = purchase_type.title()
 
-    execute_transaction(transaction_amount, purchase_type)
+    # parse transaction_date here.
+    if transaction_date:
+        parsed_date = datetime.strptime(transaction_date, '%b %d %Y')
+    else:
+        parsed_date = datetime.today()
+
+    # move this back up after finished with testing of transaction date.
+    if transaction_amount == 0:
+        return redirect(url_for('index'))
+
+    execute_transaction(transaction_amount, purchase_type, parsed_date)
 
     return redirect(url_for('index'))

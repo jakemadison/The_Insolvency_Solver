@@ -30,39 +30,49 @@ def update_rates(new_rates_dict):
     return True
 
 
-def update_daily_history(transaction):
+def update_daily_history(transaction, start_date):
     # discover if we already have a day record.  If we do, update that one =+ transaction
     # if we do not, then add a new one.  Should be able to use this to populate existing records
     # transaction = TransactionHistory(10, 'Booze')
 
-    existing_day = get_day_row(func.DATE(transaction.timestamp))
+    existing_days = get_day_rows(start_date)
 
-    if not existing_day:
-        print('inserting new row for day')
-        insert_new_day(func.DATE(transaction.timestamp))
-        return True
-
-    else:
-        print('updating existing row')
-        existing_day.update_day(transaction.amount)
+    for day in existing_days:
+        print('updating existing row: {0}'.format(day.day))
+        day.update_day(transaction.amount)
         db.session.commit()
-        return True
+
+    return True
 
 
-def execute_transaction(amount, purchase_type, timestamp=None):
+def execute_transaction(amount, purchase_type, date=None):
 
     # transaction needs to take in a date param optionally, and modify model defaults.
+
+    print(type(date), type(datetime.today()), datetime.today())
+
+    # okay, so execute now gets a date in the form of a day.
+    if datetime.today().date() == date.date():
+        timestamp = datetime.now()
+    else:
+        timestamp = date
 
     print('received transaction for timestamp: {0}'.format(timestamp))
 
     # insert a transaction & update balance.
     #This should include adding system time when button was pressed, which can then be gathered for Daily View
 
-    new_transaction = TransactionHistory(amount, purchase_type)
+    new_transaction = TransactionHistory(amount, timestamp, purchase_type)
+    print('new transaction created: {0}, {1}'.format(new_transaction.amount, new_transaction.timestamp))
+
+    # print('dying now....')
+    # return True
+
     db.session.add(new_transaction)
     db.session.commit()
 
-    update_daily_history(new_transaction)
+    # this will need to change if the day is not today...
+    update_daily_history(new_transaction, start_date=timestamp.date())
 
     current_rates = get_current_rates()
     current_rates['balance'] -= amount  # at this point, all transactions are debits.
@@ -100,10 +110,10 @@ def get_daily_summary():
     return daily_list
 
 
-def get_day_row(date):
-    """check for the existence of a day row for date"""
-    day_row = db.session.query(DailyHistory).filter(DailyHistory.day == date).first()
-    return day_row
+def get_day_rows(start_date):
+    """return all day rows >= dates"""
+    day_rows = db.session.query(DailyHistory).filter(DailyHistory.day >= start_date).all()
+    return day_rows
 
 
 def insert_new_day(date=None):

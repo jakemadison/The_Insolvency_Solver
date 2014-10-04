@@ -67,7 +67,7 @@ class TransactionHistory(db.Model):
     amount = db.Column(db.Integer, default=0)
     purchase_type = db.Column(db.String(64), default=None)
 
-    def __init__(self, amount, purchase_type=None):
+    def __init__(self, amount, transaction_timestamp, purchase_type=None):
         self.amount = amount
-        self.timestamp = datetime.now()
+        self.timestamp = transaction_timestamp
         self.purchase_type = purchase_type
