@@ -1,6 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
 
-        More Content to follow....
+        <h2 class="sub-header">Daily Summary</h2>
+          <div class="table-responsive col-lg-8">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Date</th>
+                  <th>Debits</th>
+                  <th>Credits</th>
+                  <th>Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for day in daily_summary %}
+
+                <tr>
+                  <td>{{ day.id }}</td>
+                  <td>{{ day.date }}</td>
+                  <td>{{ day.debits }}</td>
+                  <td>{{ day.credits }}</td>
+                  <td>{{ day.balance }}</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
 
 {% endblock %}

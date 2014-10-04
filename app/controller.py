@@ -87,6 +87,18 @@ def get_recent_transactions():
     return transaction_list
 
 
+def get_daily_summary():
+
+    daily_summary = db.session.query(DailyHistory).order_by(DailyHistory.day.desc()).all()
+
+    daily_list = []
+    for d in daily_summary:
+        day = {"id": d.id, "date": d.day, "credits": d.credits, "debits": d.debits, "balance": d.balance}
+        daily_list.append(day)
+
+    return daily_list
+
+
 if __name__ == "__main__":
     # rates = get_current_rates()
     # update_rates(rates)

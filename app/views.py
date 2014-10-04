@@ -1,7 +1,7 @@
 from __future__ import print_function
 from app import app
 from flask import render_template, request, jsonify, redirect, url_for
-from controller import get_current_rates, update_rates, execute_transaction, get_recent_transactions
+from controller import get_current_rates, update_rates, execute_transaction, get_recent_transactions, get_daily_summary
 
 
 @app.route('/')
@@ -26,7 +26,9 @@ def settings():
 @app.route('/daily_summary')
 def daily_summary():
     rates = get_current_rates()
-    return render_template('daily_summary.html', rates=rates)
+    daily_summary = get_daily_summary()
+
+    return render_template('daily_summary.html', rates=rates, daily_summary=daily_summary)
 
 
 @app.route('/total_savings')

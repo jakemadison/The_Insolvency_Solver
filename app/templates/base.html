@@ -106,19 +106,21 @@
 {#</div>#}
 
 <div class="row">
-<div id="transaction_forms" class="col-lg-6">
+<div id="transaction_forms" class="col-lg-8">
   <div class="input-group">
     <span class="input-group-addon">$</span>
-    <input type="text" name="transaction" class="form-control" id="transaction_amount">
+    <input type="text" name="transaction" class="form-control" id="transaction_amount" tabindex="1">
     <span class="input-group-addon">.00</span>
 
     <span class="input-group-addon"></span>
-    <input type="text" name="purchase" class="form-control" id="purchase_type" placeholder="Purchase Type (optional)">
+    <input type="text" name="purchase" class="form-control" id="purchase_type"
+           placeholder="Purchase Type (optional)" tabindex="2">
     <!--<span class="input-group-addon">.00</span>-->
 
 
     <div class="input-group-btn">
-        <button type="button" class="btn btn-primary" onclick="submit_transaction()">Submit Transaction</button>
+        <button type="button" class="btn btn-primary"
+                onclick="submit_transaction()" tabindex="3">Submit Transaction</button>
 
 
 
