@@ -1,7 +1,7 @@
 from __future__ import print_function
 from app import db
 from app.models import CurrentRates, TransactionHistory, DailyHistory
-from sqlalchemy import DATE, cast, func
+from sqlalchemy import func
 
 
 def get_current_rates():
@@ -103,7 +103,13 @@ if __name__ == "__main__":
     # rates = get_current_rates()
     # update_rates(rates)
     # execute_transaction(13)
-    print(get_recent_transactions())
+    # print(get_recent_transactions())
+
+    transaction = TransactionHistory(10, 'Booze')
+    new_day_row = DailyHistory(func.DATE(transaction.timestamp), transaction.amount)
+
+
+
 
     # t_list = db.session.query(TransactionHistory).order_by(TransactionHistory.timestamp.desc()).all()
     # for t in t_list:
