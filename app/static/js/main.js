@@ -30,7 +30,7 @@ var get_todays_date = function() {
 };
 
 //incorrect format... moment.js? or is that overkill?
-document.getElementById("transaction_date").value = get_todays_date();
+//document.getElementById("transaction_date").value = get_todays_date();
 
 $('.date').datepicker({
     format: "M dd yyyy",
@@ -38,11 +38,7 @@ $('.date').datepicker({
     endDate: get_todays_date(),
     autoclose: true,
     todayHighlight: true
-
-
-
-}
-);
+});
 
 
 

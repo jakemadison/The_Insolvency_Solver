@@ -12,8 +12,6 @@ var select_paragraph = function() {
         .text(function(d) {return d});
 
 
-
-
     console.log('select_paragraph is finished.');
 
 };
