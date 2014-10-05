@@ -126,7 +126,7 @@ def insert_new_day(date=None):
     """insert a new day row at specified date"""
 
     if date is None:
-        date = datetime.now()
+        date = datetime.now()  # this might need to be .date() as well..
 
     new_day = DailyHistory(date)
     db.session.add(new_day)

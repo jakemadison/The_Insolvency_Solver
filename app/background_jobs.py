@@ -1,5 +1,5 @@
 from __future__ import print_function
-from controller import get_current_rates, update_rates, get_day_row, insert_new_day
+from controller import get_current_rates, update_rates, get_day_rows, insert_new_day
 from datetime import datetime
 
 
@@ -14,8 +14,8 @@ def daily_increase():
 
 def create_new_day():
     # check for the existence of a day row as a precaution.  If it doesn't exist, create a new row
-    today = datetime.now()
-    existing = get_day_row(today)
+    today = datetime.now().date()
+    existing = get_day_rows(today)
 
     print('check for existence of day revealed: {0}'.format(existing))
 
