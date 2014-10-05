@@ -138,10 +138,10 @@ if __name__ == "__main__":
     # rates = get_current_rates()
     # update_rates(rates)
     # execute_transaction(13)
-    # print(get_recent_transactions())
+    print(get_recent_transactions())
 
-    transaction = TransactionHistory(10, 'Booze')
-    print(func.DATE(transaction.timestamp).execute())
+    # transaction = TransactionHistory(10, 'Booze')
+    # print(func.DATE(transaction.timestamp).execute())
 
 
 
