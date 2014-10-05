@@ -43,7 +43,6 @@ def total_savings():
     return render_template('total_savings.html', rates=rates)
 
 
-
 # POST ROUTES:
 @app.route('/submit_monthly', methods=['POST'])
 def submit_monthly():
@@ -130,3 +129,10 @@ def submit_transaction():
     execute_transaction(transaction_amount, purchase_type, parsed_date)
 
     return redirect(url_for('index'))
+
+
+#ROUTES FOR METRICS:
+@app.route('/get_daily_metrics')
+def get_daily_metrics():
+    daily_summary = get_daily_summary()
+    return jsonify({"summary": daily_summary, "success": True})
