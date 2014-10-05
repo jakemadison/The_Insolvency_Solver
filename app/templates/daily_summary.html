@@ -21,7 +21,12 @@
                   <td>{{ day.date }}</td>
                   <td>{{ day.credits }}</td>
                   <td>{{ day.debits }}</td>
-                  <td>{{ day.balance }}</td>
+
+                {% if day.balance >= 0 %}
+                  <td class="positive_balance">{{ day.balance }}</td>
+                {% else %}
+                  <td class="negative_balance">{{ day.balance }}</td>
+                {% endif %}
                 </tr>
               {% endfor %}
               </tbody>
