@@ -2,14 +2,15 @@
 var select_paragraph = function() {
 
     var chart = d3.select(".chart");
-    var data = [4, 8, 15, 16, 23, 42];
 
-    var width = 420;
-    var barheight = 20;
+    var height = 200;
+    var width = 600;
 
-    var data2 = [];
 
-    chart.attr("width", width);
+    var data = [];
+
+    chart.attr("height", height)
+        .attr("width", width);
 
 
     d3.json('get_daily_metrics', function(error, json) {
@@ -17,37 +18,41 @@ var select_paragraph = function() {
 
         //quick reversal of our desc() ordered array:
         for (var i = json.summary.length - 1; i >= 0; i--) {
-            data2.push(Math.abs(+json.summary[i].balance));
+            var datum = {"value": Math.abs(+json.summary[i].balance),
+                         "date": json.summary[i].date};
+
+            data.push(datum);
         }
-        console.log('data loading is complete.', data2);
+        console.log('data loading is complete.', data);
+        ////////////////////////////////////////////////////////////////////////////////
 
-        var x = d3.scale.linear()
-            .domain([0, d3.max(data2)])
-            .range([0, width]);
+        var barwidth = width / data.length;
 
-        chart.attr("height", barheight * data2.length);
+        var y = d3.scale.linear()
+            .domain([0, d3.max(data.value)])
+            .range([height, 0]);
+
 
         var bar = chart.selectAll("g")
-            .data(data2)
+            .data(data.value)
             .enter().append("g")
             .attr("transform", function (d, i) {
-                return "translate(0," + i * barheight + ")";
+                return "translate(" + i * barwidth + ",0)";
             });
 
         bar.append("rect")
-            .attr("width", function (d) {
-                return x(d);
+            .attr("y", function(d) {return y(d.value);})
+            .attr("height", function (d) {
+                return height - y(d.value);
             })
-            .attr("height", barheight - 1);
+            .attr("width", barwidth - 1);
 
         bar.append("text")
-            .attr("x", function (d) {
-                return d - 3;
-            })
-            .attr("y", barheight / 2)
-            .attr("dy", "0.35em")
+            .attr("x", barwidth / 2)
+            .attr("y", function(d) {return y(d.value) + 3;})
+            .attr("dy", "0.75em")
             .text(function (d) {
-                return d;
+                return d.value;
             });
 
     }); //end of json loading.
