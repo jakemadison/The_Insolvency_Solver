@@ -28,3 +28,13 @@ Down the line:
 
 - add "planned transactions" for future things needing to buy (separate table). should
 make for easier planning of wage vs debits.
+
+
+---
+Metrics;
+
+- get_daily_metrics should take optional start/end params.  We can then grab new data from the DB (only
+the stuff that's needed, please), and redraw our chart on the fly.
+
+nice transitions on that? nice start-to date picker instances.
+d3 should handle the transforms well.

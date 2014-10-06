@@ -23,9 +23,10 @@ var get_todays_date = function() {
   var yyyy = today.getFullYear();
 
   var date_final = mm+'/'+dd+'/'+yyyy;
+
   console.log(date_final);
 
-    return date_final;
+  return date_final;
 
 };
 
