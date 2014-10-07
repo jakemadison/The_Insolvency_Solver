@@ -104,9 +104,6 @@ var select_paragraph = function() {
              .attr("class", "y axis")
             .call(yAxis);
 
-
-
-
         //select all "bars" (even though they don't exist yet)
         chart.selectAll(".bar")
             .data(data)  //join our data on to our bars
@@ -116,8 +113,31 @@ var select_paragraph = function() {
            .append("rect")//on enter, append a rect to them.
             .attr("class", "bar")  //give each rect the class "bar
             .attr("x", function(d) {return x(d.date);})  //set width to scale function of date
-            .attr("y", function(d) {return y(d.value);})  //set y to scale of it's value
-            .attr("height", function(d) {return y(0) + y(d.value);})  //set height to scaled value
+
+
+            .attr("y", function(d) {
+                if (d.value >= 0)
+                {
+                    return y(0);
+                }
+                else {
+                    return y(d.value)
+                }
+            })  //set y to scale of it's value
+            .attr("height", function(d) {
+
+                if (d.value>=0) {
+                    return y(d.value);
+                }
+
+                else {
+                    return y(d.value);
+                }
+
+
+            })  //set height to scaled value
+
+
             .attr("width", x.rangeBand())  //set width to our x scale rangeband
             .attr("class", function(d) {
                 if (d.value >= 0) {
