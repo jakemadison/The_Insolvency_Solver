@@ -1,8 +1,10 @@
 
 var select_paragraph = function() {
 
-    var margin = {top: 20, right: 30, bottom: 30, left: 0},
-        width = 700 - margin.left - margin.right,
+    var init_width = $("svg").parent().width();
+
+    var margin = {top: 20, right: 0, bottom: 30, left: 30},
+        width = init_width - margin.left - margin.right,
         height = 220 - margin.top - margin.bottom;
 
     var number_of_days = 14;
@@ -33,7 +35,8 @@ var select_paragraph = function() {
     //create yAxis based on our y scale:
     var yAxis = d3.svg.axis()
             .scale(y)
-            .orient("left");
+            .orient("left")
+            .tickFormat(function(d) {return '$' + d;});
 
 
     //actually begin loading data:
@@ -42,40 +45,44 @@ var select_paragraph = function() {
 
         //quick reversal of our desc() ordered array:
         for (var i = json.summary.length - 1; i >= 0; i--) {
-            var datum = {"value": Math.abs(+json.summary[i].balance),
-                         "date": json.summary[i].date.substring(0,6)};
+            var datum = {
+//                "value": Math.abs(+json.summary[i].balance),
+                "value": +json.summary[i].balance,
+                 "date": json.summary[i].date.substring(0,6)};
 
             data.push(datum);
 
             var final_value = datum.value;
         }
-        //let's pad some extra days here:
-        if (data.length < number_of_days) {
-            datum = {"value": final_value+current_income,
-                         "date": 'tomorrow'};
-            data.push(datum);
-        }
 
-        var j = 0;
-        while (data.length < number_of_days) {
-            datum = {"value":.5,
-                         "date": 'f'+j};
-            data.push(datum);
-            i++;
-        }
+        //let's pad some extra days here:
+//        if (data.length < number_of_days) {
+//            datum = {"value": final_value+current_income,
+//                         "date": 'tomorrow'};
+//            data.push(datum);
+//        }
+//
+//        var j = 0;
+//        while (data.length < number_of_days) {
+//            datum = {"value":.5,
+//                         "date": 'f'+j};
+//            data.push(datum);
+//            i++;
+//        }
 
         console.log('data loading is complete.');
         console.log(data);
         console.log(data.length);
         ////////////////////////////////////////////////////////////////////////////////
 
-        var barwidth = width / data.length;
+//        var barwidth = width / data.length;
 
         //apply our data domain to our x scale:
         x.domain(data.map(function(d) {return d.date;}));
 
         //apply our data domain of values to the y range:
-        y.domain([0, d3.max(data, function(d) {return d.value;})]);
+        y.domain([d3.min(data, function(d) {return d.value;})-5,
+            d3.max(data, function(d) {return d.value;})]);
 
 
         //with our original chart object, append a new group element.
@@ -87,8 +94,10 @@ var select_paragraph = function() {
 
         //append another group element, called y axis, and call it:
         chart.append("g")
-             .attr("class", "y axis");
-//             .call(yAxis);
+             .attr("class", "y axis")
+            .call(yAxis);
+
+
 
 
         //select all "bars" (even though they don't exist yet)
