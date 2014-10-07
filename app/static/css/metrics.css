@@ -8,24 +8,41 @@
 }
 
 
-.chart rect {
-  fill: steelblue;
+/*.chart rect {*/
+  /*fill: steelblue;*/
+/*}*/
+
+.positive_bar {
+    fill: steelblue;
 }
+
+.negative_bar {
+    fill: brown;
+}
+
+.chart rect:hover {
+   fill: teal;
+}
+
 
 .chart text {
   fill: black;
   font: 10px sans-serif;
-  text-anchor: end;
+  text-anchor: middle;
 }
 
 .bar_group text {
     fill: white;
 }
 
-
-.bar:hover {
-  fill: brown;
+.bar_group:hover text {
+    fill: black;
 }
+
+
+/*.bar:hover {*/
+  /*fill: teal;*/
+/*}*/
 
 .axis {
   font: 10px sans-serif;

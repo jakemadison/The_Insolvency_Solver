@@ -80,9 +80,16 @@ var select_paragraph = function() {
         //apply our data domain to our x scale:
         x.domain(data.map(function(d) {return d.date;}));
 
+        var max_val = function() {
+            return d3.max(data, function(d){
+               return Math.abs(d.value);
+            });
+        };
+
         //apply our data domain of values to the y range:
-        y.domain([d3.min(data, function(d) {return d.value;})-5,
-            d3.max(data, function(d) {return d.value;})]);
+        y.domain([-max_val() - 5 , max_val() + 5]);
+
+        var center_val = max_val() / 2;
 
 
         //with our original chart object, append a new group element.
@@ -110,8 +117,16 @@ var select_paragraph = function() {
             .attr("class", "bar")  //give each rect the class "bar
             .attr("x", function(d) {return x(d.date);})  //set width to scale function of date
             .attr("y", function(d) {return y(d.value);})  //set y to scale of it's value
-            .attr("height", function(d) {return height - y(d.value);})  //set height to scaled value
-            .attr("width", x.rangeBand());  //set width to our x scale rangeband
+            .attr("height", function(d) {return y(0) + y(d.value);})  //set height to scaled value
+            .attr("width", x.rangeBand())  //set width to our x scale rangeband
+            .attr("class", function(d) {
+                if (d.value >= 0) {
+                    return "positive_bar";
+                }
+                else {
+                    return "negative_bar";
+                }
+            });
 
         //select all bars and add a text element to them
         chart.selectAll(".bar_group")
