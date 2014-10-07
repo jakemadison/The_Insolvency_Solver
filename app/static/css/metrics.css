@@ -13,10 +13,15 @@
 }
 
 .chart text {
-  fill: white;
+  fill: black;
   font: 10px sans-serif;
   text-anchor: end;
 }
+
+.bar_group text {
+    fill: white;
+}
+
 
 .bar:hover {
   fill: brown;

@@ -40,3 +40,23 @@
     text-align: right;
 }
 
+
+
+#close {
+    float:right;
+    display:inline-block;
+    padding:2px 5px;
+    background:#ccc;
+    margin-top: -5px;
+    margin-right: -5px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+#close:hover {
+    float:right;
+    display:inline-block;
+    padding:2px 5px;
+    background:#ccc;
+    color:#fff;
+}

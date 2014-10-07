@@ -1,9 +1,9 @@
 
 var select_paragraph = function() {
 
-    var margin = {top: 20, right: 30, bottom: 30, left: 40},
-        width = 900 - margin.left - margin.right,
-        height = 500 - margin.top - margin.bottom;
+    var margin = {top: 20, right: 30, bottom: 30, left: 0},
+        width = 700 - margin.left - margin.right,
+        height = 220 - margin.top - margin.bottom;
 
     var number_of_days = 14;
     var current_income = 30;
@@ -43,7 +43,7 @@ var select_paragraph = function() {
         //quick reversal of our desc() ordered array:
         for (var i = json.summary.length - 1; i >= 0; i--) {
             var datum = {"value": Math.abs(+json.summary[i].balance),
-                         "date": json.summary[i].date};
+                         "date": json.summary[i].date.substring(0,6)};
 
             data.push(datum);
 
@@ -56,10 +56,12 @@ var select_paragraph = function() {
             data.push(datum);
         }
 
+        var j = 0;
         while (data.length < number_of_days) {
             datum = {"value":.5,
-                         "date": 'future'};
+                         "date": 'f'+j};
             data.push(datum);
+            i++;
         }
 
         console.log('data loading is complete.');
@@ -85,14 +87,16 @@ var select_paragraph = function() {
 
         //append another group element, called y axis, and call it:
         chart.append("g")
-             .attr("class", "y axis")
-             .call(yAxis);
+             .attr("class", "y axis");
+//             .call(yAxis);
 
 
         //select all "bars" (even though they don't exist yet)
         chart.selectAll(".bar")
             .data(data)  //join our data on to our bars
           .enter()
+            .append("g")
+            .attr("class", "bar_group")
            .append("rect")//on enter, append a rect to them.
             .attr("class", "bar")  //give each rect the class "bar
             .attr("x", function(d) {return x(d.date);})  //set width to scale function of date
@@ -101,12 +105,12 @@ var select_paragraph = function() {
             .attr("width", x.rangeBand());  //set width to our x scale rangeband
 
         //select all bars and add a text element to them
-        chart.selectAll(".bar")
+        chart.selectAll(".bar_group")
             .append("text")
-            .attr("x", barwidth / 2)
-            .attr("y", function(d) {return y(d.value) + 3;})
-            .attr("dy", "0.75em")
-            .text(function (d) {return d.value;});
+              .attr("x", function(d) {return x(d.date) + (x.rangeBand()/2)})
+              .attr("y", function(d) {return y(d.value) + 3;})
+              .attr("dy", "0.75em")
+              .text(function (d) {return d.value;});
 
 
     }); //end of json loading.
