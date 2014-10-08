@@ -20,6 +20,10 @@
     fill: brown;
 }
 
+.bar_future {
+    fill-opacity: .4;
+}
+
 .chart rect:hover {
    fill: teal;
 }

@@ -2,10 +2,12 @@
 var select_paragraph = function() {
 
     var init_width = $("svg").parent().width();
+    var init_height = 500;
+
 
     var margin = {top: 20, right: 0, bottom: 30, left: 30},
         width = init_width - margin.left - margin.right,
-        height = 220 - margin.top - margin.bottom;
+        height = init_height - margin.top - margin.bottom;
 
     var number_of_days = 14;
     var current_income = 30;
@@ -55,12 +57,12 @@ var select_paragraph = function() {
             var final_value = datum.value;
         }
 
-        //let's pad some extra days here:
-//        if (data.length < number_of_days) {
-//            datum = {"value": final_value+current_income,
-//                         "date": 'tomorrow'};
-//            data.push(datum);
-//        }
+        //let's pad tomorrow as an extra days here:
+        if (data.length < number_of_days) {
+            datum = {"value": final_value+current_income,
+                         "date": 'tomorrow'};
+            data.push(datum);
+        }
 //
 //        var j = 0;
 //        while (data.length < number_of_days) {
@@ -89,8 +91,6 @@ var select_paragraph = function() {
         //apply our data domain of values to the y range:
         y.domain([-max_val() - 5 , max_val() + 5]);
 
-        var center_val = max_val() / 2;
-
 
         //with our original chart object, append a new group element.
         //call it x axis and transform to x=0, y=height (bottom)
@@ -118,33 +118,41 @@ var select_paragraph = function() {
             .attr("y", function(d) {
                 if (d.value >= 0)
                 {
-                    return y(0);
+                    return y(d.value);
                 }
                 else {
-                    return y(d.value)
+                    return y(0)
                 }
             })  //set y to scale of it's value
             .attr("height", function(d) {
 
                 if (d.value>=0) {
-                    return y(d.value);
+                    return y(0) - y(d.value);
                 }
 
                 else {
-                    return y(d.value);
+                    return y(d.value) - y(0);
                 }
-
 
             })  //set height to scaled value
-
-
             .attr("width", x.rangeBand())  //set width to our x scale rangeband
-            .attr("class", function(d) {
+            .attr("class", function(d) { //is this really the only way D3 can do mult classes?
+
                 if (d.value >= 0) {
-                    return "positive_bar";
+                    if (d.date == 'tomorrow'){
+                        return "positive_bar bar_future"
+                    }
+                    else {
+                        return "positive_bar";
+                    }
                 }
                 else {
-                    return "negative_bar";
+                    if (d.date == 'tomorrow'){
+                        return "negative_bar bar_future"
+                    }
+                    else {
+                        return "negative_bar";
+                    }
                 }
             });
 
@@ -152,7 +160,17 @@ var select_paragraph = function() {
         chart.selectAll(".bar_group")
             .append("text")
               .attr("x", function(d) {return x(d.date) + (x.rangeBand()/2)})
-              .attr("y", function(d) {return y(d.value) + 3;})
+              .attr("y", function(d) {
+
+                if (d.value>=0) {
+                    return y(d.value) + 3;
+                }
+                else {
+                    return y(d.value) - 12;
+                }
+
+
+            })
               .attr("dy", "0.75em")
               .text(function (d) {return d.value;});
 
