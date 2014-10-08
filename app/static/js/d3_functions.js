@@ -168,8 +168,6 @@ var select_paragraph = function() {
                 else {
                     return y(d.value) - 12;
                 }
-
-
             })
               .attr("dy", "0.75em")
               .text(function (d) {return d.value;});
@@ -180,3 +178,5 @@ var select_paragraph = function() {
         console.log('select_paragraph is finished.');
 
 };
+
+

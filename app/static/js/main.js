@@ -41,7 +41,17 @@ $('.date').datepicker({
     todayHighlight: true
 });
 
+$('.input-daterange').datepicker({
+    format: "M dd yyyy",
+    startDate: "10/01/2014",  //make this not hardcoded...
+    endDate: "10/10/2014",
+    autoclose: true,
+    todayHighlight: true
+});
 
+
+
+//functions for hiding/showing the description:
 window.onload = function(){
 //    document.getElementById('close').onclick = function(){
 //        this.parentNode.parentNode.parentNode
