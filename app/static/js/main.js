@@ -43,10 +43,31 @@ $('.date').datepicker({
 
 
 window.onload = function(){
+//    document.getElementById('close').onclick = function(){
+//        this.parentNode.parentNode.parentNode
+//        .removeChild(this.parentNode.parentNode);
+//        return false;
+//    };
+
     document.getElementById('close').onclick = function(){
-        this.parentNode.parentNode.parentNode
-        .removeChild(this.parentNode.parentNode);
+        this.parentNode.parentNode
+        .style.display = "none";
+        document.getElementById('about_link').style.display="";
+
+
         return false;
     };
+
+
+    document.getElementById('about_link').onclick = function(){
+        document.getElementById('close')
+            .parentNode.parentNode
+        .style.display = "";
+
+        this.style.display="none";
+        return true;
+    };
+
+
 };
 
