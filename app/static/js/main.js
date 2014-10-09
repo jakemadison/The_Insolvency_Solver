@@ -44,7 +44,7 @@ $('.date').datepicker({
 $('.input-daterange').datepicker({
     format: "M dd yyyy",
     startDate: "10/01/2014",  //make this not hardcoded...
-    endDate: "10/10/2014",
+    endDate: get_todays_date(),
     autoclose: true,
     todayHighlight: true
 });

@@ -1,4 +1,62 @@
 
+var create_chart_plot = function() {
+
+    var init_height = 300;
+
+    //init our chart to produce our initial vals
+    var init_vals = init_chart_area(init_height);
+
+    //make our call to grab the data and create the chart with it:
+    get_parse_data(init_vals.chart, init_vals.xAxis, init_vals.yAxis,
+                   init_vals.x, init_vals.y, init_vals.height);
+
+    console.log('create_chart_plot is finished.');
+};
+
+
+function init_chart_area(init_height) {
+    var init_width = $("svg").parent().width();
+//    var init_height = 200;
+
+
+    var margin = {top: 20, right: 0, bottom: 30, left: 30},
+        width = init_width - margin.left - margin.right,
+        height = init_height - margin.top - margin.bottom;
+
+
+    //create our initial chart space, append a group to it, transform to size:
+    var chart = d3.select(".chart")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+    //set our x function as an ordinal scale using range
+    var x = d3.scale.ordinal()
+                .rangeRoundBands([0, width], .1);
+
+    //set our y function as a linear range between 0 and height.
+    var y = d3.scale.linear()
+            .range([height, 0]);
+
+    //create xAxis object based on our x scale
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+    //create yAxis based on our y scale:
+    var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .tickFormat(function(d) {return '$' + d;});
+
+    return {"chart": chart, "xAxis": xAxis, "yAxis": yAxis, "x": x, "y": y, "height": height};
+
+
+}
+
+
 function get_parse_data(chart, xAxis, yAxis, x, y, height) {
 
     var data = [];
@@ -27,7 +85,8 @@ function get_parse_data(chart, xAxis, yAxis, x, y, height) {
                 "date": 'tomorrow'};
             data.push(datum);
         }
-//
+
+//If we want to pad lots of extra days, do it here:
 //        var j = 0;
 //        while (data.length < number_of_days) {
 //            datum = {"value":.5,
@@ -39,9 +98,7 @@ function get_parse_data(chart, xAxis, yAxis, x, y, height) {
         console.log('data loading is complete.');
         console.log(data);
         console.log(data.length);
-        ////////////////////////////////////////////////////////////////////////////////
-
-//        var barwidth = width / data.length;
+////////////////////////////////////////////////////////////////////////////////
 
         //apply our data domain to our x scale:
         x.domain(data.map(function (d) {
@@ -55,6 +112,8 @@ function get_parse_data(chart, xAxis, yAxis, x, y, height) {
         };
 
         //apply our data domain of values to the y range:
+        //in this case we want equal amts on both sides of the zero line, so
+        //get our abs(max) and set each of them to that.
         y.domain([-max_val() - 5 , max_val() + 5]);
 
 
@@ -77,30 +136,27 @@ function get_parse_data(chart, xAxis, yAxis, x, y, height) {
             .append("g")
             .attr("class", "bar_group")
             .append("rect")//on enter, append a rect to them.
-            .attr("class", "bar")  //give each rect the class "bar
+            .attr("class", "bar")  //give each rect the class "bar"
             .attr("x", function (d) {
                 return x(d.date);
             })  //set width to scale function of date
             .attr("y", function (d) {
                 if (d.value >= 0) {
-                    return y(d.value);
+//                    return y(d.value);
+                        return y(0);
                 }
                 else {
                     return y(0)
                 }
             })  //set y to scale of it's value
+
             .attr("height", function (d) {
-
-                if (d.value >= 0) {
-                    return y(0) - y(d.value);
-                }
-
-                else {
-                    return y(d.value) - y(0);
-                }
-
+//                return Math.abs(y(0) - y(d.value));
+                    return 0;
             })  //set height to scaled value
+
             .attr("width", x.rangeBand())  //set width to our x scale rangeband
+
             .attr("class", function (d) { //is this really the only way D3 can do mult classes?
 
                 if (d.value >= 0) {
@@ -145,62 +201,25 @@ function get_parse_data(chart, xAxis, yAxis, x, y, height) {
             });
 
 
+        //Animation time!
+
+        d3.selectAll("rect").transition()
+            .attr("height", function(d) {
+                return Math.abs(y(0) - y(d.value))
+            })
+            .attr("y", function (d) {
+                if (d.value >= 0) {
+                    return y(d.value);
+                }
+                else {
+                    return y(0);
+                }
+            })
+            .duration(2000)
+            .delay(500)
+            .ease("elastic");
+
+
     }); //end json call.
 
 } //end function.
-
-
-
-
-var create_chart_plot = function() {
-
-    var init_vals = init_chart_area();
-
-    get_parse_data(init_vals.chart, init_vals.xAxis, init_vals.yAxis,
-        init_vals.x, init_vals.y, init_vals.height);
-
-    console.log('create_chart_plot is finished.');
-};
-
-
-function init_chart_area() {
-    var init_width = $("svg").parent().width();
-    var init_height = 500;
-
-
-    var margin = {top: 20, right: 0, bottom: 30, left: 30},
-        width = init_width - margin.left - margin.right,
-        height = init_height - margin.top - margin.bottom;
-
-
-    //create our initial chart space, append a group to it, transform to size:
-    var chart = d3.select(".chart")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-          .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
-    //set our x function as an ordinal scale using range
-    var x = d3.scale.ordinal()
-                .rangeRoundBands([0, width], .1);
-
-    //set our y function as a linear range between 0 and height.
-    var y = d3.scale.linear()
-            .range([height, 0]);
-
-    //create xAxis object based on our x scale
-    var xAxis = d3.svg.axis()
-        .scale(x)
-        .orient("bottom");
-
-    //create yAxis based on our y scale:
-    var yAxis = d3.svg.axis()
-            .scale(y)
-            .orient("left")
-            .tickFormat(function(d) {return '$' + d;});
-
-    return {"chart": chart, "xAxis": xAxis, "yAxis": yAxis, "x": x, "y": y, "height": height};
-
-
-}
