@@ -1,7 +1,7 @@
 
 var create_chart_plot = function() {
 
-    var init_height = 300;
+    var init_height = 400;
 
     //init our chart to produce our initial vals
     var init_vals = init_chart_area(init_height);
@@ -223,3 +223,7 @@ function get_parse_data(chart, xAxis, yAxis, x, y, height) {
     }); //end json call.
 
 } //end function.
+
+function test_function(message) {
+    console.log('message received!', message);
+}

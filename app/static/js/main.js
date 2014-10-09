@@ -47,7 +47,22 @@ $('.input-daterange').datepicker({
     endDate: get_todays_date(),
     autoclose: true,
     todayHighlight: true
-});
+})
+
+    .on("changeDate", function(e) {
+            console.log("the date was changed: ", e);
+
+            //changes to the first date or last date should also affect the range of
+            //available dates. --is that possible with datepicker?
+
+            var start_date = document.getElementById("date_start").value;
+            var end_date = document.getElementById("date_end").value;
+
+            if (start_date !== '' && end_date !== '') {
+                console.log("I have two dates!!");
+                test_function("sending a message your way, guy...");
+            }
+        });
 
 
 
