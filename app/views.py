@@ -134,5 +134,12 @@ def submit_transaction():
 #ROUTES FOR METRICS:
 @app.route('/get_daily_metrics')
 def get_daily_metrics():
+
+    start_date = request.args.get('start_date', None)
+    end_date = request.args.get('end_date', None)
+
+    print('hey guess what???? I received: {0}, {1}'.format(start_date, end_date))
+    print(start_date == 'undefined')
+
     daily_summary = get_daily_summary()
     return jsonify({"summary": daily_summary, "success": True})

@@ -1,5 +1,8 @@
 
-var create_chart_plot = function() {
+var create_chart_plot = function(start_date, end_date) {
+
+//    start_date = '01/10/14';
+//    end_date = '05/10/14';
 
     var init_height = 400;
 
@@ -8,7 +11,7 @@ var create_chart_plot = function() {
 
     //make our call to grab the data and create the chart with it:
     get_parse_data(init_vals.chart, init_vals.xAxis, init_vals.yAxis,
-                   init_vals.x, init_vals.y, init_vals.height);
+                   init_vals.x, init_vals.y, init_vals.height, start_date, end_date);
 
     console.log('create_chart_plot is finished.');
 };
@@ -57,14 +60,16 @@ function init_chart_area(init_height) {
 }
 
 
-function get_parse_data(chart, xAxis, yAxis, x, y, height) {
+function get_parse_data(chart, xAxis, yAxis, x, y, height, start_date, end_date) {
 
     var data = [];
     var number_of_days = 14;
     var current_income = 30;
 
+    var url_full = 'get_daily_metrics' + '?' + 'start_date=' + start_date + '&' + 'end_date=' + end_date;
+
     //actually begin loading data:
-    d3.json('get_daily_metrics', function (error, json) {
+    d3.json(url_full, function (error, json) {
         console.log('received: ', json);
 
         //quick reversal of our desc() ordered array:
@@ -113,7 +118,7 @@ function get_parse_data(chart, xAxis, yAxis, x, y, height) {
 
         //apply our data domain of values to the y range:
         //in this case we want equal amts on both sides of the zero line, so
-        //get our abs(max) and set each of them to that.
+        //get our abs(max) and set each of them to that (with a but extra added on).
         y.domain([-max_val() - 5 , max_val() + 5]);
 
 
