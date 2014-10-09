@@ -109,7 +109,8 @@ def get_daily_summary():
 
     daily_list = []
     for d in daily_summary:
-        day = {"id": d.id, "date": d.day.strftime("%b %d %Y"),
+        # day = {"id": d.id, "date": d.day.strftime("%b %d %Y"),
+        day = {"id": d.id, "date": d.day.strftime("%a %d"),
                "credits": d.credits, "debits": d.debits, "balance": d.balance}
         daily_list.append(day)
 

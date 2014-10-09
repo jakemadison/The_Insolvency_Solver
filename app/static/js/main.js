@@ -60,7 +60,7 @@ $('.input-daterange').datepicker({
 
             if (start_date !== '' && end_date !== '') {
                 console.log("I have two dates!!");
-                test_function("sending a message your way, guy...");
+                redraw_chart(start_date, end_date);
             }
         });
 

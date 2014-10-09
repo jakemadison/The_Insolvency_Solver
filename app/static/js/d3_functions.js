@@ -4,7 +4,7 @@ var create_chart_plot = function(start_date, end_date) {
 //    start_date = '01/10/14';
 //    end_date = '05/10/14';
 
-    var init_height = 400;
+    var init_height = 250;
 
     //init our chart to produce our initial vals
     var init_vals = init_chart_area(init_height);
@@ -22,7 +22,7 @@ function init_chart_area(init_height) {
 //    var init_height = 200;
 
 
-    var margin = {top: 20, right: 0, bottom: 30, left: 30},
+    var margin = {top: 0, right: 0, bottom: 30, left: 30},
         width = init_width - margin.left - margin.right,
         height = init_height - margin.top - margin.bottom;
 
@@ -221,13 +221,33 @@ function get_parse_data(chart, xAxis, yAxis, x, y, height, start_date, end_date)
                 }
             })
             .duration(2000)
-            .delay(500)
+            .delay(200)
             .ease("elastic");
+
+
 
 
     }); //end json call.
 
 } //end function.
+
+function redraw_chart(start_date, end_date) {
+
+    console.log('redrawing chart', start_date, end_date);
+
+    d3.selectAll("rect").transition()
+        .attr("height", 0)
+        .delay(300)
+        .duration(2000)
+        .ease("cubic");
+
+    d3.selectAll("g.y.axis").attr("transform", "Translate(0,0)");
+
+
+
+}
+
+
 
 function test_function(message) {
     console.log('message received!', message);
