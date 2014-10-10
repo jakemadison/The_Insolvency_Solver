@@ -11,7 +11,7 @@ function create_chart_plot(start_date, end_date) {
     var init_width = $("svg").parent().width();
     //    var init_height = 200;
 
-    var margin = {top: 10, right: 0, bottom: 30, left: 30},
+    var margin = {top: 10, right: 0, bottom: 20, left: 30},
         width = init_width - margin.left - margin.right,
         height = init_height - margin.top - margin.bottom;
 
@@ -197,16 +197,111 @@ function redraw_chart(start_date, end_date) {
 
     console.log('redrawing chart', start_date, end_date);
 
-    //get data first, and establish our scales.
+    var chart = d3.select(".chart");
+    var height = chart.attr("height");
+    var width = chart.attr("width");
+
+    var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
+    var y = d3.scale.linear().range([height, 0]);
+
+    var xAxis = d3.svg.axis().scale(x).orient("bottom");
+    var yAxis = d3.svg.axis().scale(y).orient("left").tickFormat(function(d) {return '$' + d;});
+
+    var xAxis_group = chart.select(".x.axis");
+    var yAxis_group = chart.select(".y.axis");
+
+    console.log(yAxis_group);
+
+    var url_full = 'get_daily_metrics' + '?' + 'start_date=' + start_date + '&' + 'end_date=' + end_date;
+
+    var new_data = [];
+    var number_of_days = 14;
+    var current_income = 30;
+
+    //actually begin loading data:
+    d3.json(url_full, function (error, json) {
+      console.log('received: ', json);
+
+        //quick reversal of our desc() ordered array:
+        for (var i = json.summary.length - 1; i >= 5; i--) {  //change to >=0
+            var datum = {"value": +json.summary[i].balance, "date": json.summary[i].date.substring(0, 6)};
+            new_data.push(datum);
+            var final_value = datum.value;
+            }
+
+        //let's pad tomorrow as an extra days here:
+        //commented out so that we can test change of days on front end.
+//        if (new_data.length < number_of_days) {
+//            datum = {"value": final_value + current_income, "date": 'tomorrow'};
+//            new_data.push(datum);
+//        }
+        console.log('data loading is complete.');
+        console.log('new data: ', new_data);
+
+        x.domain(new_data.map(function (d) {return d.date;}));
+
+        var max_val = function () {return d3.max(new_data, function (d) {return Math.abs(d.value);});};
+        y.domain([-max_val() - 5 , max_val() + 5]);
+
+        //remove/transition our old data:
+        d3.selectAll("rect").transition().duration(1000).ease("exp").attr("height", 0);
+        yAxis_group.transition().duration(1000).ease("sin-in-out").call(yAxis);
+        xAxis_group.transition().duration(1000).ease("sin-in-out").call(xAxis);
+
+        //add data to chart again:
+        var bars_data = chart.selectAll(".bar").data(new_data);
+        bars_data.exit().remove();
+
+        bars_data.enter()
+            .append("g")
+            .attr("class", "bar_group")
+            .append("rect")//on enter, append a rect to them.
+            .attr("class", "bar")  //give each rect the class "bar"
+            .attr("x", function (d) {return x(d.date);})  //set width to scale function of date
+            .attr("y", y(0))
+            .attr("height", 0)//set height to 0, then transition later
+            .attr("width", x.rangeBand())  //set width to our x scale rangeband
+            .attr("class", function (d) { //is this really the only way D3 can do mult classes?
+                if (d.value >= 0) {
+                    if (d.date == 'tomorrow') { //apparently there isn't a good way to add classes?
+                        return "positive_bar bar_future"
+                    }
+                    else {
+                        return "positive_bar";
+                    }
+                }
+                else {
+                    if (d.date == 'tomorrow') {
+                        return "negative_bar bar_future"
+                    }
+                    else {
+                        return "negative_bar";
+                    }
+                }
+            });
+
+        //Animation time!
+        d3.selectAll("rect").transition()
+            .attr("height", function(d) {
+                return Math.abs(y(0) - y(d.value))
+            })
+            .attr("y", function (d) {
+                if (d.value >= 0) {
+                    return y(d.value);
+                }
+                else {
+                    return y(0);
+                }
+            })
+            .duration(2000)
+            .delay(200)
+            .ease("elastic");
 
 
-    d3.select(".chart").select(".y.axis").remove();
+
+    });  //end d3.json.
 
 
-    d3.selectAll("rect").transition()
-        .attr("height", 0)
-        .duration(1000)
-        .ease("exp");
 
 
 }
