@@ -124,7 +124,7 @@ function create_chart_plot(start_date, end_date) {
             .append("g")
             .attr("class", "bar_group")
             .append("rect")//on enter, append a rect to them.
-            .attr("class", "bar")  //give each rect the class "bar"
+            .attr("class", "bar_rect")  //give each rect the class "bar"
             .attr("x", function (d) {return x(d.date);})  //set width to scale function of date
             .attr("y", y(0))
             .attr("height", 0)//set height to 0, then transition later
@@ -210,11 +210,9 @@ function redraw_chart(start_date, end_date) {
     var xAxis_group = chart.select(".x.axis");
     var yAxis_group = chart.select(".y.axis");
 
-    console.log(yAxis_group);
-
     var url_full = 'get_daily_metrics' + '?' + 'start_date=' + start_date + '&' + 'end_date=' + end_date;
 
-    var new_data = [];
+    var data = [];
     var number_of_days = 14;
     var current_income = 30;
 
@@ -223,9 +221,9 @@ function redraw_chart(start_date, end_date) {
       console.log('received: ', json);
 
         //quick reversal of our desc() ordered array:
-        for (var i = json.summary.length - 1; i >= 5; i--) {  //change to >=0
+        for (var i = json.summary.length - 2; i >= 6; i--) {  //change to >=0 and -1
             var datum = {"value": +json.summary[i].balance, "date": json.summary[i].date.substring(0, 6)};
-            new_data.push(datum);
+            data.push(datum);
             var final_value = datum.value;
             }
 
@@ -236,29 +234,32 @@ function redraw_chart(start_date, end_date) {
 //            new_data.push(datum);
 //        }
         console.log('data loading is complete.');
-        console.log('new data: ', new_data);
+        console.log('new data: ', data);
 
-        x.domain(new_data.map(function (d) {return d.date;}));
+        x.domain(data.map(function (d) {return d.date;}));
 
-        var max_val = function () {return d3.max(new_data, function (d) {return Math.abs(d.value);});};
+        var max_val = function () {return d3.max(data, function (d) {return Math.abs(d.value);});};
         y.domain([-max_val() - 5 , max_val() + 5]);
 
         //remove/transition our old data:
-        d3.selectAll("rect").transition().duration(1000).ease("exp").attr("height", 0);
+//        d3.selectAll("rect").transition().duration(1000).ease("exp").attr("height", 0);
         yAxis_group.transition().duration(1000).ease("sin-in-out").call(yAxis);
         xAxis_group.transition().duration(1000).ease("sin-in-out").call(xAxis);
 
         //add data to chart again:
-        var bars_data = chart.selectAll(".bar").data(new_data);
-        bars_data.exit().remove();
+        var bars_data = chart.selectAll(".bar_group");
+        var bar_data_sel = bars_data.data(data);
 
-        bars_data.enter()
+        bar_data_sel.enter()
             .append("g")
             .attr("class", "bar_group")
             .append("rect")//on enter, append a rect to them.
-            .attr("class", "bar");
+            .attr("class", "bar_rect");
 
-        bars_data//give each rect the class "bar"
+
+        function redraw() {
+
+        chart.selectAll(".bar_rect")
             .attr("x", function (d) {return x(d.date);})  //set width to scale function of date
             .attr("y", y(0))
             .attr("height", 0)//set height to 0, then transition later
@@ -298,6 +299,29 @@ function redraw_chart(start_date, end_date) {
             .duration(2000)
             .delay(200)
             .ease("elastic");
+        }
+
+
+        var removal_selection_size = bar_data_sel.size();
+        bar_data_sel.exit().selectAll("rect")
+            .transition()
+            .attr("height", 0)
+            .duration(1000)
+            .ease("exp")
+            .each("end", function() {
+                removal_selection_size --;
+                if (removal_selection_size == 0){
+                    bar_data_sel.exit().remove();
+                    console.log("all done?");
+                    redraw();
+                    console.log(removal_selection_size = bar_data_sel.size());
+                }
+            });
+
+
+
+
+
 
 
 
