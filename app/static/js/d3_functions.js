@@ -256,7 +256,9 @@ function redraw_chart(start_date, end_date) {
             .append("g")
             .attr("class", "bar_group")
             .append("rect")//on enter, append a rect to them.
-            .attr("class", "bar")  //give each rect the class "bar"
+            .attr("class", "bar");
+
+        bars_data//give each rect the class "bar"
             .attr("x", function (d) {return x(d.date);})  //set width to scale function of date
             .attr("y", y(0))
             .attr("height", 0)//set height to 0, then transition later
