@@ -1,38 +1,26 @@
 
+function retrieve_data(start_date, end_date) {
+
+}
+
+
+
 var create_chart_plot = function(start_date, end_date) {
 
-//    start_date = '01/10/14';
-//    end_date = '05/10/14';
-
     var init_height = 250;
-
-    //init our chart to produce our initial vals
-    var init_vals = init_chart_area(init_height);
-
-    //make our call to grab the data and create the chart with it:
-    get_parse_data(init_vals.chart, init_vals.xAxis, init_vals.yAxis,
-                   init_vals.x, init_vals.y, init_vals.height, start_date, end_date);
-
-    console.log('create_chart_plot is finished.');
-};
-
-
-function init_chart_area(init_height) {
     var init_width = $("svg").parent().width();
-//    var init_height = 200;
-
+    //    var init_height = 200;
 
     var margin = {top: 0, right: 0, bottom: 30, left: 30},
         width = init_width - margin.left - margin.right,
         height = init_height - margin.top - margin.bottom;
 
-
     //create our initial chart space, append a group to it, transform to size:
     var chart = d3.select(".chart")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-          .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
     //set our x function as an ordinal scale using range
@@ -54,13 +42,6 @@ function init_chart_area(init_height) {
             .orient("left")
             .tickFormat(function(d) {return '$' + d;});
 
-    return {"chart": chart, "xAxis": xAxis, "yAxis": yAxis, "x": x, "y": y, "height": height};
-
-
-}
-
-
-function get_parse_data(chart, xAxis, yAxis, x, y, height, start_date, end_date) {
 
     var data = [];
     var number_of_days = 14;
@@ -70,6 +51,7 @@ function get_parse_data(chart, xAxis, yAxis, x, y, height, start_date, end_date)
 
     //actually begin loading data:
     d3.json(url_full, function (error, json) {
+
         console.log('received: ', json);
 
         //quick reversal of our desc() ordered array:
@@ -103,6 +85,9 @@ function get_parse_data(chart, xAxis, yAxis, x, y, height, start_date, end_date)
         console.log('data loading is complete.');
         console.log(data);
         console.log(data.length);
+    });
+
+
 ////////////////////////////////////////////////////////////////////////////////
 
         //apply our data domain to our x scale:
@@ -184,7 +169,6 @@ function get_parse_data(chart, xAxis, yAxis, x, y, height, start_date, end_date)
 
 //            .transition.delay().duration(30).attr("height", 0);
 
-
         //select all bars and add a text element to them
         chart.selectAll(".bar_group")
             .append("text")
@@ -224,31 +208,27 @@ function get_parse_data(chart, xAxis, yAxis, x, y, height, start_date, end_date)
             .delay(200)
             .ease("elastic");
 
+    }//end json call.
 
+    console.log('create_chart_plot is finished.');
 
+}
 
-    }); //end json call.
-
-} //end function.
 
 function redraw_chart(start_date, end_date) {
 
     console.log('redrawing chart', start_date, end_date);
 
+    //get data first, and establish our scales.
+
+
+    d3.select(".chart").select(".y.axis").remove();
+
+
     d3.selectAll("rect").transition()
         .attr("height", 0)
-        .delay(300)
-        .duration(2000)
-        .ease("cubic");
-
-    d3.selectAll("g.y.axis").attr("transform", "Translate(0,0)");
+        .duration(1000)
+        .ease("exp");
 
 
-
-}
-
-
-
-function test_function(message) {
-    console.log('message received!', message);
 }
