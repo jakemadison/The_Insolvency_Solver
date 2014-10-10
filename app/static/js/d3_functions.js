@@ -5,7 +5,7 @@ function retrieve_data(start_date, end_date) {
 
 
 
-var create_chart_plot = function(start_date, end_date) {
+function create_chart_plot(start_date, end_date) {
 
     var init_height = 250;
     var init_width = $("svg").parent().width();
@@ -85,9 +85,6 @@ var create_chart_plot = function(start_date, end_date) {
         console.log('data loading is complete.');
         console.log(data);
         console.log(data.length);
-    });
-
-
 ////////////////////////////////////////////////////////////////////////////////
 
         //apply our data domain to our x scale:
@@ -208,7 +205,7 @@ var create_chart_plot = function(start_date, end_date) {
             .delay(200)
             .ease("elastic");
 
-    }//end json call.
+    });//end json call.
 
     console.log('create_chart_plot is finished.');
 
