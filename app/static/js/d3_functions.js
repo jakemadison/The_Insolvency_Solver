@@ -237,29 +237,27 @@ function redraw_chart(start_date, end_date) {
         console.log('new data: ', data);
 
         x.domain(data.map(function (d) {return d.date;}));
-
         var max_val = function () {return d3.max(data, function (d) {return Math.abs(d.value);});};
         y.domain([-max_val() - 5 , max_val() + 5]);
 
         //remove/transition our old data:
-//        d3.selectAll("rect").transition().duration(1000).ease("exp").attr("height", 0);
         yAxis_group.transition().duration(1000).ease("sin-in-out").call(yAxis);
         xAxis_group.transition().duration(1000).ease("sin-in-out").call(xAxis);
 
-        //add data to chart again:
-        var bars_data = chart.selectAll(".bar_group");
-        var bar_data_sel = bars_data.data(data);
+        var bars_sel = d3.selectAll(".bar_group");
 
-        bar_data_sel.enter()
+
+
+       //finally our exit function:
+        bars_sel.remove();
+
+        chart.selectAll(".bar")
+            .data(data)  //join our data on to our bars
+            .enter()
             .append("g")
             .attr("class", "bar_group")
             .append("rect")//on enter, append a rect to them.
-            .attr("class", "bar_rect");
-
-
-        function redraw() {
-
-        chart.selectAll(".bar_rect")
+            .attr("class", "bar_rect")  //give each rect the class "bar"
             .attr("x", function (d) {return x(d.date);})  //set width to scale function of date
             .attr("y", y(0))
             .attr("height", 0)//set height to 0, then transition later
@@ -283,7 +281,7 @@ function redraw_chart(start_date, end_date) {
                 }
             });
 
-        //Animation time!
+
         d3.selectAll("rect").transition()
             .attr("height", function(d) {
                 return Math.abs(y(0) - y(d.value))
@@ -299,28 +297,59 @@ function redraw_chart(start_date, end_date) {
             .duration(2000)
             .delay(200)
             .ease("elastic");
-        }
-
-
-        var removal_selection_size = bar_data_sel.size();
-        bar_data_sel.exit().selectAll("rect")
-            .transition()
-            .attr("height", 0)
-            .duration(1000)
-            .ease("exp")
-            .each("end", function() {
-                removal_selection_size --;
-                if (removal_selection_size == 0){
-                    bar_data_sel.exit().remove();
-                    console.log("all done?");
-                    redraw();
-                    console.log(removal_selection_size = bar_data_sel.size());
-                }
-            });
 
 
 
 
+        function redraw() {
+
+
+
+
+            return;
+
+
+            chart.selectAll(".bar_rect")
+                .attr("x", function (d) {return x(d.date);})  //set width to scale function of date
+                .attr("y", y(0))
+                .attr("height", 0)//set height to 0, then transition later
+                .attr("width", x.rangeBand())  //set width to our x scale rangeband
+                .attr("class", function (d) { //is this really the only way D3 can do mult classes?
+                    if (d.value >= 0) {
+                        if (d.date == 'tomorrow') { //apparently there isn't a good way to add classes?
+                            return "positive_bar bar_future"
+                        }
+                        else {
+                            return "positive_bar";
+                        }
+                    }
+                    else {
+                        if (d.date == 'tomorrow') {
+                            return "negative_bar bar_future"
+                        }
+                        else {
+                            return "negative_bar";
+                        }
+                    }
+                });
+
+            //Animation time!
+            d3.selectAll("rect").transition()
+                .attr("height", function(d) {
+                    return Math.abs(y(0) - y(d.value))
+                })
+                .attr("y", function (d) {
+                    if (d.value >= 0) {
+                        return y(d.value);
+                    }
+                    else {
+                        return y(0);
+                    }
+                })
+                .duration(2000)
+                .delay(200)
+                .ease("elastic");
+            }
 
 
 
