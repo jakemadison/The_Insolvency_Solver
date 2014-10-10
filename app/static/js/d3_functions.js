@@ -11,7 +11,7 @@ function create_chart_plot(start_date, end_date) {
     var init_width = $("svg").parent().width();
     //    var init_height = 200;
 
-    var margin = {top: 0, right: 0, bottom: 30, left: 30},
+    var margin = {top: 10, right: 0, bottom: 30, left: 30},
         width = init_width - margin.left - margin.right,
         height = init_height - margin.top - margin.bottom;
 
@@ -74,6 +74,7 @@ function create_chart_plot(start_date, end_date) {
         }
 
 //If we want to pad lots of extra days, do it here:
+//
 //        var j = 0;
 //        while (data.length < number_of_days) {
 //            datum = {"value":.5,
@@ -124,30 +125,13 @@ function create_chart_plot(start_date, end_date) {
             .attr("class", "bar_group")
             .append("rect")//on enter, append a rect to them.
             .attr("class", "bar")  //give each rect the class "bar"
-            .attr("x", function (d) {
-                return x(d.date);
-            })  //set width to scale function of date
-            .attr("y", function (d) {
-                if (d.value >= 0) {
-//                    return y(d.value);
-                        return y(0);
-                }
-                else {
-                    return y(0)
-                }
-            })  //set y to scale of it's value
-
-            .attr("height", function (d) {
-//                return Math.abs(y(0) - y(d.value));
-                    return 0;
-            })  //set height to scaled value
-
+            .attr("x", function (d) {return x(d.date);})  //set width to scale function of date
+            .attr("y", y(0))
+            .attr("height", 0)//set height to 0, then transition later
             .attr("width", x.rangeBand())  //set width to our x scale rangeband
-
             .attr("class", function (d) { //is this really the only way D3 can do mult classes?
-
                 if (d.value >= 0) {
-                    if (d.date == 'tomorrow') {
+                    if (d.date == 'tomorrow') { //apparently there isn't a good way to add classes?
                         return "positive_bar bar_future"
                     }
                     else {
@@ -163,8 +147,6 @@ function create_chart_plot(start_date, end_date) {
                     }
                 }
             });
-
-//            .transition.delay().duration(30).attr("height", 0);
 
         //select all bars and add a text element to them
         chart.selectAll(".bar_group")
@@ -188,7 +170,6 @@ function create_chart_plot(start_date, end_date) {
 
 
         //Animation time!
-
         d3.selectAll("rect").transition()
             .attr("height", function(d) {
                 return Math.abs(y(0) - y(d.value))
