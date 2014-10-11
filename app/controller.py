@@ -102,10 +102,18 @@ def get_recent_transactions():
     return transaction_list
 
 
-def get_daily_summary():
+def get_daily_summary(start_date=None, end_date=None):
     """retrieve a full summary of all days"""
 
-    daily_summary = db.session.query(DailyHistory).order_by(DailyHistory.day.desc()).all()
+    daily_summary = db.session.query(DailyHistory)
+
+    if start_date and end_date:
+        daily_summary = daily_summary.filter(DailyHistory.day >= start_date, DailyHistory.day <= end_date)
+
+    daily_summary = daily_summary.order_by(DailyHistory.day.desc()).all()
+
+    for e in daily_summary:
+        print(e)
 
     daily_list = []
     for d in daily_summary:

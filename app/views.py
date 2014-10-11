@@ -2,7 +2,7 @@ from __future__ import print_function
 from app import app
 from flask import render_template, request, jsonify, redirect, url_for
 from controller import get_current_rates, update_rates, execute_transaction, get_recent_transactions, get_daily_summary
-from datetime import datetime
+from datetime import datetime, timedelta
 
 @app.route('/')
 @app.route('/index')
@@ -139,7 +139,16 @@ def get_daily_metrics():
     end_date = request.args.get('end_date', None)
 
     print('hey guess what???? I received: {0}, {1}'.format(start_date, end_date))
-    print(start_date == 'undefined')
+    print(start_date == '0')
 
-    daily_summary = get_daily_summary()
+    if start_date != '0' and end_date != '0':
+        start = datetime.strptime(start_date, '%b %d %Y')
+        delta = timedelta(days=1)
+        start = start - delta
+        end = datetime.strptime(end_date, '%b %d %Y')
+    else:
+        start = None
+        end = None
+
+    daily_summary = get_daily_summary(start, end)
     return jsonify({"summary": daily_summary, "success": True})

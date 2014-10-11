@@ -63,7 +63,7 @@ $('.input-daterange').datepicker({
 //                redraw_chart(start_date, end_date);
 
                 var event = new CustomEvent(
-                    "newMessage",
+                    "newDates",
                     {
                         detail: {
                             start_date: start_date,
@@ -84,11 +84,6 @@ $('.input-daterange').datepicker({
 
 //functions for hiding/showing the description:
 window.onload = function(){
-//    document.getElementById('close').onclick = function(){
-//        this.parentNode.parentNode.parentNode
-//        .removeChild(this.parentNode.parentNode);
-//        return false;
-//    };
 
     document.getElementById('close').onclick = function(){
         this.parentNode.parentNode

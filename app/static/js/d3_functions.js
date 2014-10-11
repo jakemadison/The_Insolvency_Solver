@@ -11,16 +11,18 @@ function create_bar_plot() {
 
         var url_full = 'get_daily_metrics' + '?' + 'start_date=' + start_date + '&' + 'end_date=' + end_date;
 
-        data = [];
+
 
         d3.json(url_full, function (error, json) {
 
             console.log('received: ', json, 'offset:', offset);
+            while (data.length > 0) {
+                data.pop();
+            }
 
             //quick reversal of our desc() ordered array:
             for (var i = json.summary.length - 1; i >= offset; i--) {
                 var datum = {
-//                "value": Math.abs(+json.summary[i].balance),
                     "value": +json.summary[i].balance,
                     "date": json.summary[i].date.substring(0, 6)};
 
@@ -223,28 +225,17 @@ function create_bar_plot() {
 
     get_parse_data(0, 0, 0, false);
 
-    document.addEventListener("newMessage", function(e) {
+    document.addEventListener("newDates", function(e) {
         clear_chart();
         console.log("my dates are: ", e.detail.start_date, e.detail.end_date);
         var rand = Math.floor((Math.random() * 6) + 1);
-        get_parse_data(e.detail.start_date, e.detail.end_date, rand, true);
+        get_parse_data(e.detail.start_date, e.detail.end_date, 0, true);
 
     }, false);
 
 
 
 }
-
-//$('.input-daterange').datepicker({
-//    format: "M dd yyyy",
-//    startDate: "10/01/2014",  //make this not hardcoded...
-//    endDate: "01/01/2014", //get_todays_date(),
-//    autoclose: true,
-//    todayHighlight: true
-//    })
-//    .on("changeDate", function(e) {
-//        console.log("errrrrmegaaarg", e);
-//});
 
 
 
