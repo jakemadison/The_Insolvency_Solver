@@ -60,7 +60,23 @@ $('.input-daterange').datepicker({
 
             if (start_date !== '' && end_date !== '') {
                 console.log("I have two dates!!");
-                redraw_chart(start_date, end_date);
+//                redraw_chart(start_date, end_date);
+
+                var event = new CustomEvent(
+                    "newMessage",
+                    {
+                        detail: {
+                            start_date: start_date,
+                            end_date: end_date
+                        },
+                        bubbles: true,
+                        cancelable: true
+                    }
+                );
+
+                console.log("dispatching!");
+                document.getElementById("datepicker").dispatchEvent(event);
+
             }
         });
 

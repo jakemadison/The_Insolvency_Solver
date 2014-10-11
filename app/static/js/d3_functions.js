@@ -1,5 +1,5 @@
 
-function create_bar_plot(start_date, end_date) {
+function create_bar_plot() {
 
     var max_val = function () {
             return d3.max(data, function (d) {
@@ -7,7 +7,7 @@ function create_bar_plot(start_date, end_date) {
             });
         };
 
-    function get_parse_data(offset, transition) {
+    function get_parse_data(start_date, end_date, offset, transition) {
 
         var url_full = 'get_daily_metrics' + '?' + 'start_date=' + start_date + '&' + 'end_date=' + end_date;
 
@@ -166,9 +166,14 @@ function create_bar_plot(start_date, end_date) {
         y.domain([-max_val() - 5 , max_val() + 5]);
 
         //remove/transition our old data:
+        var y_old = chart.select(".y.axis").attr("class", "y axis old");
+        var x_old = chart.select(".x.axis").attr("class", "x axis old");
+
         chart.select(".y.axis").transition().duration(1000).ease("sin-in-out").call(yAxis);
         chart.select(".x.axis").transition().duration(1000).ease("sin-in-out").call(xAxis);
 
+        y_old.remove();
+        x_old.remove();
     }
 
     function clear_chart() {
@@ -216,17 +221,30 @@ function create_bar_plot(start_date, end_date) {
     var number_of_days = 14;
     var current_income = 30;
 
-    get_parse_data(0, false);
+    get_parse_data(0, 0, 0, false);
 
-    document.getElementById("submit_chart").onclick = function() {
+    document.addEventListener("newMessage", function(e) {
         clear_chart();
+        console.log("my dates are: ", e.detail.start_date, e.detail.end_date);
         var rand = Math.floor((Math.random() * 6) + 1);
-        get_parse_data(rand, true);
-    };
+        get_parse_data(e.detail.start_date, e.detail.end_date, rand, true);
+
+    }, false);
+
+
 
 }
 
-
+//$('.input-daterange').datepicker({
+//    format: "M dd yyyy",
+//    startDate: "10/01/2014",  //make this not hardcoded...
+//    endDate: "01/01/2014", //get_todays_date(),
+//    autoclose: true,
+//    todayHighlight: true
+//    })
+//    .on("changeDate", function(e) {
+//        console.log("errrrrmegaaarg", e);
+//});
 
 
 
