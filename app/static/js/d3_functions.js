@@ -127,6 +127,7 @@ function create_chart_plot(start_date, end_date) {
             .attr("class", "bar_rect")  //give each rect the class "bar"
             .attr("x", function (d) {return x(d.date);})  //set width to scale function of date
             .attr("y", y(0))
+            .style("opacity",.5)
             .attr("height", 0)//set height to 0, then transition later
             .attr("width", x.rangeBand())  //set width to our x scale rangeband
             .attr("class", function (d) { //is this really the only way D3 can do mult classes?
@@ -182,6 +183,7 @@ function create_chart_plot(start_date, end_date) {
                     return y(0);
                 }
             })
+            .style("opacity", 1)
             .duration(2000)
             .delay(200)
             .ease("elastic");
@@ -297,61 +299,6 @@ function redraw_chart(start_date, end_date) {
             .duration(2000)
             .delay(200)
             .ease("elastic");
-
-
-
-
-        function redraw() {
-
-
-
-
-            return;
-
-
-            chart.selectAll(".bar_rect")
-                .attr("x", function (d) {return x(d.date);})  //set width to scale function of date
-                .attr("y", y(0))
-                .attr("height", 0)//set height to 0, then transition later
-                .attr("width", x.rangeBand())  //set width to our x scale rangeband
-                .attr("class", function (d) { //is this really the only way D3 can do mult classes?
-                    if (d.value >= 0) {
-                        if (d.date == 'tomorrow') { //apparently there isn't a good way to add classes?
-                            return "positive_bar bar_future"
-                        }
-                        else {
-                            return "positive_bar";
-                        }
-                    }
-                    else {
-                        if (d.date == 'tomorrow') {
-                            return "negative_bar bar_future"
-                        }
-                        else {
-                            return "negative_bar";
-                        }
-                    }
-                });
-
-            //Animation time!
-            d3.selectAll("rect").transition()
-                .attr("height", function(d) {
-                    return Math.abs(y(0) - y(d.value))
-                })
-                .attr("y", function (d) {
-                    if (d.value >= 0) {
-                        return y(d.value);
-                    }
-                    else {
-                        return y(0);
-                    }
-                })
-                .duration(2000)
-                .delay(200)
-                .ease("elastic");
-            }
-
-
 
 
     });  //end d3.json.
