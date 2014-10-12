@@ -102,6 +102,43 @@ def get_recent_transactions():
     return transaction_list
 
 
+def generate_summary_on_transactions(transaction_list):
+    pay_rate = 30
+    start_date = transaction_list[-1]["timestamp"]
+    end_date = transaction_list[0]["timestamp"]
+
+    print(start_date, end_date)
+
+
+
+    return transaction_list
+
+
+
+
+
+def get_filtered_transactions(filter_list):
+    """get all recent transactions filtered as a date"""
+
+    recent_transactions = db.session.query(TransactionHistory)
+    recent_transactions = recent_transactions.filter(TransactionHistory.purchase_type.in_(filter_list))
+    recent_transactions = recent_transactions.order_by(TransactionHistory.timestamp.desc()).all()
+
+    # here we need to turn transactions into a daily summary on the fly...?
+
+    transaction_list = []
+    for e in recent_transactions:
+        transaction = {"id": e.id,
+                       "timestamp": e.timestamp.strftime("%a %d"),
+                       "amount": '$'+str(e.amount)+'.00',
+                       "purchase_type": e.purchase_type}
+        transaction_list.append(transaction)
+
+    daily_summary = generate_summary_on_transactions(transaction_list)
+
+    return daily_summary
+
+
 def get_daily_summary(start_date=None, end_date=None):
     """retrieve a full summary of all days"""
 

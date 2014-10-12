@@ -42,3 +42,7 @@ d3 should handle the transforms well.
 =====
 integrating a calendar would be a great idea... match up expected money with things like shopping 
 or going to the bar or a show or date or whatever.
+
+===
+be able to filter out transaction types: eg, this is what your week would have looked like if you
+didn't buy booze

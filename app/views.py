@@ -1,7 +1,7 @@
 from __future__ import print_function
 from app import app
 from flask import render_template, request, jsonify, redirect, url_for
-from controller import get_current_rates, update_rates, execute_transaction, get_recent_transactions, get_daily_summary
+from controller import get_current_rates, update_rates, execute_transaction, get_recent_transactions, get_daily_summary, get_filtered_transactions
 from datetime import datetime, timedelta
 
 @app.route('/')
@@ -137,9 +137,15 @@ def get_daily_metrics():
 
     start_date = request.args.get('start_date', None)
     end_date = request.args.get('end_date', None)
+    filters = request.args.get('filters', None)
 
     print('hey guess what???? I received: {0}, {1}'.format(start_date, end_date))
-    print(start_date == '0')
+    print('hey guess what???? I received: {0}'.format(filters))
+
+    filter_array = [str(x) for x in filters.split(',')]
+
+    if len(filter_array):
+        print('yerrrrp', filter_array)
 
     if start_date != '0' and end_date != '0':
         start = datetime.strptime(start_date, '%d/%m/%Y')
@@ -150,5 +156,10 @@ def get_daily_metrics():
         start = None
         end = None
 
-    daily_summary = get_daily_summary(start, end)
+    if len(filter_array) and False:
+        daily_summary = get_filtered_transactions(filter_array)
+    else:
+        daily_summary = get_daily_summary(start, end)
+
+
     return jsonify({"summary": daily_summary, "success": True})

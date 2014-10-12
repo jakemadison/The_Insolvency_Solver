@@ -7,11 +7,14 @@ function create_bar_plot() {
             });
         };
 
-    function get_parse_data(start_date, end_date, offset, transition, pad) {
+    function get_parse_data(start_date, end_date, offset, transition, pad, filters) {
 
-        var url_full = 'get_daily_metrics' + '?' + 'start_date=' + start_date + '&' + 'end_date=' + end_date;
+        filters = ['Groceries', 'Dinning Out', 'Coffee'];
 
-
+        var url_full = 'get_daily_metrics' + '?' +
+                       'start_date=' + start_date + '&' +
+                       'end_date=' + end_date + '&' +
+                       'filters=' + filters;
 
         d3.json(url_full, function (error, json) {
 
@@ -156,9 +159,10 @@ function create_bar_plot() {
                 }
             })
             .style("opacity", 1)
-            .duration(2000)
-            .delay(200)
-            .ease("elastic");
+            .duration(1); //duration 2000
+//            .delay(200);
+//            .ease("sin-in-out");
+//        .ease("elastic");
 
     }
 
@@ -237,4 +241,5 @@ function create_bar_plot() {
 
 
 }
+
 
