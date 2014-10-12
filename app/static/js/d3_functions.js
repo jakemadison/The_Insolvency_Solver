@@ -168,8 +168,11 @@ function create_bar_plot() {
         y.domain([-max_val() - 5 , max_val() + 5]);
 
         //remove/transition our old data:
-        var y_old = chart.select(".y.axis").attr("class", "y axis old");
-        var x_old = chart.select(".x.axis").attr("class", "x axis old");
+        var y_old = chart.select(".y.axis");
+        y_old.attr("class", "y axis old");
+
+        var x_old = chart.select(".x.axis");
+        x_old.attr("class", "x axis old");
 
         chart.select(".y.axis").transition().duration(1000).ease("sin-in-out").call(yAxis);
         chart.select(".x.axis").transition().duration(1000).ease("sin-in-out").call(xAxis);
@@ -189,7 +192,7 @@ function create_bar_plot() {
     var init_width = $("svg").parent().width();
     //    var init_height = 200;
 
-    var margin = {top: 10, right: 0, bottom: 20, left: 30},
+    var margin = {top: 10, right: 0, bottom: 30, left: 30},
         width = init_width - margin.left - margin.right,
         height = init_height - margin.top - margin.bottom;
 
@@ -227,8 +230,6 @@ function create_bar_plot() {
 
     document.addEventListener("newDates", function(e) {
         clear_chart();
-        console.log("my dates are: ", e.detail.start_date, e.detail.end_date);
-        var rand = Math.floor((Math.random() * 6) + 1);
         get_parse_data(e.detail.start_date, e.detail.end_date, 0, true);
 
     }, false);

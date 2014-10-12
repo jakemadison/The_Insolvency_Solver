@@ -38,3 +38,7 @@ the stuff that's needed, please), and redraw our chart on the fly.
 
 nice transitions on that? nice start-to date picker instances.
 d3 should handle the transforms well.
+
+=====
+integrating a calendar would be a great idea... match up expected money with things like shopping 
+or going to the bar or a show or date or whatever.

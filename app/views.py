@@ -142,10 +142,10 @@ def get_daily_metrics():
     print(start_date == '0')
 
     if start_date != '0' and end_date != '0':
-        start = datetime.strptime(start_date, '%b %d %Y')
+        start = datetime.strptime(start_date, '%d/%m/%Y')
         delta = timedelta(days=1)
         start = start - delta
-        end = datetime.strptime(end_date, '%b %d %Y')
+        end = datetime.strptime(end_date, '%d/%m/%Y')
     else:
         start = None
         end = None

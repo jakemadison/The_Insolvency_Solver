@@ -22,7 +22,7 @@ var get_todays_date = function() {
   var mm = today.getMonth() + 1;
   var yyyy = today.getFullYear();
 
-  var date_final = mm+'/'+dd+'/'+yyyy;
+  var date_final = dd+'/'+mm+'/'+yyyy;
 
   console.log(date_final);
 
@@ -42,8 +42,9 @@ $('.date').datepicker({
 });
 
 $('.input-daterange').datepicker({
-    format: "M dd yyyy",
-    startDate: "10/01/2014",  //make this not hardcoded...
+//    format: "M dd yyyy",
+    format: "dd/mm/yyyy",
+    startDate: "01/10/2014",  //make this not hardcoded...
     endDate: get_todays_date(),
     autoclose: true,
     todayHighlight: true
@@ -81,6 +82,8 @@ $('.input-daterange').datepicker({
         });
 
 
+$('#date_start').attr("value", '01/10/2014');
+$('#date_end').attr("value", get_todays_date());
 
 //functions for hiding/showing the description:
 window.onload = function(){
