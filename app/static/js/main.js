@@ -60,15 +60,27 @@ $('.input-daterange').datepicker({
             var end_date = document.getElementById("date_end").value;
 
             if (start_date !== '' && end_date !== '') {
-                console.log("I have two dates!!");
+
 //                redraw_chart(start_date, end_date);
+
+                var end_date_current;
+
+                if (end_date == get_todays_date()) {
+                    console.log("end date true!!");
+                    end_date_current = true;
+                }
+                else {
+                    console.log("end date false!!");
+                    end_date_current = false;
+                }
 
                 var event = new CustomEvent(
                     "newDates",
                     {
                         detail: {
                             start_date: start_date,
-                            end_date: end_date
+                            end_date: end_date,
+                            end_date_current: end_date_current
                         },
                         bubbles: true,
                         cancelable: true

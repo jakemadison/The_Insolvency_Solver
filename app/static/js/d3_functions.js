@@ -7,7 +7,7 @@ function create_bar_plot() {
             });
         };
 
-    function get_parse_data(start_date, end_date, offset, transition) {
+    function get_parse_data(start_date, end_date, offset, transition, pad) {
 
         var url_full = 'get_daily_metrics' + '?' + 'start_date=' + start_date + '&' + 'end_date=' + end_date;
 
@@ -33,7 +33,7 @@ function create_bar_plot() {
 
             //let's pad tomorrow as an extra days here:
             //this should actually check if last day == today for padding a "tomorrow"
-            if (data.length < number_of_days && !transition) {
+            if (data.length < number_of_days && pad) {
                 datum = {"value": final_value + current_income,
                     "date": 'tomorrow'};
                 data.push(datum);
@@ -226,11 +226,11 @@ function create_bar_plot() {
     var number_of_days = 14;
     var current_income = 30;
 
-    get_parse_data(0, 0, 0, false);
+    get_parse_data(0, 0, 0, false, true);
 
     document.addEventListener("newDates", function(e) {
         clear_chart();
-        get_parse_data(e.detail.start_date, e.detail.end_date, 0, true);
+        get_parse_data(e.detail.start_date, e.detail.end_date, 0, true, e.detail.end_date_current);
 
     }, false);
 
