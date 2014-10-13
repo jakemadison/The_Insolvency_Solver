@@ -259,7 +259,7 @@ function create_bar_plot() {
 }
 
 
-function create_transaction_plot() {
+function create_transaction_plot(t_indicator) {
     console.log("transaction plot!");
 
     var max_val = function () {
@@ -288,7 +288,9 @@ function create_transaction_plot() {
 
             var running_balance = current_income;
             var date_counter = new Date(2014, 9, 1);
-            var datum = {'day': date_counter.toDateString().substring(4, 10), 'balance': running_balance};
+            var datum = {'day': date_counter.toDateString().substring(4, 10),
+                         'balance': running_balance,
+                          'total_transactions': 0};
             console.log("balance is at: ", datum);
 
             function parse_data(f){
@@ -309,6 +311,7 @@ function create_transaction_plot() {
                         var num_amount = +transactions[i].amount;
 
                         datum.balance -= num_amount;
+                        datum.total_transactions += 1;
                         console.log("same day, subtracting amount.  new balance: ", datum, num_amount);
 
                     }
@@ -329,6 +332,7 @@ function create_transaction_plot() {
                             (f.length === 0 || f.indexOf(transactions[i].purchase_type) > - 1)) {
 
                             datum.balance -= +transactions[i].amount;
+                            datum.total_transactions += 1;
 
                         }
 
@@ -347,6 +351,8 @@ function create_transaction_plot() {
 
 
             parse_data(filters);
+//              parse_data(['Smokes', 'Booze','Groceries', 'Cab', 'Coffee']);
+
 
             if (transition === true) {
                 transition_chart();
@@ -434,7 +440,9 @@ function create_transaction_plot() {
             .attr("dy", "0.75em")
             .text(function (d) {
                 return d.balance;
-            });
+            })
+           .append("svg:title")
+            .text(function(d) { return d.total_transactions + " total transactions."; });
 
 
         //Animation time!
@@ -451,10 +459,10 @@ function create_transaction_plot() {
                 }
             })
             .style("opacity", 1)
-            .duration(1); //duration 2000
-//            .delay(200);
+            .duration(500) //duration 2000
+//            .delay(200)
 //            .ease("sin-in-out");
-//        .ease("elastic");
+        .ease("elastic");
 
     }
 
@@ -522,7 +530,31 @@ function create_transaction_plot() {
     var number_of_days = 14;
     var current_income = 30;
 
-    get_parse_data(0, 0, 0, false, true, []);
+    function get_filter_list() {
+
+        var filter_list = [];
+        $(".filter_options").each(function() {
+            if ($(this).prop("checked")) {
+                filter_list.push($(this).val());
+            }
+        });
+        console.log("filter list: ", filter_list);
+
+        return filter_list;
+    }
+
+
+    var ret_filters = get_filter_list();
+
+    console.log("t indicator: ", t_indicator);
+
+    if (t_indicator) {
+        d3.select(".y.axis").remove();
+        d3.select(".x.axis").remove();
+        clear_chart();
+    }
+
+    get_parse_data(0, 0, 0, t_indicator, true, ret_filters);
 
     document.addEventListener("newDates", function(e) {
         clear_chart();

@@ -21,17 +21,25 @@
 {#    <div class="col-lg-8 well well-sm">#}
 {#        <svg class="transaction_chart"></svg>#}
 {#    </div>#}
+<hr>
 
+<form action="">
 {% for t in transaction_categories %}
-<p>{{ t }}</p>
+<span class="input-group-addon">
+    <input type="checkbox" id="{{ t }}" value="{{ t }}" checked="checked" onclick="create_transaction_plot(true);"
+           class="filter_options">{{ t }}<br>
+</span>
 {%  endfor %}
+
+</form>
+
 
 
 </div>
 
 <script src="../static/js/d3_functions.js"></script>
 <script>
-    create_transaction_plot();
+    create_transaction_plot(false);
 </script>
 
 {% endblock %}
