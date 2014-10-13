@@ -34,8 +34,8 @@ var get_todays_date = function() {
 //document.getElementById("transaction_date").value = get_todays_date();
 
 $('.date').datepicker({
-    format: "M dd yyyy",
-    startDate: "10/01/2014",  //make this not hardcoded...
+    format: "dd/mm/yyyy",
+    startDate: "01/10/2014",  //make this not hardcoded...
     endDate: get_todays_date(),
     autoclose: true,
     todayHighlight: true

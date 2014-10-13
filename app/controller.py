@@ -94,8 +94,9 @@ def get_recent_transactions():
     transaction_list = []
     for e in recent_transactions:
         transaction = {"id": e.id,
-                       "timestamp": e.timestamp.strftime("%b %d %Y: %I:%M:%S %p"),
-                       "amount": '$'+str(e.amount)+'.00',
+                       # "timestamp": e.timestamp.strftime("%b %d %Y: %I:%M:%S %p"),
+                       "timestamp": e.timestamp.strftime("%d/%m/%Y"),
+                       "amount": str(e.amount),
                        "purchase_type": e.purchase_type}
         transaction_list.append(transaction)
 

@@ -1,3 +1,19 @@
+function daysBetween( date1, date2 ) {
+  //Get 1 day in milliseconds
+  var one_day=1000*60*60*24;
+
+  // Convert both dates to milliseconds
+  var date1_ms = date1.getTime();
+  var date2_ms = date2.getTime();
+
+  // Calculate the difference in milliseconds
+  var difference_ms = date2_ms - date1_ms;
+
+  // Convert back to days and return
+  return Math.round(difference_ms/one_day);
+}
+
+
 
 function create_bar_plot() {
 
@@ -243,3 +259,276 @@ function create_bar_plot() {
 }
 
 
+function create_transaction_plot() {
+    console.log("transaction plot!");
+
+    var max_val = function () {
+            return d3.max(data, function (d) {
+                return Math.abs(d.balance);
+            });
+        };
+
+    function get_parse_data(start_date, end_date, offset, transition, pad, filters) {
+
+        var url_full = 'get_transaction_metrics' + '?' +
+                       'start_date=' + start_date + '&' +
+                       'end_date=' + end_date;
+
+
+        d3.json(url_full, function (error, json) {
+
+            console.log('received: ', json, 'offset:', offset);
+            while (data.length > 0) {
+                data.pop();
+            }
+
+            //quick reversal of our desc() ordered array:
+
+            var transactions = json.transactions;
+
+            var running_balance = current_income;
+            var date_counter = new Date(2014, 9, 1);
+            var datum = {'day': date_counter.toDateString().substring(4, 10), 'balance': running_balance};
+            console.log("balance is at: ", datum);
+
+            function parse_data(f){
+                for (var i = transactions.length - 1; i >= offset; i--) {
+
+                  console.log('===current date record: ', datum, 'current transaction: ', transactions[i].amount);
+                // - dd/mm/yyyy
+
+                var mdy = transactions[i].timestamp.split('/');
+                var transaction_date = new Date(mdy[2], mdy[1]-1, mdy[0]);
+
+//                console.log('testing date counter ', date_counter.toDateString(), 'against date transaction',
+//                    transaction_date, transaction_date.toDateString()===date_counter.toDateString());
+
+                if (transaction_date.toDateString() === date_counter.toDateString()) { //apply this transaction to our date record.
+
+                    if (f.length === 0 || f.indexOf(transactions[i].purchase_type) > - 1) {
+                        var num_amount = +transactions[i].amount;
+
+                        datum.balance -= num_amount;
+                        console.log("same day, subtracting amount.  new balance: ", datum, num_amount);
+
+                    }
+                }
+
+                else {
+
+                    console.log("----> finished date, pushing to stack: ", datum);
+
+                    do  {
+                        running_balance = datum.balance;
+                        data.push(datum);  //push day record on to our stack.
+                        date_counter.setDate(date_counter.getDate() + 1); //increase date counter by one
+                        datum = {'day': date_counter.toDateString().substring(4, 10),
+                                 'balance': current_income + running_balance}; //create a new day record
+
+                        if (transaction_date.toDateString() === date_counter.toDateString() &&
+                            (f.length === 0 || f.indexOf(transactions[i].purchase_type) > - 1)) {
+
+                            datum.balance -= +transactions[i].amount;
+
+                        }
+
+//                        break;
+                    } while (date_counter.toDateString() !== transaction_date.toDateString());
+                }
+            }
+
+            data.push(datum);
+
+            console.log('data loading is complete.');
+            console.log(data);
+            console.log(data.length);
+
+            }
+
+
+            parse_data(filters);
+
+            if (transition === true) {
+                transition_chart();
+            }
+
+            draw_chart();
+
+        }); //end json call.
+
+
+    }
+
+    function draw_chart() {
+
+        //apply our data domain to our x scale:
+        x.domain(data.map(function (d) {
+            return d.day;
+        }));
+
+        //apply our data domain of values to the y range:
+        //in this case we want equal amts on both sides of the zero line, so
+        //get our abs(max) and set each of them to that (with a but extra added on).
+        y.domain([-max_val() - 5 , max_val() + 5]);
+
+
+        //with our original chart object, append a new group element.
+        //call it x axis and transform to x=0, y=height (bottom)
+        chart.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+
+        //append another group element, called y axis, and call it:
+        chart.append("g")
+            .attr("class", "y axis")
+            .call(yAxis);
+
+        //select all "bars" (even though they don't exist yet)
+        chart.selectAll(".bar")
+            .data(data)  //join our data on to our bars
+            .enter()
+            .append("g")
+            .attr("class", "bar_group")
+            .append("rect")//on enter, append a rect to them.
+            .attr("class", "bar_rect")  //give each rect the class "bar"
+            .attr("x", function (d) {return x(d.day);})  //set width to scale function of date
+            .attr("y", y(0))
+            .style("opacity",.5)
+            .attr("height", 0)//set height to 0, then transition later
+            .attr("width", x.rangeBand())  //set width to our x scale rangeband
+            .attr("class", function (d) { //is this really the only way D3 can do mult classes?
+                if (d.balance >= 0) {
+                    if (d.day == 'tomorrow') { //apparently there isn't a good way to add classes?
+                        return "positive_bar bar_future"
+                    }
+                    else {
+                        return "positive_bar";
+                    }
+                }
+                else {
+                    if (d.day == 'tomorrow') {
+                        return "negative_bar bar_future"
+                    }
+                    else {
+                        return "negative_bar";
+                    }
+                }
+            });
+
+        //select all bars and add a text element to them
+        chart.selectAll(".bar_group")
+            .append("text")
+            .attr("x", function (d) {
+                return x(d.day) + (x.rangeBand() / 2)
+            })
+            .attr("y", function (d) {
+
+                if (d.balance >= 0) {
+                    return y(d.balance) + 3;
+                }
+                else {
+                    return y(d.balance) - 12;
+                }
+            })
+            .attr("dy", "0.75em")
+            .text(function (d) {
+                return d.balance;
+            });
+
+
+        //Animation time!
+        d3.selectAll("rect").transition()
+            .attr("height", function(d) {
+                return Math.abs(y(0) - y(d.balance))
+            })
+            .attr("y", function (d) {
+                if (d.balance >= 0) {
+                    return y(d.balance);
+                }
+                else {
+                    return y(0);
+                }
+            })
+            .style("opacity", 1)
+            .duration(1); //duration 2000
+//            .delay(200);
+//            .ease("sin-in-out");
+//        .ease("elastic");
+
+    }
+
+    function transition_chart() {
+
+        x.domain(data.map(function (d) {return d.date;}));
+        y.domain([-max_val() - 5 , max_val() + 5]);
+
+        //remove/transition our old data:
+        var y_old = chart.select(".y.axis");
+        y_old.attr("class", "y axis old");
+
+        var x_old = chart.select(".x.axis");
+        x_old.attr("class", "x axis old");
+
+        chart.select(".y.axis").transition().duration(1000).ease("sin-in-out").call(yAxis);
+        chart.select(".x.axis").transition().duration(1000).ease("sin-in-out").call(xAxis);
+
+        y_old.remove();
+        x_old.remove();
+    }
+
+    function clear_chart() {
+
+        var bars_sel = d3.selectAll(".bar_group");
+        bars_sel.remove();
+
+    }
+
+    var init_height = 250;
+    var init_width = $("svg").parent().width();
+    //    var init_height = 200;
+
+    var margin = {top: 10, right: 0, bottom: 30, left: 30},
+        width = init_width - margin.left - margin.right,
+        height = init_height - margin.top - margin.bottom;
+
+    //create our initial chart space, append a group to it, transform to size:
+    var chart = d3.select(".chart")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    //set our x function as an ordinal scale using range
+    var x = d3.scale.ordinal()
+                .rangeRoundBands([0, width], .1);
+
+    //set our y function as a linear range between 0 and height.
+    var y = d3.scale.linear()
+            .range([height, 0]);
+
+    //create xAxis object based on our x scale
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+    //create yAxis based on our y scale:
+    var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .tickFormat(function(d) {return '$' + d;});
+
+    var data = [];
+    var number_of_days = 14;
+    var current_income = 30;
+
+    get_parse_data(0, 0, 0, false, true, []);
+
+    document.addEventListener("newDates", function(e) {
+        clear_chart();
+        get_parse_data(e.detail.start_date, e.detail.end_date, 0, true, e.detail.end_date_current);
+
+    }, false);
+
+
+}

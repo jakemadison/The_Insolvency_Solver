@@ -31,6 +31,19 @@ def daily_summary():
     return render_template('daily_summary.html', rates=rates, daily_summary=daily_summary)
 
 
+@app.route('/transaction_metrics')
+def transaction_metrics():
+    rates = get_current_rates()
+    transactions = get_recent_transactions()
+
+    transaction_categories = list(set([t['purchase_type'] for t in transactions]))
+    transaction_categories.sort()
+
+    return render_template('transaction_metrics.html', rates=rates,
+                           transactions=transactions,
+                           transaction_categories=transaction_categories)
+
+
 @app.route('/metrics')
 def metrics():
     rates = get_current_rates()
@@ -118,7 +131,7 @@ def submit_transaction():
 
     # parse transaction_date here.
     if transaction_date:
-        parsed_date = datetime.strptime(transaction_date, '%b %d %Y')
+        parsed_date = datetime.strptime(transaction_date, '%d/%m/%Y')
     else:
         parsed_date = datetime.today()
 
@@ -132,6 +145,18 @@ def submit_transaction():
 
 
 #ROUTES FOR METRICS:
+@app.route('/get_transaction_metrics')
+def get_transaction_metrics():
+
+    transaction_list = get_recent_transactions()
+
+    transaction_categories = list(set([t['purchase_type'] for t in transaction_list]))
+    transaction_categories.sort()
+
+    return jsonify({"transactions": transaction_list, "categories": transaction_categories, "success": True})
+
+
+
 @app.route('/get_daily_metrics')
 def get_daily_metrics():
 
