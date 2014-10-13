@@ -3,7 +3,7 @@
 
 
 <div>Daily Summary: </div>
-<div class="col-lg-8 well well-sm"><svg class="chart"></svg>
+<div class="well well-sm"><svg class="chart"></svg>
 
 {#Custom Date Range:#}
 <div id="date_range_container">
@@ -23,6 +23,7 @@
 {#    </div>#}
 <hr>
 
+{#<div class="input-group">#}
 <form action="">
 {% for t in transaction_categories %}
 <span class="input-group-addon">
@@ -32,6 +33,7 @@
 {%  endfor %}
 
 </form>
+{#</div>#}
 
 
 

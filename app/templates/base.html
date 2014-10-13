@@ -112,6 +112,8 @@
           </div>
 
 {#        <hr>#}
+
+<div class="panel panel-default well well-sm">
 <div class="row">
 {% if rates.balance >= 0 %}
     <div id="current_balance" class="positive_balance col-lg-8"><h1>Current Balance: ${{ rates.balance }}</h1></div>
@@ -129,7 +131,7 @@
 </div>
 
 
-</div>
+{#</div>#}
 {#            <hr>#}
 {#<div class="input-group">#}
 {#  <span class="input-group-addon">$</span>#}
@@ -142,8 +144,9 @@
 
 
 
-<div class="row">
-<div id="transaction_forms" class="col-lg-8">
+<div class="">
+<div id="transaction_forms">
+
   <div class="input-group">
     <span class="input-group-addon">$</span>
     <input type="text" name="transaction" class="form-control" id="transaction_amount" tabindex="1">
@@ -169,11 +172,15 @@
 {#          <li><a href="#">Deposit Money</a></li>#}
 {#        </ul>#}
 
-    </div><!-- /btn-group -->
-  </div>
+
+
+
+
 
     <div class="row">
+    </div><!-- /btn-group -->
 
+</div>
 {#row might not be needed....#}
 
 
@@ -185,7 +192,7 @@
 
 </div>
 </div>
-
+</div>
 
 {#<input type="submit" value="Submit Transaction">#}
 
