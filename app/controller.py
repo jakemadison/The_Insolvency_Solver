@@ -8,7 +8,6 @@ from datetime import datetime
 def get_current_rates():
 
     current_rates = db.session.query(CurrentRates).all()
-
     rates_dict = {str(e.type): e.amount for e in current_rates}
 
     return rates_dict
@@ -89,32 +88,17 @@ def get_recent_transactions(start=None, end=None):
 
     """get all recent transactions"""
 
-    print('start and end: {0},{1}'.format(start, end))
-
     recent_transactions = db.session.query(TransactionHistory)
 
     if start and end:
-        # start_timestamp = datetime.
-        end_timestamp = func.datetime(end)
-
-        # print(start_timestamp, end_timestamp, start, end)
-
-        # recent_transactions = recent_transactions.filter(func.DATE(TransactionHistory.timestamp) >= start,
-        #                                                  func.DATE(TransactionHistory.timestamp) <= end)
 
         recent_transactions = recent_transactions.filter(TransactionHistory.timestamp >= start,
                                                          TransactionHistory.timestamp <= end)
-
 
     recent_transactions = recent_transactions.order_by(TransactionHistory.timestamp.desc()).all()
 
     transaction_list = []
     for e in recent_transactions:
-
-        # print(e.timestamp)
-        if start and end:
-            print(e.timestamp >= start, e.timestamp <=end)
-
         transaction = {"id": e.id,
                        # "timestamp": e.timestamp.strftime("%b %d %Y: %I:%M:%S %p"),
                        "timestamp": e.timestamp.strftime("%d/%m/%Y"),
