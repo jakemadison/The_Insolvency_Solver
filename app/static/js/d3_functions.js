@@ -259,7 +259,7 @@ function create_bar_plot() {
 }
 
 
-function create_transaction_plot(t_indicator) {
+function create_transaction_plot(t_indicator, plot_style) {
     console.log("transaction plot!");
 
     var max_val = function () {
@@ -367,7 +367,17 @@ function create_transaction_plot(t_indicator) {
                 transition_chart();
             }
 
-            draw_chart();
+
+            switch (plot_style) {
+                case 'chart':
+                    draw_chart();
+                    break;
+                case 'calendar':
+                    draw_chart();
+                    break;
+                default:
+                    draw_chart();
+            }
 
         }); //end json call.
 
