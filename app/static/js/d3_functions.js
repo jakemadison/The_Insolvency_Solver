@@ -400,7 +400,7 @@ function create_transaction_plot(t_indicator) {
             .attr("class", "bar_rect")  //give each rect the class "bar"
             .attr("x", function (d) {return x(d.day);})  //set width to scale function of date
             .attr("y", y(0))
-            .style("opacity",.5)
+//            .style("opacity",.5)
             .attr("height", 0)//set height to 0, then transition later
             .attr("width", x.rangeBand())  //set width to our x scale rangeband
             .attr("class", function (d) { //is this really the only way D3 can do mult classes?
@@ -458,11 +458,13 @@ function create_transaction_plot(t_indicator) {
                     return y(0);
                 }
             })
-            .style("opacity", 1)
-            .duration(500) //duration 2000
-//            .delay(200)
+//            .style("opacity", 1)
+//            .duration(50) //duration 2000
+            .delay(function (d, i) {
+                return i*20;
+            });
 //            .ease("sin-in-out");
-        .ease("elastic");
+//        .ease("elastic");
 
     }
 
@@ -487,8 +489,23 @@ function create_transaction_plot(t_indicator) {
 
     function clear_chart() {
 
-        var bars_sel = d3.selectAll(".bar_group");
+        function remove_chart_data() {
+            var bars_sel = d3.selectAll(".bar_group");
         bars_sel.remove();
+        }
+
+        d3.selectAll('rect')
+            .transition()
+            .attr("height", function(d)
+            {
+               return 0;
+            })
+            .delay(function(d, i) {
+                return i*20;
+            });
+
+            setTimeout(remove_chart_data(), 500);
+
 
     }
 
