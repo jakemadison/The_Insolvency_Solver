@@ -52,7 +52,7 @@ function create_bar_plot() {
 
             //let's pad tomorrow as an extra days here:
             //this should actually check if last day == today for padding a "tomorrow"
-            if (data.length < number_of_days && pad) {
+            if (data.length < number_of_days+14 && pad) {
                 datum = {"value": final_value + current_income,
                     "date": 'tomorrow'};
                 data.push(datum);
