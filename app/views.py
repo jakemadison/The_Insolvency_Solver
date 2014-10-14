@@ -148,7 +148,21 @@ def submit_transaction():
 @app.route('/get_transaction_metrics')
 def get_transaction_metrics():
 
-    transaction_list = get_recent_transactions()
+    start_date = request.args.get('start_date', None)
+    end_date = request.args.get('end_date', None)
+
+    if start_date != '0' and end_date != '0':
+
+        print("got it!")
+        start = datetime.strptime(start_date, '%d/%m/%Y')
+        # delta = timedelta(days=1)
+        # start = start - delta
+        end = datetime.strptime(end_date, '%d/%m/%Y')
+    else:
+        start = None
+        end = None
+
+    transaction_list = get_recent_transactions(start, end)
 
     transaction_categories = list(set([t['purchase_type'] for t in transaction_list]))
     transaction_categories.sort()

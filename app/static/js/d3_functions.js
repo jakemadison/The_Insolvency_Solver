@@ -287,7 +287,16 @@ function create_transaction_plot(t_indicator) {
             var transactions = json.transactions;
 
             var running_balance = current_income;
-            var date_counter = new Date(2014, 9, 1);
+            console.log(start_date);
+            var date_counter;
+            if (start_date !== 0) {
+                var date_vals = start_date.split('/');
+                date_counter = new Date(date_vals[2], date_vals[1]-1, date_vals[0]);
+            }
+            else {
+                date_counter = new Date(2014, 9, 1); //this needs to change.
+            }
+//            date_counter = new Date(date_vals[2], date_vals[1], date_vals[0]); //this needs to be the first date in the record...
             var datum = {'day': date_counter.toDateString().substring(4, 10),
                          'balance': running_balance,
                           'total_transactions': 0};
@@ -296,7 +305,7 @@ function create_transaction_plot(t_indicator) {
             function parse_data(f){
                 for (var i = transactions.length - 1; i >= offset; i--) {
 
-                  console.log('===current date record: ', datum, 'current transaction: ', transactions[i].amount);
+//                  console.log('===current date record: ', datum, 'current transaction: ', transactions[i].amount);
                 // - dd/mm/yyyy
 
                 var mdy = transactions[i].timestamp.split('/');
@@ -312,7 +321,7 @@ function create_transaction_plot(t_indicator) {
 
                         datum.balance -= num_amount;
                         datum.total_transactions += 1;
-                        console.log("same day, subtracting amount.  new balance: ", datum, num_amount);
+//                        console.log("same day, subtracting amount.  new balance: ", datum, num_amount);
 
                     }
                 }
@@ -491,7 +500,7 @@ function create_transaction_plot(t_indicator) {
 
         function remove_chart_data() {
             var bars_sel = d3.selectAll(".bar_group");
-        bars_sel.remove();
+            bars_sel.remove();
         }
 
         d3.selectAll('rect')
@@ -575,7 +584,7 @@ function create_transaction_plot(t_indicator) {
 
     document.addEventListener("newDates", function(e) {
         clear_chart();
-        get_parse_data(e.detail.start_date, e.detail.end_date, 0, true, e.detail.end_date_current);
+        get_parse_data(e.detail.start_date, e.detail.end_date, 0, true, e.detail.end_date_current, ret_filters);
 
     }, false);
 
