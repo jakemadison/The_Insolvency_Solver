@@ -50,6 +50,12 @@ def metrics():
     return render_template('metrics.html', rates=rates)
 
 
+@app.route('/calendar')
+def calendar():
+    rates = get_current_rates()
+    return render_template('calendar.html', rates=rates)
+
+
 @app.route('/total_savings')
 def total_savings():
     rates = get_current_rates()

@@ -373,7 +373,7 @@ function create_transaction_plot(t_indicator, plot_style) {
                     draw_chart();
                     break;
                 case 'calendar':
-                    draw_chart();
+                    draw_calendar();
                     break;
                 default:
                     draw_chart();
@@ -383,6 +383,12 @@ function create_transaction_plot(t_indicator, plot_style) {
 
 
     }
+
+    function draw_calendar() {
+        console.log("calendar is a go!");
+    }
+
+
 
     function draw_chart() {
 
