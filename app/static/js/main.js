@@ -97,6 +97,26 @@ $('.input-daterange').datepicker({
 $('#date_start').attr("value", '01/10/2014');
 $('#date_end').attr("value", get_todays_date());
 
+//$("#changeChartType")
+
+function switchChartType() {
+
+     var event = new CustomEvent(
+                    "newChartType",
+                    {
+                        detail: {
+                            type: "line"
+                        },
+                        bubbles: true,
+                        cancelable: true
+                    }
+                );
+
+    document.getElementById("changeChartType").dispatchEvent(event);
+
+}
+
+
 //functions for hiding/showing the description:
 window.onload = function(){
 

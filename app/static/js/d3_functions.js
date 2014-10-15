@@ -280,6 +280,7 @@ function create_transaction_plot(t_indicator, plot_style) {
             console.log('received: ', json, 'offset:', offset);
             while (data.length > 0) {
                 data.pop();
+                transaction_data.pop();
             }
 
             //quick reversal of our desc() ordered array:
@@ -287,7 +288,7 @@ function create_transaction_plot(t_indicator, plot_style) {
             var transactions = json.transactions;
 
             var running_balance = current_income;
-            console.log(start_date);
+
             var date_counter;
             if (start_date !== 0) {
                 var date_vals = start_date.split('/');
@@ -300,6 +301,10 @@ function create_transaction_plot(t_indicator, plot_style) {
             var datum = {'day': date_counter.toDateString().substring(4, 10),
                          'balance': running_balance,
                           'total_transactions': 0};
+
+            var transaction_datum = {'day': date_counter.toDateString().substring(4, 10),
+                                      'amount': 0, 'type': "none"};
+
             console.log("balance is at: ", datum);
 
             function parse_data(f){
@@ -386,6 +391,47 @@ function create_transaction_plot(t_indicator, plot_style) {
 
     function draw_calendar() {
         console.log("calendar is a go!");
+    }
+
+    function draw_line_chart() {
+        console.log("line chart is a go!");
+
+        var line = d3.svg.line()
+                    .x(function(d) { return x(d.day); })
+                    .y(function(d) {
+                return y(d.balance);
+//                return 0;
+            });
+
+        console.log(line, chart, svg);
+
+        var svg = d3.select(".chart").append("g")
+            .attr("class", "main_area")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        svg.append("g")
+              .attr("class", "x axis")
+              .attr("transform", "translate(0," + height + ")")
+              .call(xAxis);
+
+        svg.append("g")
+              .attr("class", "y axis")
+              .call(yAxis);
+
+        p = svg.append("path")
+              .datum(data)
+              .attr("class", "line")
+              .attr("d", line);
+
+        p.transition().y(function(d) {
+            return d.balance;
+        }).delay(function(d, i) {
+            return i*20;
+        });
+    }
+
+    function transition_chart_type() {
+        d3.selectAll(".chart").selectAll('g').remove();
     }
 
 
@@ -517,6 +563,9 @@ function create_transaction_plot(t_indicator, plot_style) {
         function remove_chart_data() {
             var bars_sel = d3.selectAll(".bar_group");
             bars_sel.remove();
+//
+//            d3.selectAll(".chart").selectAll('g').remove();
+
         }
 
         d3.selectAll('rect')
@@ -569,6 +618,7 @@ function create_transaction_plot(t_indicator, plot_style) {
             .tickFormat(function(d) {return '$' + d;});
 
     var data = [];
+    var transaction_data = [];
     var number_of_days = 14;
     var current_income = 30;
 
@@ -602,6 +652,12 @@ function create_transaction_plot(t_indicator, plot_style) {
         clear_chart();
         get_parse_data(e.detail.start_date, e.detail.end_date, 0, true, e.detail.end_date_current, ret_filters);
 
+    }, false);
+
+
+    document.addEventListener("newChartType", function(e) {
+        transition_chart_type();
+        draw_line_chart();
     }, false);
 
 
