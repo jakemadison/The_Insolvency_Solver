@@ -428,6 +428,132 @@ function create_transaction_plot(t_indicator, plot_style) {
         console.log("calendar is a go!");
     }
 
+    function draw_stacked_chart() {
+        console.log("stack chart is a go!");
+
+        console.log(transaction_data);
+
+        var color = d3.scale.category10();
+//        var parseDate = d3.time.format("%b %d").parse;
+//        transaction_data.forEach(function(d) { d.day = parseDate(d.day); });
+
+
+        var labelVar = 'day'; //A
+        var varNames = d3.keys(transaction_data[0])
+                    .filter(function (key) { return key !== labelVar;}); //B
+
+        color.domain(varNames);
+
+        var seriesArr = [], series2 = {}; //C
+          varNames.forEach(function (name) {
+            series2[name] = {name: name, values:[]};
+            seriesArr.push(series2[name]);
+          });
+
+          transaction_data.forEach(function (d) { //D
+            varNames.map(function (name) {
+              series2[name].values.push({label: d[labelVar], value: +d[name] || 0});
+            });
+          });
+
+          x.domain(transaction_data.map(function (d) { return d.day; })); //E
+
+        var stack = d3.layout.stack()
+            .offset("wiggle")
+            .values(function (d) { return d.values; })
+            .x(function (d) { return x(d.label) + x.rangeBand() / 2; })
+            .y(function (d) { return d.value; });
+
+          stack(seriesArr); // F
+          console.log("stacked seriesArr", seriesArr);
+
+          y.domain([0, d3.max(seriesArr, function (c) {
+              return d3.max(c.values, function (d) { return d.y0 + d.y; });
+            })]);
+
+        var area = d3.svg.area()
+            .interpolate("cardinal")
+            .x(function (d) { return x(d.label) + x.rangeBand() / 2; })
+            .y0(function (d) { return y(d.y0); })
+            .y1(function (d) { return y(d.y0 + d.y); });
+
+        var svg = d3.select(".chart").append("g");
+
+        var selection = svg.selectAll(".series")
+              .data(seriesArr)
+              .enter().append("g")
+                .attr("class", "series");
+
+            selection.append("path")
+              .attr("class", "streamPath")
+              .attr("d", function (d) { return area(d.values); })
+              .style("fill", function (d) { return color(d.name); })
+              .style("stroke", "grey");
+
+
+    }
+
+
+    function draw_stacked_bar_chart() {
+
+        console.log("stacked bar chart is a go!");
+
+        console.log(transaction_data);
+
+        var color = d3.scale.category10();
+//        var parseDate = d3.time.format("%b %d").parse;
+//        transaction_data.forEach(function(d) { d.day = parseDate(d.day); });
+
+
+        var labelVar = 'day'; //A
+        var varNames = d3.keys(transaction_data[0])
+                    .filter(function (key) { return key !== labelVar;}); //B
+
+        color.domain(varNames);
+
+        transaction_data.forEach(function (d) { //D
+        var y0 = 0;
+        d.mapping = varNames.map(function (name) {
+            var temp_val = +d[name] || 0;
+
+          return {
+            name: name,
+            label: d[labelVar],
+            y0: y0,
+            y1: y0 += temp_val
+          };
+        });
+        d.total = d.mapping[d.mapping.length - 1].y1;
+      });
+
+      console.log("prepped data", transaction_data);
+
+      x.domain(transaction_data.map(function (d) { return d.day; })); //E
+      y.domain([0, d3.max(transaction_data, function (d) { return d.total; })]);
+
+
+        var svg = d3.select(".chart").append("g");
+
+        var selection = svg.selectAll(".series")
+            .data(transaction_data)
+          .enter().append("g")
+            .attr("class", "series")
+            .attr("transform", function (d) {
+              return "translate(" + x(d.day) + ",0)";
+            });
+
+        selection.selectAll("rect")
+          .data(function (d) { return d.mapping; }) //A
+        .enter().append("rect")
+          .attr("width", x.rangeBand())
+          .attr("y", function (d) { return y(d.y1); })
+          .attr("height", function (d) { return y(d.y0) - y(d.y1); })
+          .style("fill", function (d) { return color(d.name); })
+          .style("stroke", "grey");
+
+
+    }
+
     function draw_line_chart() {
         console.log("line chart is a go!");
 
@@ -767,7 +893,7 @@ function create_transaction_plot(t_indicator, plot_style) {
 
     document.addEventListener("newChartType", function(e) {
         transition_chart_type();
-        draw_line_chart();
+        draw_stacked_bar_chart();
     }, false);
 
 
