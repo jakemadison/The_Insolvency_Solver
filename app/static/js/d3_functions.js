@@ -573,6 +573,10 @@ function create_transaction_plot(t_indicator, plot_style) {
       y.domain([0, d3.max(transaction_data, function (d) { return d.total; })]);
 
 
+      var svg = d3.select(".chart").append("g")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
+
       var xAxis = d3.svg.axis()
                 .scale(x)
                 .orient("bottom");
@@ -580,11 +584,6 @@ function create_transaction_plot(t_indicator, plot_style) {
       var yAxis = d3.svg.axis()
             .scale(y)
             .orient("right");
-
-
-        var svg = d3.select(".chart").append("g")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom);
 
       svg.append("g")
           .attr("class", "x axis")
@@ -678,6 +677,25 @@ function create_transaction_plot(t_indicator, plot_style) {
 
         var svg = d3.select(".chart").append("g");
 
+
+        var xAxis = d3.svg.axis()
+                .scale(x)
+                .orient("bottom");
+
+      var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("right");
+
+      svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis);
+
+      svg.append("g")
+          .attr("class", "y axis")
+          .call(yAxis);
+
+
         var series = svg.selectAll(".series")
             .data(seriesData)
             .enter().append("g")
@@ -694,6 +712,28 @@ function create_transaction_plot(t_indicator, plot_style) {
           .style("stroke", function (d) { return color(d.name); })
           .style("stroke-width", "4px")
           .style("fill", "none");
+
+
+        var legend = svg.selectAll(".legend")
+              .data(color.domain().slice().reverse())
+            .enter().append("g")
+              .attr("class", "legend")
+              .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+          legend.append("rect")
+              .attr("x", width + 30)
+              .attr("width", 18)
+              .attr("height", 18)
+              .style("fill", color);
+
+          legend.append("text")
+              .attr("x", width + 24)
+              .attr("y", 9)
+              .attr("dy", ".35em")
+              .style("text-anchor", "end")
+              .text(function(d) { return d; });
+
+
 //
 //        var trans = color.domain().map(function(name) {
 //            return {
