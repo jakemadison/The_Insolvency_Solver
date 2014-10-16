@@ -318,6 +318,8 @@ function create_transaction_plot(t_indicator, plot_style) {
 
                 for (var i = transactions.length - 1; i >= offset; i--) {
 
+                    console.log("attempting to add: ", transactions[i].timestamp, transactions[i].purchase_type);
+
 //                    var transaction_datum = {'day': transactions[i].timestamp,
 //                                             trasactions[i].purchase_type: transactions[i].amount};
 
@@ -330,8 +332,10 @@ function create_transaction_plot(t_indicator, plot_style) {
                 var mdy = transactions[i].timestamp.split('/');
                 var transaction_date = new Date(mdy[2], mdy[1]-1, mdy[0]);
 
-//                console.log('testing date counter ', date_counter.toDateString(), 'against date transaction',
-//                    transaction_date, transaction_date.toDateString()===date_counter.toDateString());
+                console.log('testing date counter ', date_counter.toDateString(), 'against date transaction',
+                    transaction_date, transaction_date.toDateString()===date_counter.toDateString());
+
+
 
                 if (transaction_date.toDateString() === date_counter.toDateString()) { //apply this transaction to our date record.
 
@@ -343,12 +347,16 @@ function create_transaction_plot(t_indicator, plot_style) {
                         datum.total_transactions += 1;
 //                        console.log("same day, subtracting amount.  new balance: ", datum, num_amount);
 
+                        console.log("attempting to add: ", transactions[i].timestamp, transactions[i].purchase_type);
+
                         for (var j =0; j < category_list.length; j++) {
 
                             if (transaction_datum[category_list[j]]) {
                                 transaction_datum[category_list[j]] += num_amount;
                             }
+
                             else {
+
                                 if (category_list[j] === transactions[i].purchase_type) {
                                     transaction_datum[category_list[j]] = num_amount;
                                 }
@@ -357,12 +365,14 @@ function create_transaction_plot(t_indicator, plot_style) {
                                 }
                             }
                         }
+
+                        console.log("current datum: ", transaction_datum);
                     }
                 }
 
                 else {
 
-                    console.log("----> finished date, pushing to stack: ", datum);
+//                    console.log("----> finished date, pushing to stack: ", datum);
 
                     do  {
                         running_balance = datum.balance;
@@ -381,6 +391,24 @@ function create_transaction_plot(t_indicator, plot_style) {
 
                             datum.balance -= +transactions[i].amount;
                             datum.total_transactions += 1;
+
+                            for (var j =0; j < category_list.length; j++) {
+
+                            if (transaction_datum[category_list[j]]) {
+                                transaction_datum[category_list[j]] += num_amount;
+                            }
+
+                            else {
+
+                                if (category_list[j] === transactions[i].purchase_type) {
+                                    transaction_datum[category_list[j]] = num_amount;
+                                }
+                                else {
+                                    transaction_datum[category_list[j]] = 0;
+                                }
+                            }
+                        }
+
 
                         }
 
@@ -493,7 +521,6 @@ function create_transaction_plot(t_indicator, plot_style) {
 
     }
 
-
     function draw_stacked_bar_chart() {
 
         console.log("stacked bar chart is a go!");
@@ -503,7 +530,6 @@ function create_transaction_plot(t_indicator, plot_style) {
         var color = d3.scale.category10();
 //        var parseDate = d3.time.format("%b %d").parse;
 //        transaction_data.forEach(function(d) { d.day = parseDate(d.day); });
-
 
         var labelVar = 'day'; //A
         var varNames = d3.keys(transaction_data[0])
@@ -528,11 +554,31 @@ function create_transaction_plot(t_indicator, plot_style) {
 
       console.log("prepped data", transaction_data);
 
+        var xAxis = d3.svg.axis()
+                .scale(x)
+                .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("right");
+//            .tickFormat(d3.format(".2s"));
+
       x.domain(transaction_data.map(function (d) { return d.day; })); //E
       y.domain([0, d3.max(transaction_data, function (d) { return d.total; })]);
 
 
-        var svg = d3.select(".chart").append("g");
+        var svg = d3.select(".chart").append("g")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom);
+
+      svg.append("g")
+          .attr("class", "x axis")
+          .attr("transform", "translate(0," + height + ")")
+          .call(xAxis);
+
+      svg.append("g")
+          .attr("class", "y axis")
+          .call(yAxis);
 
         var selection = svg.selectAll(".series")
             .data(transaction_data)
@@ -550,6 +596,26 @@ function create_transaction_plot(t_indicator, plot_style) {
           .attr("height", function (d) { return y(d.y0) - y(d.y1); })
           .style("fill", function (d) { return color(d.name); })
           .style("stroke", "grey");
+
+
+          var legend = svg.selectAll(".legend")
+              .data(color.domain().slice().reverse())
+            .enter().append("g")
+              .attr("class", "legend")
+              .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+          legend.append("rect")
+              .attr("x", width + 30)
+              .attr("width", 18)
+              .attr("height", 18)
+              .style("fill", color);
+
+          legend.append("text")
+              .attr("x", width + 24)
+              .attr("y", 9)
+              .attr("dy", ".35em")
+              .style("text-anchor", "end")
+              .text(function(d) { return d; });
 
 
     }
@@ -669,8 +735,6 @@ function create_transaction_plot(t_indicator, plot_style) {
     function transition_chart_type() {
         d3.selectAll(".chart").selectAll('g').remove();
     }
-
-
 
     function draw_chart() {
 
@@ -823,7 +887,7 @@ function create_transaction_plot(t_indicator, plot_style) {
     var init_width = $("svg").parent().width();
     //    var init_height = 200;
 
-    var margin = {top: 10, right: 0, bottom: 30, left: 30},
+    var margin = {top: 10, right: 30, bottom: 30, left: 30},
         width = init_width - margin.left - margin.right,
         height = init_height - margin.top - margin.bottom;
 
