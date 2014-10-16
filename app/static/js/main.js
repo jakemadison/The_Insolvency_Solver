@@ -99,13 +99,13 @@ $('#date_end').attr("value", get_todays_date());
 
 //$("#changeChartType")
 
-function switchChartType() {
+function switchChartType(type) {
 
      var event = new CustomEvent(
                     "newChartType",
                     {
                         detail: {
-                            type: "line"
+                            chart_type: type
                         },
                         bubbles: true,
                         cancelable: true

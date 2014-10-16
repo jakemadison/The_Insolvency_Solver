@@ -14,7 +14,6 @@ function daysBetween( date1, date2 ) {
 }
 
 
-
 function create_bar_plot() {
 
     var max_val = function () {
@@ -318,7 +317,7 @@ function create_transaction_plot(t_indicator, plot_style) {
 
                 for (var i = transactions.length - 1; i >= offset; i--) {
 
-                    console.log("attempting to add: ", transactions[i].timestamp, transactions[i].purchase_type);
+//                    console.log("attempting to add: ", transactions[i].timestamp, transactions[i].purchase_type);
 
 //                    var transaction_datum = {'day': transactions[i].timestamp,
 //                                             trasactions[i].purchase_type: transactions[i].amount};
@@ -332,10 +331,10 @@ function create_transaction_plot(t_indicator, plot_style) {
                 var mdy = transactions[i].timestamp.split('/');
                 var transaction_date = new Date(mdy[2], mdy[1]-1, mdy[0]);
 
-                console.log('testing date counter ', date_counter.toDateString(), 'against date transaction',
-                    transaction_date, transaction_date.toDateString()===date_counter.toDateString());
+//                console.log('testing date counter ', date_counter.toDateString(), 'against date transaction',
+//                    transaction_date, transaction_date.toDateString()===date_counter.toDateString());
 
-
+                console.log("attempting to add: ", transactions[i].timestamp, transactions[i].purchase_type, transactions[i].amount);
 
                 if (transaction_date.toDateString() === date_counter.toDateString()) { //apply this transaction to our date record.
 
@@ -347,16 +346,19 @@ function create_transaction_plot(t_indicator, plot_style) {
                         datum.total_transactions += 1;
 //                        console.log("same day, subtracting amount.  new balance: ", datum, num_amount);
 
-                        console.log("attempting to add: ", transactions[i].timestamp, transactions[i].purchase_type);
-
                         for (var j =0; j < category_list.length; j++) {
 
                             if (transaction_datum[category_list[j]]) {
-                                transaction_datum[category_list[j]] += num_amount;
+
+                                if (category_list[j] === transactions[i].purchase_type) {
+
+                                    console.log("hit");
+                                    transaction_datum[category_list[j]] += num_amount;
+                                }
+
                             }
 
                             else {
-
                                 if (category_list[j] === transactions[i].purchase_type) {
                                     transaction_datum[category_list[j]] = num_amount;
                                 }
@@ -389,26 +391,32 @@ function create_transaction_plot(t_indicator, plot_style) {
                         if (transaction_date.toDateString() === date_counter.toDateString() &&
                             (f.length === 0 || f.indexOf(transactions[i].purchase_type) > - 1)) {
 
+                            console.log("creating a new date record now.");
+
+                            var num_amount_new = +transactions[i].amount;
+
                             datum.balance -= +transactions[i].amount;
                             datum.total_transactions += 1;
 
-                            for (var j =0; j < category_list.length; j++) {
+                            for (j = 0; j < category_list.length; j++) {
 
-                            if (transaction_datum[category_list[j]]) {
-                                transaction_datum[category_list[j]] += num_amount;
-                            }
-
-                            else {
-
-                                if (category_list[j] === transactions[i].purchase_type) {
-                                    transaction_datum[category_list[j]] = num_amount;
+                                if (transaction_datum[category_list[j]]) {
+                                    if (category_list[j] === transactions[i].purchase_type) {
+                                        transaction_datum[category_list[j]] += num_amount_new;
+                                    }
                                 }
+
                                 else {
-                                    transaction_datum[category_list[j]] = 0;
+                                    if (category_list[j] === transactions[i].purchase_type) {
+                                        transaction_datum[category_list[j]] = num_amount_new;
+                                    }
+                                    else {
+                                        transaction_datum[category_list[j]] = 0;
+                                    }
                                 }
                             }
-                        }
 
+                            console.log("current datum for the new day: ", transaction_datum);
 
                         }
 
@@ -528,6 +536,10 @@ function create_transaction_plot(t_indicator, plot_style) {
         console.log(transaction_data);
 
         var color = d3.scale.category10();
+//
+//        var color = d3.scale.ordinal()
+//            .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
+
 //        var parseDate = d3.time.format("%b %d").parse;
 //        transaction_data.forEach(function(d) { d.day = parseDate(d.day); });
 
@@ -554,17 +566,20 @@ function create_transaction_plot(t_indicator, plot_style) {
 
       console.log("prepped data", transaction_data);
 
-        var xAxis = d3.svg.axis()
-                .scale(x)
-                .orient("bottom");
 
-        var yAxis = d3.svg.axis()
-            .scale(y)
-            .orient("right");
 //            .tickFormat(d3.format(".2s"));
 
       x.domain(transaction_data.map(function (d) { return d.day; })); //E
       y.domain([0, d3.max(transaction_data, function (d) { return d.total; })]);
+
+
+      var xAxis = d3.svg.axis()
+                .scale(x)
+                .orient("bottom");
+
+      var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("right");
 
 
         var svg = d3.select(".chart").append("g")
@@ -956,8 +971,29 @@ function create_transaction_plot(t_indicator, plot_style) {
 
 
     document.addEventListener("newChartType", function(e) {
+
         transition_chart_type();
-        draw_stacked_bar_chart();
+
+        console.log("switching to chart type: ", e.detail.chart_type);
+
+        switch (e.detail.chart_type) {
+            case 'chart':
+                draw_chart();
+                break;
+            case 'stacked_bar':
+                draw_stacked_bar_chart();
+                break;
+            case 'line_chart':
+                draw_line_chart();
+                break;
+            case 'stacked':
+                draw_stacked_chart();
+                break;
+
+            default:
+                draw_chart();
+            }
+
     }, false);
 
 
