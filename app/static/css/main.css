@@ -53,3 +53,8 @@
 .balance_text {
     text-align: center;
 }
+
+#chart_type_btns {
+    /*width: px; *//*SET your width here*/
+    margin: 0 auto;
+}

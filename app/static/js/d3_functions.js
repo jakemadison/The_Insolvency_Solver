@@ -259,7 +259,79 @@ function create_bar_plot() {
 
 
 function create_transaction_plot(t_indicator, plot_style) {
+
     console.log("transaction plot!");
+
+    var json_data = [];  //what the server originally sent us
+    var data = [];  //data that is parsed for daily metrics calculations, includes daily amounts (-N -> N)
+    var transaction_data = [];  //data that is parsed for transactions/day (0 -> N)
+
+    //
+    //init all of our starting vars:
+    //
+
+    var init_height = 400;
+    var init_width = $("svg").parent().width();
+    //    var init_height = 200;
+
+    var margin = {top: 10, right: 30, bottom: 30, left: 30},
+        width = init_width - margin.left - margin.right,
+        height = init_height - margin.top - margin.bottom;
+
+    //create our initial chart space, append a group to it, transform to size:
+    var chart = d3.select(".chart")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    //set our x function as an ordinal scale using range
+    var x = d3.scale.ordinal()
+                .rangeRoundBands([0, width], .1);
+
+    //set our y function as a linear range between 0 and height.
+    var y = d3.scale.linear()
+            .range([height, 0]);
+
+    //create xAxis object based on our x scale
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom");
+
+    //create yAxis based on our y scale:
+    var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .tickFormat(function(d) {return '$' + d;});
+
+
+    var number_of_days = 14;
+    var current_income = 30;
+
+    function get_filter_list() {
+
+        var filter_list = [];
+        $(".filter_options").each(function() {
+            if ($(this).prop("checked")) {
+                filter_list.push($(this).val());
+            }
+        });
+        console.log("filter list: ", filter_list);
+
+        return filter_list;
+    }
+
+    //get the list of currently active filters
+    var ret_filters = get_filter_list();
+
+
+    if (t_indicator) {
+        d3.select(".y.axis").remove();
+        d3.select(".x.axis").remove();
+        clear_chart();
+    }
+
+
 
     var max_val = function () {
             return d3.max(data, function (d) {
@@ -283,8 +355,7 @@ function create_transaction_plot(t_indicator, plot_style) {
             }
 
             //quick reversal of our desc() ordered array:
-
-            var transactions = json.transactions;
+            json_data = json.transactions;
 
             var running_balance = current_income;
 
@@ -305,7 +376,6 @@ function create_transaction_plot(t_indicator, plot_style) {
 
             var transaction_datum = {'day': date_counter.toDateString().substring(4, 10)};
 
-
             console.log("balance is at: ", datum);
 
             function parse_data(f){
@@ -315,32 +385,20 @@ function create_transaction_plot(t_indicator, plot_style) {
                     category_list.push($(this).val());
                 });
 
-                for (var i = transactions.length - 1; i >= offset; i--) {
+                for (var i = json_data.length - 1; i >= offset; i--) {
 
-//                    console.log("attempting to add: ", transactions[i].timestamp, transactions[i].purchase_type);
-
-//                    var transaction_datum = {'day': transactions[i].timestamp,
-//                                             trasactions[i].purchase_type: transactions[i].amount};
-
-
-//                    transaction_data.push(transaction_datum);
-
-//                  console.log('===current date record: ', datum, 'current transaction: ', transactions[i].amount);
-                // - dd/mm/yyyy
-
-                var mdy = transactions[i].timestamp.split('/');
+                var mdy = json_data[i].timestamp.split('/');
                 var transaction_date = new Date(mdy[2], mdy[1]-1, mdy[0]);
 
-//                console.log('testing date counter ', date_counter.toDateString(), 'against date transaction',
-//                    transaction_date, transaction_date.toDateString()===date_counter.toDateString());
 
-                console.log("attempting to add: ", transactions[i].timestamp, transactions[i].purchase_type, transactions[i].amount);
+//                console.log("attempting to add: ", json_data[i].timestamp, json_data[i].purchase_type, json_data[i].amount);
 
+                //ready for spaghetti??
                 if (transaction_date.toDateString() === date_counter.toDateString()) { //apply this transaction to our date record.
 
-                    if (f.length === 0 || f.indexOf(transactions[i].purchase_type) > - 1) {  //filters?
+                    if (f.length === 0 || f.indexOf(json_data[i].purchase_type) > - 1) {  //filters?
 
-                        var num_amount = +transactions[i].amount;
+                        var num_amount = +json_data[i].amount;
 
                         datum.balance -= num_amount;
                         datum.total_transactions += 1;
@@ -350,7 +408,7 @@ function create_transaction_plot(t_indicator, plot_style) {
 
                             if (transaction_datum[category_list[j]]) {
 
-                                if (category_list[j] === transactions[i].purchase_type) {
+                                if (category_list[j] === json_data[i].purchase_type) {
 
                                     console.log("hit");
                                     transaction_datum[category_list[j]] += num_amount;
@@ -359,7 +417,7 @@ function create_transaction_plot(t_indicator, plot_style) {
                             }
 
                             else {
-                                if (category_list[j] === transactions[i].purchase_type) {
+                                if (category_list[j] === json_data[i].purchase_type) {
                                     transaction_datum[category_list[j]] = num_amount;
                                 }
                                 else {
@@ -372,9 +430,7 @@ function create_transaction_plot(t_indicator, plot_style) {
                     }
                 }
 
-                else {
-
-//                    console.log("----> finished date, pushing to stack: ", datum);
+                else { //our current transaction is a new day.  push our old record on to the stack and make a new one.
 
                     do  {
                         running_balance = datum.balance;
@@ -389,25 +445,25 @@ function create_transaction_plot(t_indicator, plot_style) {
                         transaction_datum = {'day': date_counter.toDateString().substring(4, 10)};
 
                         if (transaction_date.toDateString() === date_counter.toDateString() &&
-                            (f.length === 0 || f.indexOf(transactions[i].purchase_type) > - 1)) {
+                            (f.length === 0 || f.indexOf(json_data[i].purchase_type) > - 1)) {
 
                             console.log("creating a new date record now.");
 
-                            var num_amount_new = +transactions[i].amount;
+                            var num_amount_new = +json_data[i].amount;
 
-                            datum.balance -= +transactions[i].amount;
+                            datum.balance -= +json_data[i].amount;
                             datum.total_transactions += 1;
 
                             for (j = 0; j < category_list.length; j++) {
 
                                 if (transaction_datum[category_list[j]]) {
-                                    if (category_list[j] === transactions[i].purchase_type) {
+                                    if (category_list[j] === json_data[i].purchase_type) {
                                         transaction_datum[category_list[j]] += num_amount_new;
                                     }
                                 }
 
                                 else {
-                                    if (category_list[j] === transactions[i].purchase_type) {
+                                    if (category_list[j] === json_data[i].purchase_type) {
                                         transaction_datum[category_list[j]] = num_amount_new;
                                     }
                                     else {
@@ -436,9 +492,10 @@ function create_transaction_plot(t_indicator, plot_style) {
 
 
             parse_data(filters);
-//              parse_data(['Smokes', 'Booze','Groceries', 'Cab', 'Coffee']);
 
-
+            //this should get moved to a separate function on level up the call stack.
+            //all transitions should happen on the client side.  Always retrieve all data once and draw a chart
+            //then just alter the contents of the chart later
             if (transition === true) {
                 transition_chart();
             }
@@ -464,6 +521,33 @@ function create_transaction_plot(t_indicator, plot_style) {
         console.log("calendar is a go!");
     }
 
+
+    //starting to group common chart operations here....
+    function draw_legend(svg, color) {
+
+        var legend = svg.selectAll(".legend")
+              .data(color.domain().slice().reverse())
+            .enter().append("g")
+              .attr("class", "legend")
+              .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+          legend.append("rect")
+              .attr("x", width + 30)
+              .attr("width", 18)
+              .attr("height", 18)
+              .style("fill", color);
+
+          legend.append("text")
+              .attr("x", width + 24)
+              .attr("y", 9)
+              .attr("dy", ".35em")
+              .style("text-anchor", "end")
+              .text(function(d) { return d; });
+
+    }
+
+
+    //chart drawing functions:
     function draw_stacked_chart() {
         console.log("stack chart is a go!");
 
@@ -526,24 +610,9 @@ function create_transaction_plot(t_indicator, plot_style) {
               .style("fill", function (d) { return color(d.name); })
               .style("stroke", "grey");
 
-        var legend = svg.selectAll(".legend")
-              .data(color.domain().slice().reverse())
-            .enter().append("g")
-              .attr("class", "legend")
-              .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+        draw_legend(svg, color);
 
-          legend.append("rect")
-              .attr("x", width + 30)
-              .attr("width", 18)
-              .attr("height", 18)
-              .style("fill", color);
 
-          legend.append("text")
-              .attr("x", width + 24)
-              .attr("y", 9)
-              .attr("dy", ".35em")
-              .style("text-anchor", "end")
-              .text(function(d) { return d; });
 
 
     }
@@ -555,12 +624,6 @@ function create_transaction_plot(t_indicator, plot_style) {
         console.log(transaction_data);
 
         var color = d3.scale.category10();
-//
-//        var color = d3.scale.ordinal()
-//            .range(["#98abc5", "#8a89a6", "#7b6888", "#6b486b", "#a05d56", "#d0743c", "#ff8c00"]);
-
-//        var parseDate = d3.time.format("%b %d").parse;
-//        transaction_data.forEach(function(d) { d.day = parseDate(d.day); });
 
         var labelVar = 'day'; //A
         var varNames = d3.keys(transaction_data[0])
@@ -585,11 +648,8 @@ function create_transaction_plot(t_indicator, plot_style) {
 
       console.log("prepped data", transaction_data);
 
-
-//            .tickFormat(d3.format(".2s"));
-
       x.domain(transaction_data.map(function (d) { return d.day; })); //E
-      y.domain([0, d3.max(transaction_data, function (d) { return d.total; })]);
+      y.domain([0, d3.max(transaction_data, function (d) { return d.total; })]).nice();
 
 
       var svg = d3.select(".chart").append("g")
@@ -631,25 +691,7 @@ function create_transaction_plot(t_indicator, plot_style) {
           .style("stroke", "grey");
 
 
-          var legend = svg.selectAll(".legend")
-              .data(color.domain().slice().reverse())
-            .enter().append("g")
-              .attr("class", "legend")
-              .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-          legend.append("rect")
-              .attr("x", width + 30)
-              .attr("width", 18)
-              .attr("height", 18)
-              .style("fill", color);
-
-          legend.append("text")
-              .attr("x", width + 24)
-              .attr("y", 9)
-              .attr("dy", ".35em")
-              .style("text-anchor", "end")
-              .text(function(d) { return d; });
-
+        draw_legend(svg, color);
 
     }
 
@@ -659,9 +701,6 @@ function create_transaction_plot(t_indicator, plot_style) {
         console.log(transaction_data);
 
         var color = d3.scale.category10();
-//        var parseDate = d3.time.format("%b %d").parse;
-//        transaction_data.forEach(function(d) { d.day = parseDate(d.day); });
-
 
         var labelVar = 'day'; //A
         var varNames = d3.keys(transaction_data[0])
@@ -691,7 +730,7 @@ function create_transaction_plot(t_indicator, plot_style) {
             d3.max(seriesData, function (c) {
               return d3.max(c.values, function (d) { return d.value; });
             })
-        ]);
+        ]).nice();
 
 
         var svg = d3.select(".chart").append("g");
@@ -733,83 +772,13 @@ function create_transaction_plot(t_indicator, plot_style) {
           .style("fill", "none");
 
 
-        var legend = svg.selectAll(".legend")
-              .data(color.domain().slice().reverse())
-            .enter().append("g")
-              .attr("class", "legend")
-              .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-          legend.append("rect")
-              .attr("x", width + 30)
-              .attr("width", 18)
-              .attr("height", 18)
-              .style("fill", color);
-
-          legend.append("text")
-              .attr("x", width + 24)
-              .attr("y", 9)
-              .attr("dy", ".35em")
-              .style("text-anchor", "end")
-              .text(function(d) { return d; });
-
-
-//
-//        var trans = color.domain().map(function(name) {
-//            return {
-//                      name: name,
-//                      values: data.map(function(d) {
-//                        return {day: d.day, amount: +d[name]};
-//                      })
-//                    };
-//                  });
-//
-//        color.domain(d3.keys(transaction_data[0]).filter(function(key) { return key !== "day"; }));
-//
-//        x.domain(d3.extent(transaction_data, function(d) { return d.day; }));
-//
-//        y.domain([
-//            d3.min(trans, function(c) { return d3.min(c.values, function(v) { return v.amount; }); }),
-//            d3.max(trans, function(c) { return d3.max(c.values, function(v) { return v.amount; }); })
-//        ]);
-//
-//        var svg = d3.select(".chart").append("g");
-////            .attr("class", "main_area")
-////            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-//
-//        svg.append("g")
-//              .attr("class", "x axis")
-//              .attr("transform", "translate(0," + height + ")")
-//              .call(xAxis);
-//
-//        svg.append("g")
-//              .attr("class", "y axis")
-//              .call(yAxis);
-//
-//        var tran = svg.selectAll(".tran")
-//            .data(transaction_data)
-//            .enter().append("g")
-//            .attr("class", "tran")
-//            .append("path")
-//            .attr("class", "line");
-//
-//        tran.selectAll(".line")
-//            .attr("d", function(d) {
-////                return line(d.amount);
-//                return "test;"
-//            });
-
-//        var p = svg.append("path")
-//              .datum(data)
-//              .attr("class", "line")
-//              .attr("d", line);
+        draw_legend(svg, color);
 
 
     }
 
-    function transition_chart_type() {
-        d3.selectAll(".chart").selectAll('g').remove();
-    }
 
+    //draw our basic chart:
     function draw_chart() {
 
         //apply our data domain to our x scale:
@@ -820,7 +789,7 @@ function create_transaction_plot(t_indicator, plot_style) {
         //apply our data domain of values to the y range:
         //in this case we want equal amts on both sides of the zero line, so
         //get our abs(max) and set each of them to that (with a but extra added on).
-        y.domain([-max_val() - 5 , max_val() + 5]);
+        y.domain([-max_val() - 5 , max_val() + 5]).nice();
 
 
         //with our original chart object, append a new group element.
@@ -913,6 +882,8 @@ function create_transaction_plot(t_indicator, plot_style) {
 
     }
 
+
+    //chart transition/clearing functions:
     function transition_chart() {
 
         x.domain(data.map(function (d) {return d.date;}));
@@ -957,77 +928,26 @@ function create_transaction_plot(t_indicator, plot_style) {
 
     }
 
-    var init_height = 250;
-    var init_width = $("svg").parent().width();
-    //    var init_height = 200;
-
-    var margin = {top: 10, right: 30, bottom: 30, left: 30},
-        width = init_width - margin.left - margin.right,
-        height = init_height - margin.top - margin.bottom;
-
-    //create our initial chart space, append a group to it, transform to size:
-    var chart = d3.select(".chart")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    //set our x function as an ordinal scale using range
-    var x = d3.scale.ordinal()
-                .rangeRoundBands([0, width], .1);
-
-    //set our y function as a linear range between 0 and height.
-    var y = d3.scale.linear()
-            .range([height, 0]);
-
-    //create xAxis object based on our x scale
-    var xAxis = d3.svg.axis()
-        .scale(x)
-        .orient("bottom");
-
-    //create yAxis based on our y scale:
-    var yAxis = d3.svg.axis()
-            .scale(y)
-            .orient("left")
-            .tickFormat(function(d) {return '$' + d;});
-
-    var data = [];
-    var transaction_data = [];
-    var number_of_days = 14;
-    var current_income = 30;
-
-    function get_filter_list() {
-
-        var filter_list = [];
-        $(".filter_options").each(function() {
-            if ($(this).prop("checked")) {
-                filter_list.push($(this).val());
-            }
-        });
-        console.log("filter list: ", filter_list);
-
-        return filter_list;
+    function transition_chart_type() {
+        d3.selectAll(".chart").selectAll('g').remove();
     }
 
 
-    var ret_filters = get_filter_list();
 
-    console.log("t indicator: ", t_indicator);
 
-    if (t_indicator) {
-        d3.select(".y.axis").remove();
-        d3.select(".x.axis").remove();
-        clear_chart();
-    }
-
+    //get our init data:
     get_parse_data(0, 0, 0, t_indicator, true, ret_filters);
 
+
+
+    //Custom event listeners for changing dates/chart types
     document.addEventListener("newDates", function(e) {
         clear_chart();
+
+        //this should be done on the client side...
         get_parse_data(e.detail.start_date, e.detail.end_date, 0, true, e.detail.end_date_current, ret_filters);
 
     }, false);
-
 
     document.addEventListener("newChartType", function(e) {
 
