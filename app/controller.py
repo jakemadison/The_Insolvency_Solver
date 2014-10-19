@@ -1,7 +1,7 @@
 from __future__ import print_function
 from app import db
 from app.models import CurrentRates, TransactionHistory, DailyHistory
-from sqlalchemy import func
+from sqlalchemy import func, cast, DATE
 from datetime import datetime
 
 
@@ -109,14 +109,30 @@ def get_recent_transactions(start=None, end=None):
     return transaction_list
 
 
+def get_sum_category_per_day():
+
+    recent_transactions = db.session.query(func.sum(TransactionHistory.amount).label('amount'),
+                                           func.DATE(TransactionHistory.timestamp).label('day'),
+                                           TransactionHistory.purchase_type)
+
+    recent_transactions = recent_transactions.group_by(func.DATE(TransactionHistory.timestamp))
+    recent_transactions = recent_transactions.order_by(TransactionHistory.timestamp.desc())
+
+    sum_transactions = []
+
+    for row in recent_transactions.all():
+        day_record = {'day': str(row.day), 'purchase_type': str(row.purchase_type), 'amount': row.amount}
+        sum_transactions.append(day_record)
+
+    return sum_transactions
+
+
 def generate_summary_on_transactions(transaction_list):
     pay_rate = 30
     start_date = transaction_list[-1]["timestamp"]
     end_date = transaction_list[0]["timestamp"]
 
     print(start_date, end_date)
-
-
 
     return transaction_list
 
@@ -188,7 +204,8 @@ if __name__ == "__main__":
     # rates = get_current_rates()
     # update_rates(rates)
     # execute_transaction(13)
-    print(get_recent_transactions())
+    print(get_sum_category_per_day())
+
 
     # transaction = TransactionHistory(10, 'Booze')
     # print(func.DATE(transaction.timestamp).execute())

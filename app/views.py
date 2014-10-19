@@ -151,6 +151,13 @@ def submit_transaction():
 
 
 #ROUTES FOR METRICS:
+@app.route('/get_transaction_summary')
+def get_transaction_summary():
+
+
+    return jsonify({'success': True})
+
+
 @app.route('/get_transaction_metrics')
 def get_transaction_metrics():
 
