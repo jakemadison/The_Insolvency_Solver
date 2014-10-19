@@ -4,6 +4,7 @@ from flask import render_template, request, jsonify, redirect, url_for
 from controller import get_current_rates, get_sum_category_per_day, update_rates, execute_transaction, get_recent_transactions, get_daily_summary, get_filtered_transactions
 from datetime import datetime, timedelta
 
+
 @app.route('/')
 @app.route('/index')
 def index():
@@ -54,12 +55,6 @@ def metrics():
 def calendar():
     rates = get_current_rates()
     return render_template('calendar.html', rates=rates)
-
-
-@app.route('/total_savings')
-def total_savings():
-    rates = get_current_rates()
-    return render_template('total_savings.html', rates=rates)
 
 
 # POST ROUTES:
@@ -153,9 +148,9 @@ def submit_transaction():
 #ROUTES FOR METRICS:
 @app.route('/get_transaction_summary')
 def get_transaction_summary():
+    """This returns a daily list of sum(amount) per category"""
 
     transaction_summary = get_sum_category_per_day()
-
     return jsonify(transaction_summary)
 
 
