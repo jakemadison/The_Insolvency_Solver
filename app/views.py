@@ -1,7 +1,7 @@
 from __future__ import print_function
 from app import app
 from flask import render_template, request, jsonify, redirect, url_for
-from controller import get_current_rates, update_rates, execute_transaction, get_recent_transactions, get_daily_summary, get_filtered_transactions
+from controller import get_current_rates, get_sum_category_per_day, update_rates, execute_transaction, get_recent_transactions, get_daily_summary, get_filtered_transactions
 from datetime import datetime, timedelta
 
 @app.route('/')
@@ -154,8 +154,9 @@ def submit_transaction():
 @app.route('/get_transaction_summary')
 def get_transaction_summary():
 
+    transaction_summary = get_sum_category_per_day()
 
-    return jsonify({'success': True})
+    return jsonify(transaction_summary)
 
 
 @app.route('/get_transaction_metrics')
