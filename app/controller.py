@@ -137,8 +137,54 @@ def generate_summary_on_transactions(transaction_list):
     return transaction_list
 
 
-def get_filtered_transactions(filter_list):
-    """get all recent transactions filtered as a date"""
+def get_filtered_summary(filter_list):
+    """recreate a daily summary with certain transactions filtered out."""
+
+    #ORM this:
+# select * from daily_history d
+# left outer join (select date(timestamp) as transaction_day, purchase_type, sum(amount)
+# from transaction_history
+# where purchase_type in ('Booze', 'Smokes')
+# group by date(timestamp), purchase_type) t on d.day = t.transaction_day order by day desc, purchase_type;
+
+    # get all transactions in filter list
+    transaction_subquery = db.session.query(func.DATE(TransactionHistory.timestamp).label('transaction_day'),
+                                            TransactionHistory.purchase_type,
+                                            func.sum(TransactionHistory.amount).label('amount'))
+
+    transaction_subquery = transaction_subquery.filter(TransactionHistory.purchase_type.in_(filter_list))
+
+    transaction_subquery = transaction_subquery.group_by(func.DATE(TransactionHistory.timestamp))
+    transaction_subquery = transaction_subquery.group_by(TransactionHistory.purchase_type).subquery()
+
+    full_query = db.session.query(DailyHistory.day, DailyHistory.credits,
+                                  transaction_subquery).outerjoin(transaction_subquery,
+                                                                  DailyHistory.day == transaction_subquery.c.transaction_day)
+
+    full_query = full_query.order_by(DailyHistory.day.desc()).order_by(transaction_subquery.c.transaction_day)
+
+    result = full_query.all()
+
+    for x in result:
+        print(x)
+
+    return 'done!'
+
+
+
+
+    recent_transactions = db.session.query(TransactionHistory)
+    recent_transactions = recent_transactions.filter(TransactionHistory.purchase_type.in_(filter_list))
+    recent_transactions = recent_transactions.order_by(TransactionHistory.timestamp.asc()).all()
+
+    for x in recent_transactions:
+        print(x.purchase_type, x.amount)
+
+
+    return 'done'
+    # build our daily summary ignoring transactions that are not in filter list
+
+
 
     recent_transactions = db.session.query(TransactionHistory)
     recent_transactions = recent_transactions.filter(TransactionHistory.purchase_type.in_(filter_list))
@@ -204,7 +250,7 @@ if __name__ == "__main__":
     # rates = get_current_rates()
     # update_rates(rates)
     # execute_transaction(13)
-    print(get_sum_category_per_day())
+    print(get_filtered_summary(['Booze', 'Smokes']))
 
 
     # transaction = TransactionHistory(10, 'Booze')

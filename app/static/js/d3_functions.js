@@ -974,38 +974,48 @@ function create_transaction_plot(t_indicator, plot_style) {
     }, false);
 
 
-
-    document.addEventListener("testEvent", function(e) {
+    document.addEventListener("newData", function(e) {
 
         console.log("i have received our new test event.");
         console.log("here's global data: ", global_data);
+        console.log("some details of event: ", e);
 
     }, false);
 
 }
 
-var global_data = [];
+var global_data;
 
-
-function load_data() {
+function load_data(filters) {
     console.log("loading data now");
 
-    global_data.push('some data');
-    console.log("global before event: ", global_data);
+    var url_full = 'get_spending_data'
+               + '?' + 'filters=' + filters;
 
 
-    var event = new CustomEvent(
-        "testEvent",
-        {
-            detail: {
-                some_data: "some more data!"
-            },
-            bubbles: true,
-            cancelable: true
-        }
-    );
+        d3.json(url_full, function (error, json) {
 
-    document.dispatchEvent(event);
+            console.log("retrieving data from server");
+
+            console.log("i received: ", json);
+
+            global_data = json;
+
+            var event = new CustomEvent(
+                "newData",
+                {
+                    detail: {
+                        transition_chart: false,
+                        change_chart_type: false
+                    },
+                    bubbles: true,
+                    cancelable: true
+                }
+            );
+
+            document.dispatchEvent(event);
+
+        });
 
 }
 

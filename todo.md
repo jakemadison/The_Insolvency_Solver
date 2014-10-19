@@ -62,6 +62,20 @@ Page Loading Plan:
 - any time someone hits an input box or whatever, fire that event again.
 
 
+=======
+I have two types of data arrays that I need for charts:
+- 1) daily balance amount.  this takes daily income into account and graphs out based on filters what that balance is.
+- 2) transaction summary. this does not take daily income into account.  it's just a measure of raw spending.
+
+both of these should be delivered in the same call, with filters attached, for all dates.
+it will set them as global variables and call the draw chart method.
+
+Our charts should have three separate listeners: changing chart type, changing data, and changing dates
+
+
+Charts shouldn't care about getting data, they should only listen for new data passively and then deal with it accordingly
+
+
 
 
 
