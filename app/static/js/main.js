@@ -93,8 +93,8 @@ $('.input-daterange').datepicker({
             }
         });
 
-
-$('#date_start').attr("value", '01/10/2014');
+console.log("setting start and end date");
+$('#date_start').attr("value", '05/10/2014');
 $('#date_end').attr("value", get_todays_date());
 
 //$("#changeChartType")

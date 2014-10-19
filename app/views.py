@@ -183,6 +183,8 @@ def get_transaction_metrics():
 @app.route('/get_daily_metrics')
 def get_daily_metrics():
 
+    """this is used by main metrics page, and is set to get nixed."""
+
     start_date = request.args.get('start_date', None)
     end_date = request.args.get('end_date', None)
     filters = request.args.get('filters', None)

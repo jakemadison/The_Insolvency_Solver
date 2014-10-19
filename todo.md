@@ -46,3 +46,39 @@ or going to the bar or a show or date or whatever.
 ===
 be able to filter out transaction types: eg, this is what your week would have looked like if you
 didn't buy booze
+
+//////
+
+-> start date and end date should be done on the client side.  all data for each call should be passed from the
+server.
+-> filters though should be done server side since there's a bunch of re-calculating that needs to get done.
+
+
+::::
+Page Loading Plan:
+- flask renders the page with rates
+- some ajax calls go and grab data, during this time, input boxes are inactive/unavailable
+- ajax calls return and fire a new "draw chart" event
+- any time someone hits an input box or whatever, fire that event again.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -16,6 +16,8 @@
 
 function create_bar_plot() {
 
+    console.log("create bar plot is on!");
+
     var max_val = function () {
             return d3.max(data, function (d) {
                 return Math.abs(d.value);
@@ -51,21 +53,12 @@ function create_bar_plot() {
 
             //let's pad tomorrow as an extra days here:
             //this should actually check if last day == today for padding a "tomorrow"
-            if (data.length < number_of_days+14 && pad) {
+            if (data.length < number_of_days && pad) {
                 datum = {"value": final_value + current_income,
                     "date": 'tomorrow'};
                 data.push(datum);
             }
 
-//If we want to pad lots of extra days, do it here:
-//
-//        var j = 0;
-//        while (data.length < number_of_days) {
-//            datum = {"value":.5,
-//                         "date": 'f'+j};
-//            data.push(datum);
-//            i++;
-//        }
 
             console.log('data loading is complete.');
             console.log(data);
@@ -245,7 +238,12 @@ function create_bar_plot() {
     var number_of_days = 14;
     var current_income = 30;
 
-    get_parse_data(0, 0, 0, false, true);
+    //this won't work because main.js is loaded after d3_functions:
+    var init_date = document.getElementById("date_start").value;
+
+    console.log("init date: ", init_date);
+
+    get_parse_data('05/10/2014', '19/10/2014', 0, false, true);
 
     document.addEventListener("newDates", function(e) {
         clear_chart();
@@ -376,7 +374,7 @@ function create_transaction_plot(t_indicator, plot_style) {
 
             var transaction_datum = {'day': date_counter.toDateString().substring(4, 10)};
 
-            console.log("balance is at: ", datum);
+//            console.log("balance is at: ", datum);
 
             function parse_data(f){
 
@@ -410,7 +408,7 @@ function create_transaction_plot(t_indicator, plot_style) {
 
                                 if (category_list[j] === json_data[i].purchase_type) {
 
-                                    console.log("hit");
+//                                    console.log("hit");
                                     transaction_datum[category_list[j]] += num_amount;
                                 }
 
@@ -426,7 +424,7 @@ function create_transaction_plot(t_indicator, plot_style) {
                             }
                         }
 
-                        console.log("current datum: ", transaction_datum);
+//                        console.log("current datum: ", transaction_datum);
                     }
                 }
 
@@ -447,7 +445,7 @@ function create_transaction_plot(t_indicator, plot_style) {
                         if (transaction_date.toDateString() === date_counter.toDateString() &&
                             (f.length === 0 || f.indexOf(json_data[i].purchase_type) > - 1)) {
 
-                            console.log("creating a new date record now.");
+//                            console.log("creating a new date record now.");
 
                             var num_amount_new = +json_data[i].amount;
 
@@ -472,7 +470,7 @@ function create_transaction_plot(t_indicator, plot_style) {
                                 }
                             }
 
-                            console.log("current datum for the new day: ", transaction_datum);
+//                            console.log("current datum for the new day: ", transaction_datum);
 
                         }
 
@@ -976,4 +974,39 @@ function create_transaction_plot(t_indicator, plot_style) {
     }, false);
 
 
+
+    document.addEventListener("testEvent", function(e) {
+
+        console.log("i have received our new test event.");
+        console.log("here's global data: ", global_data);
+
+    }, false);
+
 }
+
+var global_data = [];
+
+
+function load_data() {
+    console.log("loading data now");
+
+    global_data.push('some data');
+    console.log("global before event: ", global_data);
+
+
+    var event = new CustomEvent(
+        "testEvent",
+        {
+            detail: {
+                some_data: "some more data!"
+            },
+            bubbles: true,
+            cancelable: true
+        }
+    );
+
+    document.dispatchEvent(event);
+
+}
+
+
