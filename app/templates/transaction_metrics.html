@@ -27,7 +27,7 @@ Filter by purchase type:
 <form action="">
 {% for t in transaction_categories %}
 <span class="input-group-addon">
-    <input type="checkbox" id="{{ t }}" value="{{ t }}" checked="checked" onclick="create_transaction_plot(true);"
+    <input type="checkbox" id="{{ t }}" value="{{ t }}" checked="checked" onclick="load_data(true);"
            class="filter_options">{{ t }}<br>
 </span>
 {%  endfor %}

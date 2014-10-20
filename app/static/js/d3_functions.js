@@ -28,9 +28,9 @@ function get_filter_list() {
 
 var global_data;
 
-function load_data(filters) {
+function load_data(reload) {
 
-    filters = get_filter_list();
+    var filters = get_filter_list();
     console.log("loading data now");
 
     var url_full = 'get_spending_data' + '?' + 'filters=' + filters;
@@ -48,7 +48,7 @@ function load_data(filters) {
                 "newData",
                 {
                     detail: {
-                        transition_chart: false,
+                        transition_chart: reload || false,
                         change_chart_type: false
                     },
                     bubbles: true,
@@ -319,6 +319,9 @@ function create_transaction_plot(t_indicator, plot_style) {
 
     function draw_chart() {
 
+        console.log('draw_chart is active');
+        console.log('data', data);
+
         //apply our data domain to our x scale:
         x.domain(data.map(function (d) {
             return d.day;
@@ -329,6 +332,7 @@ function create_transaction_plot(t_indicator, plot_style) {
         //get our abs(max) and set each of them to that (with a but extra added on).
         y.domain([-max_val() - 5 , max_val() + 5]).nice();
 
+        chart = d3.select(".chart");
 
         //with our original chart object, append a new group element.
         //call it x axis and transform to x=0, y=height (bottom)
@@ -530,7 +534,8 @@ function create_transaction_plot(t_indicator, plot_style) {
 
         console.log(data);
 
-        var color = d3.scale.category10();
+//        var color = d3.scale.category10();
+        var color = d3.scale.category20c();
 
         var labelVar = 'day';
         var labelVar2 = 'total';
@@ -616,12 +621,12 @@ function create_transaction_plot(t_indicator, plot_style) {
         var color = d3.scale.category10();
 
         var labelVar = 'day';
-//        var labelVar2 = 'total';
+        var labelVar2 = 'mapping';
         var labelVar3 = 'balance';
 
         var varNames = d3.keys(data[0])
                     .filter(function (key) {
-                return (key !== labelVar && key !== labelVar3);
+                return (key !== labelVar && key !== labelVar3 && key !== labelVar2);
 
             }); //B
 
@@ -800,6 +805,18 @@ function create_transaction_plot(t_indicator, plot_style) {
 
         console.log("here's global data: ", global_data);
         console.log("some details of event: ", e);
+
+        if (e.detail.transition_chart) {
+
+//            while (data.length>0) {data.pop();}
+
+            d3.select(".y.axis").remove();
+            d3.select(".x.axis").remove();
+            clear_chart();
+
+
+        }
+
 
         data = global_data.daily_summary;
         draw_chart();
