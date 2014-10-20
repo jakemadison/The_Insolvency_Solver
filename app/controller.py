@@ -140,7 +140,7 @@ def generate_summary_on_transactions(transaction_list):
 def get_filtered_summary(filter_list):
     """recreate a daily summary with certain transactions filtered out."""
 
-    #ORM this:
+    #ORMify this:
 # select * from daily_history d
 # left outer join (select date(timestamp) as transaction_day, purchase_type, sum(amount)
 # from transaction_history
@@ -164,85 +164,43 @@ def get_filtered_summary(filter_list):
 
     result = full_query.all()
 
-    #Output Data Model:
+    # The following wonky code will transpose our row-wise data into a more usable column-wise format based on filters
+        #Output Data Model:
     #datum = {day: date, cat1: amount1, cat2: amount2, total: amount1 + amount2, balance: prev_bal - total}
 
     transformed_data = []
-    prev_bal = result[0][1]
+    prev_balance = result[0][1]
 
-    print('prev bal: ', prev_bal)
-    current_date = result[0][0]
-
-    datum = {'day': result[0][0], 'balance': 0, 'total': 0}
+    datum = {'day': result[0][0], 'balance': prev_balance, 'total': 0}
     for f in filter_list:
         datum[f] = 0
 
-    print(datum)
-
     for x in result:
-        print(x)
-        datum['balance'] += x[1]
-
-        print(datum['balance'])
-
-        if x[0] == datum['day'] and x[4]:
-            datum[x[3]] = x[4]
-            datum['total'] += x[4]
-            datum['balance'] -= x[4]
-            print('now: ', datum['balance'])
-        else:
-            prev_bal = datum['balance']
-            transformed_data.append(datum)
-            datum = {'balance': prev_bal, 'total': 0, 'day': x[0]}
-            for f in filter_list:
-                datum[f] = 0
+        if x[0] == datum['day']:
             if x[4]:
                 datum[x[3]] = x[4]
                 datum['total'] += x[4]
                 datum['balance'] -= x[4]
 
+        else:
+            prev_bal = datum['balance']  # carry our prev balance forward
+            transformed_data.append(datum)  # add record to our stack and start a new one
 
+            datum = {'balance': prev_bal + x[1], 'total': 0, 'day': x[0]}  # init a new record
+            for f in filter_list:
+                datum[f] = 0
 
+            if x[4]:  # populate that record with the current data
+                datum[x[3]] = x[4]
+                datum['total'] += x[4]
+                datum['balance'] -= x[4]
 
-    for d in transformed_data:
-        print(d)
+    transformed_data.append(datum)  # add our final record
 
+    for x in transformed_data:
+        x['day'] = x['day'].strftime("%d/%m")
 
-    return 'done!'
-
-
-
-
-    recent_transactions = db.session.query(TransactionHistory)
-    recent_transactions = recent_transactions.filter(TransactionHistory.purchase_type.in_(filter_list))
-    recent_transactions = recent_transactions.order_by(TransactionHistory.timestamp.asc()).all()
-
-    for x in recent_transactions:
-        print(x.purchase_type, x.amount)
-
-
-    return 'done'
-    # build our daily summary ignoring transactions that are not in filter list
-
-
-
-    recent_transactions = db.session.query(TransactionHistory)
-    recent_transactions = recent_transactions.filter(TransactionHistory.purchase_type.in_(filter_list))
-    recent_transactions = recent_transactions.order_by(TransactionHistory.timestamp.desc()).all()
-
-    # here we need to turn transactions into a daily summary on the fly...?
-
-    transaction_list = []
-    for e in recent_transactions:
-        transaction = {"id": e.id,
-                       "timestamp": e.timestamp.strftime("%a %d"),
-                       "amount": '$'+str(e.amount)+'.00',
-                       "purchase_type": e.purchase_type}
-        transaction_list.append(transaction)
-
-    daily_summary = generate_summary_on_transactions(transaction_list)
-
-    return daily_summary
+    return transformed_data
 
 
 def get_daily_summary(start_date=None, end_date=None):
@@ -290,7 +248,7 @@ if __name__ == "__main__":
     # rates = get_current_rates()
     # update_rates(rates)
     # execute_transaction(13)
-    print(get_filtered_summary(['Booze', 'Smokes']))
+    print(get_filtered_summary(['Booze', 'Smokes', 'Cab', 'Dinning Out', 'Groceries', 'Coffee', 'Bar']))
 
 
     # transaction = TransactionHistory(10, 'Booze')

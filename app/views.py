@@ -155,7 +155,7 @@ def get_spending_data():
     filters = request.args.get('filters', '')
     filter_array = [str(x) for x in filters.split(',')]
 
-    if len(filter_array) and False:
+    if len(filter_array):
         daily_summary = get_filtered_summary(filter_array)
     else:
         daily_summary = get_daily_summary()
