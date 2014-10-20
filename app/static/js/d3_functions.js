@@ -67,6 +67,9 @@ function load_data(filters) {
 
 function create_transaction_plot(t_indicator, plot_style) {
 
+    function draw_calendar() {
+        console.log("calendar is a go!");
+    }
     console.log("transaction plot!");
 
     var json_data = [];  //what the server originally sent us
@@ -122,7 +125,6 @@ function create_transaction_plot(t_indicator, plot_style) {
         d3.select(".x.axis").remove();
         clear_chart();
     }
-
 
 
     var max_val = function () {
@@ -310,9 +312,7 @@ function create_transaction_plot(t_indicator, plot_style) {
 
     }
 
-    function draw_calendar() {
-        console.log("calendar is a go!");
-    }
+
 
 
     //starting to group common chart operations here....
@@ -455,16 +455,19 @@ function create_transaction_plot(t_indicator, plot_style) {
     function draw_stacked_chart() {
         console.log("stack chart is a go!");
 
-        console.log(transaction_data);
+        console.log(data);
 
         var color = d3.scale.category10();
-//        var parseDate = d3.time.format("%b %d").parse;
-//        transaction_data.forEach(function(d) { d.day = parseDate(d.day); });
 
+        var labelVar = 'day';
+        var labelVar2 = 'total';
+        var labelVar3 = 'balance';
 
-        var labelVar = 'day'; //A
-        var varNames = d3.keys(transaction_data[0])
-                    .filter(function (key) { return key !== labelVar;}); //B
+        var varNames = d3.keys(data[0])
+                    .filter(function (key) {
+                return (key !== labelVar && key !== labelVar2 && key !== labelVar3);
+
+            }); //B
 
         color.domain(varNames);
 
@@ -474,13 +477,13 @@ function create_transaction_plot(t_indicator, plot_style) {
             seriesArr.push(series2[name]);
           });
 
-          transaction_data.forEach(function (d) { //D
+          data.forEach(function (d) { //D
             varNames.map(function (name) {
               series2[name].values.push({label: d[labelVar], value: +d[name] || 0});
             });
           });
 
-          x.domain(transaction_data.map(function (d) { return d.day; })); //E
+          x.domain(data.map(function (d) { return d.day; })); //E
 
         var stack = d3.layout.stack()
             .offset("wiggle")
@@ -525,17 +528,23 @@ function create_transaction_plot(t_indicator, plot_style) {
 
         console.log("stacked bar chart is a go!");
 
-        console.log(transaction_data);
+        console.log(data);
 
         var color = d3.scale.category10();
 
-        var labelVar = 'day'; //A
-        var varNames = d3.keys(transaction_data[0])
-                    .filter(function (key) { return key !== labelVar;}); //B
+        var labelVar = 'day';
+        var labelVar2 = 'total';
+        var labelVar3 = 'balance';
+
+        var varNames = d3.keys(data[0])
+                    .filter(function (key) {
+                return (key !== labelVar && key !== labelVar2 && key !== labelVar3);
+
+            }); //B
 
         color.domain(varNames);
 
-        transaction_data.forEach(function (d) { //D
+        data.forEach(function (d) { //D
         var y0 = 0;
         d.mapping = varNames.map(function (name) {
             var temp_val = +d[name] || 0;
@@ -550,10 +559,10 @@ function create_transaction_plot(t_indicator, plot_style) {
         d.total = d.mapping[d.mapping.length - 1].y1;
       });
 
-      console.log("prepped data", transaction_data);
+      console.log("prepped data", data);
 
-      x.domain(transaction_data.map(function (d) { return d.day; })); //E
-      y.domain([0, d3.max(transaction_data, function (d) { return d.total; })]).nice();
+      x.domain(data.map(function (d) { return d.day; })); //E
+      y.domain([0, d3.max(data, function (d) { return d.total; })]).nice();
 
 
       var svg = d3.select(".chart").append("g")
@@ -578,7 +587,7 @@ function create_transaction_plot(t_indicator, plot_style) {
           .call(yAxis);
 
         var selection = svg.selectAll(".series")
-            .data(transaction_data)
+            .data(data)
           .enter().append("g")
             .attr("class", "series")
             .attr("transform", function (d) {
@@ -602,20 +611,26 @@ function create_transaction_plot(t_indicator, plot_style) {
     function draw_line_chart() {
         console.log("line chart is a go!");
 
-        console.log(transaction_data);
+        console.log(data);
 
         var color = d3.scale.category10();
 
-        var labelVar = 'day'; //A
-        var varNames = d3.keys(transaction_data[0])
-                    .filter(function (key) { return key !== labelVar;}); //B
+        var labelVar = 'day';
+//        var labelVar2 = 'total';
+        var labelVar3 = 'balance';
+
+        var varNames = d3.keys(data[0])
+                    .filter(function (key) {
+                return (key !== labelVar && key !== labelVar3);
+
+            }); //B
 
         color.domain(varNames);
 
         var seriesData = varNames.map(function (name) { //D
             return {
               name: name,
-              values: transaction_data.map(function (d) {
+              values: data.map(function (d) {
                 return {name: name, label: d[labelVar], value: +d[name] || 0};
               })
             };
@@ -623,9 +638,7 @@ function create_transaction_plot(t_indicator, plot_style) {
 
         console.log("seriesData", seriesData);
 
-
         x.domain(data.map(function (d) { return d.day; })); //E
-
 
         y.domain([
             d3.min(seriesData, function (c) {
@@ -742,6 +755,10 @@ function create_transaction_plot(t_indicator, plot_style) {
 //    get_parse_data(0, 0, 0, t_indicator, true, ret_filters);
 
 
+    function change_date_range_of_data(start, end) {
+
+    }
+
 
     //Custom event listeners for changing dates/chart types
     document.addEventListener("newDates", function(e) {
@@ -781,7 +798,6 @@ function create_transaction_plot(t_indicator, plot_style) {
 
     document.addEventListener("newData", function(e) {
 
-        console.log("i have received our new test event.");
         console.log("here's global data: ", global_data);
         console.log("some details of event: ", e);
 
