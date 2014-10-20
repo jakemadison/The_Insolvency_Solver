@@ -157,16 +157,56 @@ def get_filtered_summary(filter_list):
     transaction_subquery = transaction_subquery.group_by(func.DATE(TransactionHistory.timestamp))
     transaction_subquery = transaction_subquery.group_by(TransactionHistory.purchase_type).subquery()
 
-    full_query = db.session.query(DailyHistory.day, DailyHistory.credits,
-                                  transaction_subquery).outerjoin(transaction_subquery,
-                                                                  DailyHistory.day == transaction_subquery.c.transaction_day)
+    full_query = db.session.query(DailyHistory.day, DailyHistory.credits, transaction_subquery)
+    full_query = full_query.outerjoin(transaction_subquery, DailyHistory.day == transaction_subquery.c.transaction_day)
 
-    full_query = full_query.order_by(DailyHistory.day.desc()).order_by(transaction_subquery.c.transaction_day)
+    full_query = full_query.order_by(DailyHistory.day).order_by(transaction_subquery.c.transaction_day)
 
     result = full_query.all()
 
+    #Output Data Model:
+    #datum = {day: date, cat1: amount1, cat2: amount2, total: amount1 + amount2, balance: prev_bal - total}
+
+    transformed_data = []
+    prev_bal = result[0][1]
+
+    print('prev bal: ', prev_bal)
+    current_date = result[0][0]
+
+    datum = {'day': result[0][0], 'balance': 0, 'total': 0}
+    for f in filter_list:
+        datum[f] = 0
+
+    print(datum)
+
     for x in result:
         print(x)
+        datum['balance'] += x[1]
+
+        print(datum['balance'])
+
+        if x[0] == datum['day'] and x[4]:
+            datum[x[3]] = x[4]
+            datum['total'] += x[4]
+            datum['balance'] -= x[4]
+            print('now: ', datum['balance'])
+        else:
+            prev_bal = datum['balance']
+            transformed_data.append(datum)
+            datum = {'balance': prev_bal, 'total': 0, 'day': x[0]}
+            for f in filter_list:
+                datum[f] = 0
+            if x[4]:
+                datum[x[3]] = x[4]
+                datum['total'] += x[4]
+                datum['balance'] -= x[4]
+
+
+
+
+    for d in transformed_data:
+        print(d)
+
 
     return 'done!'
 
