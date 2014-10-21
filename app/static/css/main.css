@@ -58,3 +58,7 @@
     /*width: px; *//*SET your width here*/
     margin: 0 auto;
 }
+
+.sidebar {
+    max-width: 250px;
+}

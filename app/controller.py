@@ -213,8 +213,8 @@ def get_daily_summary(start_date=None, end_date=None):
 
     daily_summary = daily_summary.order_by(DailyHistory.day.desc()).all()
 
-    for e in daily_summary:
-        print(e)
+    # for e in daily_summary:
+    #     print(e)
 
     daily_list = []
     for d in daily_summary:
