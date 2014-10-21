@@ -73,6 +73,6 @@
 
 .line {
   fill: none;
-  stroke: steelblue;
+  /*stroke: steelblue;*/
   stroke-width: 1.5px;
 }

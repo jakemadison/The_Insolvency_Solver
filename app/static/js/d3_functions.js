@@ -64,7 +64,6 @@ function load_data(reload) {
 }
 
 
-
 function create_transaction_plot(t_indicator, plot_style) {
 
     function draw_calendar() {
@@ -82,12 +81,14 @@ function create_transaction_plot(t_indicator, plot_style) {
     var init_height = 400;
     var init_width = $("svg").parent().width();
 
-    var margin = {top: 10, right: 30, bottom: 30, left: 30},
+    var margin = {top: 30, right: 30, bottom: 30, left: 30},
         width = init_width - margin.left - margin.right,
         height = init_height - margin.top - margin.bottom;
 
     //create our initial chart space, append a group to it, transform to size:
     var chart = d3.select(".chart")
+//        .attr("width", width + margin.left + margin.right)
+//        .attr("height", height + margin.top + margin.bottom)
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
@@ -130,6 +131,9 @@ function create_transaction_plot(t_indicator, plot_style) {
     var max_val = function () {
             return d3.max(data, function (d) {
                 return Math.abs(d.balance);
+//
+//                return d.balance;
+
             });
         };
 
@@ -311,7 +315,6 @@ function create_transaction_plot(t_indicator, plot_style) {
 
 
     }
-
 
 
 
@@ -699,8 +702,40 @@ function create_transaction_plot(t_indicator, plot_style) {
 
     }
 
+    function draw_pie_chart() {
+        console.log('draw pie chart is a go!!');
 
-    //draw our basic chart:
+    }
+
+    function draw_bal_v_spend() {
+        console.log('draw bal v spend is a go!');
+
+        draw_chart();
+        var y2 = d3.scale.linear()
+                .range([height, 0]);
+
+        y2.domain = ([0, d3.max(data, function(d) { return d.total; })]);
+
+        var line = d3.svg.line()
+            .x(function(d, i) {
+                return x(d.day);
+            })
+            .y(function(d, i) {
+               return y(d.total);
+            });
+
+        var svg = d3.select(".chart").append("g");
+
+        svg.append("path")
+            .datum(data)
+            .attr("class", "line")
+            .attr("d", line)
+            .attr("stroke", "orange");
+
+        console.log('done!');
+
+    }
+
 
 
 
@@ -756,11 +791,11 @@ function create_transaction_plot(t_indicator, plot_style) {
 
 
 
-    //get our init data:
 //    get_parse_data(0, 0, 0, t_indicator, true, ret_filters);
 
 
     function change_date_range_of_data(start, end) {
+
         //default behaviour should be to chop off most recent two-week period:
         data = global_data.daily_summary.slice(-14);
 
@@ -798,6 +833,13 @@ function create_transaction_plot(t_indicator, plot_style) {
             case 'stacked':
                 draw_stacked_chart();
                 break;
+            case 'pie':
+                draw_pie_chart();
+                break;
+            case 'balvspend':
+                draw_bal_v_spend();
+                break;
+
 
             default:
                 draw_chart();
