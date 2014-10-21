@@ -761,6 +761,8 @@ function create_transaction_plot(t_indicator, plot_style) {
 
 
     function change_date_range_of_data(start, end) {
+        //default behaviour should be to chop off most recent two-week period:
+        data = global_data.daily_summary.slice(-14);
 
     }
 
@@ -770,7 +772,10 @@ function create_transaction_plot(t_indicator, plot_style) {
         clear_chart();
 
         //this should be done on the client side...
-        get_parse_data(e.detail.start_date, e.detail.end_date, 0, true, e.detail.end_date_current, ret_filters);
+//        get_parse_data(e.detail.start_date, e.detail.end_date, 0, true, e.detail.end_date_current, ret_filters);
+
+        change_date_range_of_data(e.detail.start_date, e.detail.end_date);
+        draw_chart();
 
     }, false);
 
@@ -819,6 +824,8 @@ function create_transaction_plot(t_indicator, plot_style) {
 
 
         data = global_data.daily_summary;
+        change_date_range_of_data();
+
         draw_chart();
 
     }, false);
