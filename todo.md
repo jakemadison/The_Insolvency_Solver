@@ -84,6 +84,9 @@ Plus it would be nice to push a prod version and not have my entire DB fucked wi
 Is it possible to have them sync'd?
 
 
+Is "metrics" page useful for anything anymore? we now have a daily summary in "transactions metrics" 
+This whole thing could be simplified by taking that out...
+
 
 
 

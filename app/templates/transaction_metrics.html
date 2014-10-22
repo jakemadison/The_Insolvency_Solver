@@ -29,10 +29,15 @@ without spending money on those items:</span>
 {% for t in transaction_categories %}
 <span class="input-group-addon">
     <input type="checkbox" id="{{ t }}" value="{{ t }}" checked="checked" onclick="load_data(true);"
-           class="filter_options">{{ t }}<br>
+           class="filter_options">{{ t }}
 </span>
 {%  endfor %}
-
+<div>
+<span class="input-group-addon">
+    <input type="checkbox" id="income_toggle" value="Toggle Income Line" onclick="switchChartType('toggle_income');"
+           class="chart_settings">Toggle Income Line
+</span>
+</div>
 </form>
 {#</div>#}
 <div class="btn-group" id="chart_type_btns">

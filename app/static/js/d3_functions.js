@@ -739,6 +739,18 @@ function create_transaction_plot(t_indicator, plot_style) {
     }
 
 
+    function toggle_income_line() {
+        console.log("toggling income line now...");
+
+        var svg = d3.select(".chart").append("g");
+        svg.append("path")
+            .attr("class", "line")
+            .style("stroke-dasharray", ("3, 3"))
+            .attr("d", function(d, i) {
+                return 30;
+            });
+
+    }
 
 
     //chart transition/clearing functions:
@@ -817,6 +829,13 @@ function create_transaction_plot(t_indicator, plot_style) {
     }, false);
 
     document.addEventListener("newChartType", function(e) {
+
+        if (e.detail.chart_type == 'toggle_income') {
+            toggle_income_line();
+            return;
+        }
+
+
 
         transition_chart_type();
 
