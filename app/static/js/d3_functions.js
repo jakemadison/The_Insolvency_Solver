@@ -334,6 +334,8 @@ function create_transaction_plot(t_indicator, plot_style) {
         //in this case we want equal amts on both sides of the zero line, so
         //get our abs(max) and set each of them to that (with a but extra added on).
         y.domain([-max_val() - 5 , max_val() + 5]).nice();
+//
+//        y.domain([d3.min(data, function(d) {return d.balance;}) - 5 , d3.max(data, function(d){return d.balance;})+5]).nice();
 
         chart = d3.select(".chart");
 

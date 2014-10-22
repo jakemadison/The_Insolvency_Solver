@@ -1,12 +1,21 @@
 $(function(){
     //Array of images
-    var imageArray = ["fry_sm.png", "poor_zoidberg.png", "rich_bender"];
+    var imageArray = ["fry_sm.png", "poor_zoidberg.png", "rich_bender.jpg", "fry_sm.png"];
+
+    //the problem with this solution is that the final element of the array is almost never selected
+    //so we add an extra doubled value there, just in case it does get picked, but keeping our
+    //other elements in the mix.
     var randomNumber = Math.floor((imageArray.length-1)*Math.random());
 
     //display image:
     $('#pic').prop('src', '../static/assets/'+imageArray[randomNumber]);
 
     //eventually, let's have more pics and two arrays and if bal >= 0, richArray, else poorArray
+//    for (var i = 0; i < 100; i++) {
+//        console.log(Math.floor((imageArray.length-1)*Math.random()));
+//    }
+
+
 
 });
 
