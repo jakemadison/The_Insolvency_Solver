@@ -811,7 +811,8 @@ function create_transaction_plot(t_indicator, plot_style) {
     function change_date_range_of_data(start, end) {
 
         //default behaviour should be to chop off most recent two-week period:
-        data = global_data.daily_summary.slice(-14);
+        data = global_data.daily_summary.slice(-15);
+        console.log("sliced data: ", data);
 
     }
 
@@ -881,10 +882,7 @@ function create_transaction_plot(t_indicator, plot_style) {
             d3.select(".y.axis").remove();
             d3.select(".x.axis").remove();
             clear_chart();
-
-
         }
-
 
         data = global_data.daily_summary;
         change_date_range_of_data();

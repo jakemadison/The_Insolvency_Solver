@@ -1,6 +1,7 @@
 $(function(){
     //Array of images
-    var imageArray = ["fry_sm.png", "poor_zoidberg.png", "rich_bender.jpg", "fry_sm.png"];
+    var imageArray = ["fry_sm.png", "poor_zoidberg.png", "rich_bender.jpg",
+        "rich_zoidberg.jpg", "nixon_money.jpg", "fry_sm.png"];
 
     //the problem with this solution is that the final element of the array is almost never selected
     //so we add an extra doubled value there, just in case it does get picked, but keeping our
@@ -39,19 +40,24 @@ var submit_transaction = function() {
 
 };
 
-var get_todays_date = function() {
-  var today = new Date();
-  var dd = today.getDate();
-  var mm = today.getMonth() + 1;
-  var yyyy = today.getFullYear();
+function get_todays_date(delta_days) {
+
+    var day = new Date();
+
+    if (delta_days !== undefined) {
+        day.setDate(day.getDate() + delta_days);
+    }
+
+
+  var dd = day.getDate();
+  var mm = day.getMonth() + 1;
+  var yyyy = day.getFullYear();
 
   var date_final = dd+'/'+mm+'/'+yyyy;
 
-  console.log(date_final);
-
   return date_final;
 
-};
+}
 
 //incorrect format... moment.js? or is that overkill?
 //document.getElementById("transaction_date").value = get_todays_date();
@@ -117,7 +123,8 @@ $('.input-daterange').datepicker({
         });
 
 console.log("setting start and end date");
-$('#date_start').attr("value", '05/10/2014');
+//$('#date_start').attr("value", '05/10/2014');
+$('#date_start').attr("value", get_todays_date(-14));
 $('#date_end').attr("value", get_todays_date());
 
 //$("#changeChartType")
