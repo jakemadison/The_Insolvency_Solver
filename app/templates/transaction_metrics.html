@@ -2,7 +2,7 @@
 {% block content %}
 
 
-<div>Daily Summary: </div>
+<div><legend>Transaction Visualizations: </legend></div>
 <div class="well well-sm"><svg class="chart"></svg>
 
 {#Custom Date Range:#}
@@ -21,8 +21,9 @@
 {#    <div class="col-lg-8 well well-sm">#}
 {#        <svg class="transaction_chart"></svg>#}
 {#    </div>#}
-<hr>
-Filter by purchase type:
+{#<hr>#}
+<span class="help-block">Use the following check boxes to filter by purchase type, and see what your balance would look like
+without spending money on those items:</span>
 {#<div class="input-group">#}
 <form action="">
 {% for t in transaction_categories %}
@@ -35,6 +36,8 @@ Filter by purchase type:
 </form>
 {#</div>#}
 <div class="btn-group" id="chart_type_btns">
+
+    <span class="help-block">Change the type of chart displayed</span>
 <button type="button" class="btn btn-default" id="changeChartType" onclick="switchChartType('stacked_bar');">Stacked Bar</button>
 <button type="button" class="btn btn-default" id="changeChartType" onclick="switchChartType('line_chart');">Line Chart</button>
 <button type="button" class="btn btn-default" id="changeChartType" onclick="switchChartType('stacked');">Stacked</button>

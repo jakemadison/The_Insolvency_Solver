@@ -77,7 +77,11 @@ Charts shouldn't care about getting data, they should only listen for new data p
 
 
 
-
+====
+Sooner or later I need to incorporate a user model.  At least to remember the info text being closed, since that's
+annoying that it keeps popping up every refresh.  Probably better to do that sooner rather than later... erp.
+Plus it would be nice to push a prod version and not have my entire DB fucked with.
+Is it possible to have them sync'd?
 
 
 
