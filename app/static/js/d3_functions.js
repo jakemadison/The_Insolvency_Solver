@@ -72,7 +72,8 @@ function create_transaction_plot(t_indicator, plot_style) {
     console.log("transaction plot!");
 
     var json_data = [];  //what the server originally sent us
-    var data = [];  //data that is parsed for daily metrics calculations, includes daily amounts (-N -> N)
+    var data = [];  //data that is parsed for
+    // daily metrics calculations, includes daily amounts (-N -> N)
     var transaction_data = [];  //data that is parsed for transactions/day (0 -> N)
 
     //
@@ -81,17 +82,17 @@ function create_transaction_plot(t_indicator, plot_style) {
     var init_height = 400;
     var init_width = $("svg").parent().width();
 
-    var margin = {top: 30, right: 30, bottom: 30, left: 30},
+    var margin = {top: 10, right: 10, bottom: 30, left: 30},
         width = init_width - margin.left - margin.right,
         height = init_height - margin.top - margin.bottom;
 
     //create our initial chart space, append a group to it, transform to size:
     var chart = d3.select(".chart")
-//        .attr("width", width + margin.left + margin.right)
-//        .attr("height", height + margin.top + margin.bottom)
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-        .append("g")
+//        .attr("width", width)
+//        .attr("height", height)
+        .append("g").attr("class", "chart_area")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     //set our x function as an ordinal scale using range
@@ -337,7 +338,7 @@ function create_transaction_plot(t_indicator, plot_style) {
 //
 //        y.domain([d3.min(data, function(d) {return d.balance;}) - 5 , d3.max(data, function(d){return d.balance;})+5]).nice();
 
-        chart = d3.select(".chart");
+        chart = d3.select(".chart_area");
 
         //with our original chart object, append a new group element.
         //call it x axis and transform to x=0, y=height (bottom)
@@ -446,13 +447,13 @@ function create_transaction_plot(t_indicator, plot_style) {
           .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
 
       legend.append("rect")
-          .attr("x", width + 30)
+          .attr("x", width-4)
           .attr("width", 18)
           .attr("height", 18)
           .style("fill", color);
 
       legend.append("text")
-          .attr("x", width + 24)
+          .attr("x", width-6)
           .attr("y", 9)
           .attr("dy", ".35em")
           .style("text-anchor", "end")
@@ -461,77 +462,6 @@ function create_transaction_plot(t_indicator, plot_style) {
 }
 
     //each:
-    function draw_stacked_chart() {
-        console.log("stack chart is a go!");
-
-        console.log(data);
-
-        var color = d3.scale.category10();
-
-        var labelVar = 'day';
-        var labelVar2 = 'total';
-        var labelVar3 = 'balance';
-
-        var varNames = d3.keys(data[0])
-                    .filter(function (key) {
-                return (key !== labelVar && key !== labelVar2 && key !== labelVar3);
-
-            }); //B
-
-        color.domain(varNames);
-
-        var seriesArr = [], series2 = {}; //C
-          varNames.forEach(function (name) {
-            series2[name] = {name: name, values:[]};
-            seriesArr.push(series2[name]);
-          });
-
-          data.forEach(function (d) { //D
-            varNames.map(function (name) {
-              series2[name].values.push({label: d[labelVar], value: +d[name] || 0});
-            });
-          });
-
-          x.domain(data.map(function (d) { return d.day; })); //E
-
-        var stack = d3.layout.stack()
-            .offset("wiggle")
-            .values(function (d) { return d.values; })
-            .x(function (d) { return x(d.label) + x.rangeBand() / 2; })
-            .y(function (d) { return d.value; });
-
-          stack(seriesArr); // F
-          console.log("stacked seriesArr", seriesArr);
-
-          y.domain([0, d3.max(seriesArr, function (c) {
-              return d3.max(c.values, function (d) { return d.y0 + d.y; });
-            })]);
-
-        var area = d3.svg.area()
-            .interpolate("cardinal")
-            .x(function (d) { return x(d.label) + x.rangeBand() / 2; })
-            .y0(function (d) { return y(d.y0); })
-            .y1(function (d) { return y(d.y0 + d.y); });
-
-        var svg = d3.select(".chart").append("g");
-
-        var selection = svg.selectAll(".series")
-              .data(seriesArr)
-              .enter().append("g")
-                .attr("class", "series");
-
-            selection.append("path")
-              .attr("class", "streamPath")
-              .attr("d", function (d) { return area(d.values); })
-              .style("fill", function (d) { return color(d.name); })
-              .style("stroke", "grey");
-
-        draw_legend(svg, color);
-
-
-
-
-    }
 
     function draw_stacked_bar_chart() {
 
@@ -545,10 +475,12 @@ function create_transaction_plot(t_indicator, plot_style) {
         var labelVar = 'day';
         var labelVar2 = 'total';
         var labelVar3 = 'balance';
+        var labelVar4 = 'mapping';
 
         var varNames = d3.keys(data[0])
                     .filter(function (key) {
-                return (key !== labelVar && key !== labelVar2 && key !== labelVar3);
+                return (key !== labelVar && key !== labelVar2
+                    && key !== labelVar3 && key !== labelVar4);
 
             }); //B
 
@@ -575,7 +507,7 @@ function create_transaction_plot(t_indicator, plot_style) {
       y.domain([0, d3.max(data, function (d) { return d.total; })]).nice();
 
 
-      var svg = d3.select(".chart").append("g")
+      var svg = d3.select(".chart_area").append("g")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom);
 
@@ -585,7 +517,7 @@ function create_transaction_plot(t_indicator, plot_style) {
 
       var yAxis = d3.svg.axis()
             .scale(y)
-            .orient("right");
+            .orient("left");
 
       svg.append("g")
           .attr("class", "x axis")
@@ -660,7 +592,7 @@ function create_transaction_plot(t_indicator, plot_style) {
         ]).nice();
 
 
-        var svg = d3.select(".chart").append("g");
+        var svg = d3.select(".chart_area").append("g");
 
 
         var xAxis = d3.svg.axis()
@@ -669,7 +601,7 @@ function create_transaction_plot(t_indicator, plot_style) {
 
       var yAxis = d3.svg.axis()
             .scale(y)
-            .orient("right");
+            .orient("left");
 
       svg.append("g")
           .attr("class", "x axis")
@@ -704,6 +636,79 @@ function create_transaction_plot(t_indicator, plot_style) {
 
     }
 
+    function draw_stacked_chart() {
+        console.log("stack chart is a go!");
+
+        console.log(data);
+
+        var color = d3.scale.category10();
+
+        var labelVar = 'day';
+        var labelVar2 = 'total';
+        var labelVar3 = 'balance';
+
+        var varNames = d3.keys(data[0])
+                    .filter(function (key) {
+                return (key !== labelVar && key !== labelVar2 && key !== labelVar3);
+
+            }); //B
+
+        color.domain(varNames);
+
+        var seriesArr = [], series2 = {}; //C
+          varNames.forEach(function (name) {
+            series2[name] = {name: name, values:[]};
+            seriesArr.push(series2[name]);
+          });
+
+          data.forEach(function (d) { //D
+            varNames.map(function (name) {
+              series2[name].values.push({label: d[labelVar], value: +d[name] || 0});
+            });
+          });
+
+          x.domain(data.map(function (d) { return d.day; })); //E
+
+        var stack = d3.layout.stack()
+            .offset("wiggle")
+            .values(function (d) { return d.values; })
+            .x(function (d) { return x(d.label) + x.rangeBand() / 2; })
+            .y(function (d) { return d.value; });
+
+          stack(seriesArr); // F
+          console.log("stacked seriesArr", seriesArr);
+
+          y.domain([0, d3.max(seriesArr, function (c) {
+              return d3.max(c.values, function (d) { return d.y0 + d.y; });
+            })]);
+
+        var area = d3.svg.area()
+            .interpolate("cardinal")
+            .x(function (d) { return x(d.label) + x.rangeBand() / 2; })
+            .y0(function (d) { return y(d.y0); })
+            .y1(function (d) { return y(d.y0 + d.y); });
+
+        var svg = d3.select(".chart_area").append("g");
+
+        var selection = svg.selectAll(".series")
+              .data(seriesArr)
+              .enter().append("g")
+                .attr("class", "series");
+
+            selection.append("path")
+              .attr("class", "streamPath")
+              .attr("d", function (d) { return area(d.values); })
+              .style("fill", function (d) { return color(d.name); })
+              .style("stroke", "grey");
+
+        draw_legend(svg, color);
+
+
+
+
+    }
+
+
     function draw_pie_chart() {
         console.log('draw pie chart is a go!!');
 
@@ -726,7 +731,7 @@ function create_transaction_plot(t_indicator, plot_style) {
                return y(d.total);
             });
 
-        var svg = d3.select(".chart").append("g");
+        var svg = d3.select(".chart_area").append("g");
 
         svg.append("path")
             .datum(data)
@@ -742,13 +747,23 @@ function create_transaction_plot(t_indicator, plot_style) {
     function toggle_income_line() {
         console.log("toggling income line now...");
 
-        var svg = d3.select(".chart").append("g");
-        svg.append("path")
-            .attr("class", "line")
-            .style("stroke-dasharray", ("3, 3"))
-            .attr("d", function(d, i) {
-                return 30;
+        var line = d3.svg.line()
+            .x(function(d, i) {
+                return x(d.day);
+            })
+            .y(function(d, i) {
+               return y(30);
             });
+
+        var svg = d3.select(".chart_area").append("g");
+
+        svg.append("path")
+            .datum(data)
+            .attr("class", "line")
+            .style("stroke-dasharray", ("3, 4"))
+            .attr("d", line)
+            .attr("stroke", "black");
+
 
     }
 
@@ -799,7 +814,7 @@ function create_transaction_plot(t_indicator, plot_style) {
     }
 
     function transition_chart_type() {
-        d3.selectAll(".chart").selectAll('g').remove();
+        d3.selectAll(".chart_area").selectAll('g').remove();
     }
 
 
@@ -808,12 +823,20 @@ function create_transaction_plot(t_indicator, plot_style) {
 //    get_parse_data(0, 0, 0, t_indicator, true, ret_filters);
 
 
-    function change_date_range_of_data(start, end) {
+    function change_date_range_of_data(dates) {
 
-        //default behaviour should be to chop off most recent two-week period:
-        data = global_data.daily_summary.slice(-15);
-        console.log("sliced data: ", data);
+        if (dates === true) {
+            var start_date = $('#date_start').attr("value");
+            var end_date = $('#date_end').attr("value");
 
+            console.log("received dates: ", start_date, end_date);
+
+        }
+        else {
+            //default behaviour should be to chop off most recent two-week period:
+            data = global_data.daily_summary.slice(-15);
+            console.log("sliced data: ", data);
+        }
     }
 
 
@@ -822,7 +845,8 @@ function create_transaction_plot(t_indicator, plot_style) {
         clear_chart();
 
         //this should be done on the client side...
-//        get_parse_data(e.detail.start_date, e.detail.end_date, 0, true, e.detail.end_date_current, ret_filters);
+//get_parse_data(e.detail.start_date, e.detail.end_date, 0,
+// true, e.detail.end_date_current, ret_filters);
 
         change_date_range_of_data(e.detail.start_date, e.detail.end_date);
         draw_chart();

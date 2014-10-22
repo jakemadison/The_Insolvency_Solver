@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 
-        <hr>
+        <!--<hr>-->
 
-    <div id="entry_forms" class="well-sm">
+    <div id="entry_forms">
         <form action="/submit_monthly" method="post" class="form-horizontal">
             <fieldset>
                 <legend>Total Monthly Balance:  ${{ rates.monthly_balance }}</legend>
@@ -14,28 +14,28 @@
             <div class="form-group">
                 <label for="rent" class="col-lg-2 control-label">Rent</label>
                 <div class="col-lg-10">
-                    <input type="text" class="form-control" placeholder="{{  rates.rent }}">
+                    <input type="text" id="rent" class="form-control" placeholder="{{  rates.rent }}">
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="bills" class="col-lg-2 control-label">Bills</label>
                 <div class="col-lg-10">
-                    <input type="text" class="form-control" placeholder="{{  rates.bills }}">
+                    <input type="text" id="bills" class="form-control" placeholder="{{  rates.bills }}">
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="other_costs" class="col-lg-2 control-label">Other Costs</label>
                 <div class="col-lg-10">
-                    <input type="text" class="form-control" placeholder="{{  rates.other_costs }}">
+                    <input type="text" id = "other_costs" class="form-control" placeholder="{{  rates.other_costs }}">
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="income_per_month" class="col-lg-2 control-label">Income per Month</label>
                 <div class="col-lg-10">
-                    <input type="text" class="form-control" placeholder="{{  rates.income_per_month }}">
+                    <input type="text" id= "income_per_month" class="form-control" placeholder="{{  rates.income_per_month }}">
                 </div>
             </div>
 
@@ -53,6 +53,12 @@
 {#            <p>Income per Month:  $ <input type="text" name="income_per_month" value="{{ rates.income_per_month }}"></p>#}
 {#            <input type="submit" value="Update">#}
          </form>
+
+
+
+
+
+
     </div>
 
 
@@ -72,9 +78,9 @@
 
     <div id="savings_forms">
         <form action="/submit_savings" method="post" class="form-horizontal">
-            <label class="control-label">Savings per Month:</label>
+            <label for="savings_per_month" class="control-label">Savings per Month:</label>
             <div class="input-group">
-                <input type="text" name="savings_per_month" value="{{ rates.savings_per_month }}" class="form-control">
+                <input type="text" id="savings_per_month" name="savings_per_month" value="{{ rates.savings_per_month }}" class="form-control">
                 <span class="input-group-btn">
                 <button class="btn btn-default" type="submit">Submit</button>
                  </span>
@@ -87,9 +93,9 @@
 
     <div id="spending_forms" class="form-group">
         <form action="/submit_spending" method="post" class="form-horizontal">
-            <label class="control-label">Daily Credits:</label>
+            <label for="daily" class="control-label">Daily Credits:</label>
                <div class="input-group">
-                <input type="text" name="daily" class="form-control" value="{{ rates.daily }}" class="form-control">
+                <input type="text" id="daily" name="daily" class="form-control" value="{{ rates.daily }}" class="form-control">
                 <span class="input-group-btn">
                 <button class="btn btn-default" type="submit">Submit</button>
                  </span>
@@ -101,11 +107,29 @@
 {#    <hr>#}
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <div id="direct_balance_form">
         <form action="/direct_balance" method="post">
             <p>Directly Update my Running Balance to:  $ <input type="text" name="balance" value="{{ rates.balance }}">
             <input type="submit" value="Update"></p>
         </form>
     </div>
+
+
 
 {% endblock %}
