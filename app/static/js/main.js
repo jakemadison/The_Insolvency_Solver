@@ -1,3 +1,17 @@
+$(function(){
+    //Array of images
+    var imageArray = ["fry_sm.png", "poor_zoidberg.png", "rich_bender"];
+    var randomNumber = Math.floor((imageArray.length-1)*Math.random());
+
+    //display image:
+    $('#pic').prop('src', '../static/assets/'+imageArray[randomNumber]);
+
+    //eventually, let's have more pics and two arrays and if bal >= 0, richArray, else poorArray
+
+});
+
+
+
 
 var submit_transaction = function() {
 
