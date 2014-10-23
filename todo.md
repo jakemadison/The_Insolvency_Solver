@@ -87,6 +87,22 @@ Is it possible to have them sync'd?
 Is "metrics" page useful for anything anymore? we now have a daily summary in "transactions metrics" 
 This whole thing could be simplified by taking that out...
 
+====
+
+For the user integration:
+
+- make a modal popup on first login that sets init values.
+- create a dummy record for playing with (no DB setting of values) with "nicer" transaction records
+- change settings to be a single form
+- make sure settings actually works...
+
+
+=====
+Transaction Metrics:
+- you should have the choice to apply the category filters only to the time period selected, or to the entire 
+period that's on record.  Make that another check box next to toggle line. Also, the DB & controller will have to do
+some shifty stuff to get that to actually work properly, since the front end calculating it is a shitty idea.
+
 
 
 
