@@ -20,6 +20,7 @@ def settings():
     rates = get_current_rates()
 
     rates['monthly_balance'] = rates['income_per_month'] - (rates['rent'] + rates['bills'] + rates['other_costs'])
+    rates['max_spending'] = rates['monthly_balance']/30
 
     return render_template('settings.html', rates=rates)
 
