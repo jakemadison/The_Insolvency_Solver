@@ -63,4 +63,8 @@
     max-width: 250px;
 }
 
+#spending_slider {
+    cursor: pointer;
+}
+
 
