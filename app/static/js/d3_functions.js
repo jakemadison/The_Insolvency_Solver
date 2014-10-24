@@ -66,6 +66,8 @@ function load_data(reload) {
 
 function create_transaction_plot(t_indicator, plot_style) {
 
+    var current_chart_type;
+
     function draw_calendar() {
         console.log("calendar is a go!");
     }
@@ -140,182 +142,182 @@ function create_transaction_plot(t_indicator, plot_style) {
 
 
     //This function is going to die soon:
-    function get_parse_data(start_date, end_date, offset, transition, pad, filters) {
-
-        var url_full = 'get_transaction_metrics' + '?' +
-                       'start_date=' + start_date + '&' +
-                       'end_date=' + end_date;
-
-
-        d3.json(url_full, function (error, json) {
-
-            console.log('received: ', json, 'offset:', offset);
-            while (data.length > 0) {
-                data.pop();
-                transaction_data.pop();
-            }
-
-            //quick reversal of our desc() ordered array:
-            json_data = json.transactions;
-
-            var running_balance = current_income;
-
-            var date_counter;
-            if (start_date !== 0) {
-                var date_vals = start_date.split('/');
-                date_counter = new Date(date_vals[2], date_vals[1]-1, date_vals[0]);
-            }
-            else {
-                date_counter = new Date(2014, 9, 1); //this needs to change.
-            }
-//            date_counter = new Date(date_vals[2], date_vals[1], date_vals[0]); //this needs to be the first date in the record...
-            var datum = {'day': date_counter.toDateString().substring(4, 10),
-                         'balance': running_balance,
-                          'total_transactions': 0};
-
-            //day, category, sum_of_amounts
-
-            var transaction_datum = {'day': date_counter.toDateString().substring(4, 10)};
-
-//            console.log("balance is at: ", datum);
-
-            function parse_data(f){
-
-                var category_list = [];
-                $(".filter_options").each(function() {
-                    category_list.push($(this).val());
-                });
-
-                for (var i = json_data.length - 1; i >= offset; i--) {
-
-                var mdy = json_data[i].timestamp.split('/');
-                var transaction_date = new Date(mdy[2], mdy[1]-1, mdy[0]);
-
-
-//                console.log("attempting to add: ", json_data[i].timestamp, json_data[i].purchase_type, json_data[i].amount);
-
-                //ready for spaghetti??
-                if (transaction_date.toDateString() === date_counter.toDateString()) { //apply this transaction to our date record.
-
-                    if (f.length === 0 || f.indexOf(json_data[i].purchase_type) > - 1) {  //filters?
-
-                        var num_amount = +json_data[i].amount;
-
-                        datum.balance -= num_amount;
-                        datum.total_transactions += 1;
-//                        console.log("same day, subtracting amount.  new balance: ", datum, num_amount);
-
-                        for (var j =0; j < category_list.length; j++) {
-
-                            if (transaction_datum[category_list[j]]) {
-
-                                if (category_list[j] === json_data[i].purchase_type) {
-
-//                                    console.log("hit");
-                                    transaction_datum[category_list[j]] += num_amount;
-                                }
-
-                            }
-
-                            else {
-                                if (category_list[j] === json_data[i].purchase_type) {
-                                    transaction_datum[category_list[j]] = num_amount;
-                                }
-                                else {
-                                    transaction_datum[category_list[j]] = 0;
-                                }
-                            }
-                        }
-
-//                        console.log("current datum: ", transaction_datum);
-                    }
-                }
-
-                else { //our current transaction is a new day.  push our old record on to the stack and make a new one.
-
-                    do  {
-                        running_balance = datum.balance;
-                        data.push(datum);  //push day record on to our stack.
-
-                        transaction_data.push(transaction_datum);
-
-                        date_counter.setDate(date_counter.getDate() + 1); //increase date counter by one
-                        datum = {'day': date_counter.toDateString().substring(4, 10),
-                                 'balance': current_income + running_balance}; //create a new day record
-
-                        transaction_datum = {'day': date_counter.toDateString().substring(4, 10)};
-
-                        if (transaction_date.toDateString() === date_counter.toDateString() &&
-                            (f.length === 0 || f.indexOf(json_data[i].purchase_type) > - 1)) {
-
-//                            console.log("creating a new date record now.");
-
-                            var num_amount_new = +json_data[i].amount;
-
-                            datum.balance -= +json_data[i].amount;
-                            datum.total_transactions += 1;
-
-                            for (j = 0; j < category_list.length; j++) {
-
-                                if (transaction_datum[category_list[j]]) {
-                                    if (category_list[j] === json_data[i].purchase_type) {
-                                        transaction_datum[category_list[j]] += num_amount_new;
-                                    }
-                                }
-
-                                else {
-                                    if (category_list[j] === json_data[i].purchase_type) {
-                                        transaction_datum[category_list[j]] = num_amount_new;
-                                    }
-                                    else {
-                                        transaction_datum[category_list[j]] = 0;
-                                    }
-                                }
-                            }
-
-//                            console.log("current datum for the new day: ", transaction_datum);
-
-                        }
-
-//                        break;
-                    } while (date_counter.toDateString() !== transaction_date.toDateString());
-                }
-            }
-
-            data.push(datum);
-            transaction_data.push(transaction_datum);
-
-            console.log('data loading is complete.');
-            console.log(data);
-            console.log(data.length);
-
-            }
-
-            parse_data(filters);
-
-            //this should get moved to a separate function on level up the call stack.
-            //all transitions should happen on the client side.  Always retrieve all data once and draw a chart
-            //then just alter the contents of the chart later
-            if (transition === true) {
-                transition_chart();
-            }
-
-
-            switch (plot_style) {
-                case 'chart':
-                    draw_chart();
-                    break;
-                case 'calendar':
-                    draw_calendar();
-                    break;
-                default:
-                    draw_chart();
-            }
-
-        }); //end json call.
-
-
-    }
+//    function get_parse_data(start_date, end_date, offset, transition, pad, filters) {
+//
+//        var url_full = 'get_transaction_metrics' + '?' +
+//                       'start_date=' + start_date + '&' +
+//                       'end_date=' + end_date;
+//
+//
+//        d3.json(url_full, function (error, json) {
+//
+//            console.log('received: ', json, 'offset:', offset);
+//            while (data.length > 0) {
+//                data.pop();
+//                transaction_data.pop();
+//            }
+//
+//            //quick reversal of our desc() ordered array:
+//            json_data = json.transactions;
+//
+//            var running_balance = current_income;
+//
+//            var date_counter;
+//            if (start_date !== 0) {
+//                var date_vals = start_date.split('/');
+//                date_counter = new Date(date_vals[2], date_vals[1]-1, date_vals[0]);
+//            }
+//            else {
+//                date_counter = new Date(2014, 9, 1); //this needs to change.
+//            }
+////            date_counter = new Date(date_vals[2], date_vals[1], date_vals[0]); //this needs to be the first date in the record...
+//            var datum = {'day': date_counter.toDateString().substring(4, 10),
+//                         'balance': running_balance,
+//                          'total_transactions': 0};
+//
+//            //day, category, sum_of_amounts
+//
+//            var transaction_datum = {'day': date_counter.toDateString().substring(4, 10)};
+//
+////            console.log("balance is at: ", datum);
+//
+//            function parse_data(f){
+//
+//                var category_list = [];
+//                $(".filter_options").each(function() {
+//                    category_list.push($(this).val());
+//                });
+//
+//                for (var i = json_data.length - 1; i >= offset; i--) {
+//
+//                var mdy = json_data[i].timestamp.split('/');
+//                var transaction_date = new Date(mdy[2], mdy[1]-1, mdy[0]);
+//
+//
+////                console.log("attempting to add: ", json_data[i].timestamp, json_data[i].purchase_type, json_data[i].amount);
+//
+//                //ready for spaghetti??
+//                if (transaction_date.toDateString() === date_counter.toDateString()) { //apply this transaction to our date record.
+//
+//                    if (f.length === 0 || f.indexOf(json_data[i].purchase_type) > - 1) {  //filters?
+//
+//                        var num_amount = +json_data[i].amount;
+//
+//                        datum.balance -= num_amount;
+//                        datum.total_transactions += 1;
+////                        console.log("same day, subtracting amount.  new balance: ", datum, num_amount);
+//
+//                        for (var j =0; j < category_list.length; j++) {
+//
+//                            if (transaction_datum[category_list[j]]) {
+//
+//                                if (category_list[j] === json_data[i].purchase_type) {
+//
+////                                    console.log("hit");
+//                                    transaction_datum[category_list[j]] += num_amount;
+//                                }
+//
+//                            }
+//
+//                            else {
+//                                if (category_list[j] === json_data[i].purchase_type) {
+//                                    transaction_datum[category_list[j]] = num_amount;
+//                                }
+//                                else {
+//                                    transaction_datum[category_list[j]] = 0;
+//                                }
+//                            }
+//                        }
+//
+////                        console.log("current datum: ", transaction_datum);
+//                    }
+//                }
+//
+//                else { //our current transaction is a new day.  push our old record on to the stack and make a new one.
+//
+//                    do  {
+//                        running_balance = datum.balance;
+//                        data.push(datum);  //push day record on to our stack.
+//
+//                        transaction_data.push(transaction_datum);
+//
+//                        date_counter.setDate(date_counter.getDate() + 1); //increase date counter by one
+//                        datum = {'day': date_counter.toDateString().substring(4, 10),
+//                                 'balance': current_income + running_balance}; //create a new day record
+//
+//                        transaction_datum = {'day': date_counter.toDateString().substring(4, 10)};
+//
+//                        if (transaction_date.toDateString() === date_counter.toDateString() &&
+//                            (f.length === 0 || f.indexOf(json_data[i].purchase_type) > - 1)) {
+//
+////                            console.log("creating a new date record now.");
+//
+//                            var num_amount_new = +json_data[i].amount;
+//
+//                            datum.balance -= +json_data[i].amount;
+//                            datum.total_transactions += 1;
+//
+//                            for (j = 0; j < category_list.length; j++) {
+//
+//                                if (transaction_datum[category_list[j]]) {
+//                                    if (category_list[j] === json_data[i].purchase_type) {
+//                                        transaction_datum[category_list[j]] += num_amount_new;
+//                                    }
+//                                }
+//
+//                                else {
+//                                    if (category_list[j] === json_data[i].purchase_type) {
+//                                        transaction_datum[category_list[j]] = num_amount_new;
+//                                    }
+//                                    else {
+//                                        transaction_datum[category_list[j]] = 0;
+//                                    }
+//                                }
+//                            }
+//
+////                            console.log("current datum for the new day: ", transaction_datum);
+//
+//                        }
+//
+////                        break;
+//                    } while (date_counter.toDateString() !== transaction_date.toDateString());
+//                }
+//            }
+//
+//            data.push(datum);
+//            transaction_data.push(transaction_datum);
+//
+//            console.log('data loading is complete.');
+//            console.log(data);
+//            console.log(data.length);
+//
+//            }
+//
+//            parse_data(filters);
+//
+//            //this should get moved to a separate function on level up the call stack.
+//            //all transitions should happen on the client side.  Always retrieve all data once and draw a chart
+//            //then just alter the contents of the chart later
+//            if (transition === true) {
+//                transition_chart();
+//            }
+//
+//
+//            switch (plot_style) {
+//                case 'chart':
+//                    draw_chart();
+//                    break;
+//                case 'calendar':
+//                    draw_calendar();
+//                    break;
+//                default:
+//                    draw_chart();
+//            }
+//
+//        }); //end json call.
+//
+//
+//    }
 
 
 
@@ -875,7 +877,8 @@ function create_transaction_plot(t_indicator, plot_style) {
 
         console.log("switching to chart type: ", e.detail.chart_type);
 
-        switch (e.detail.chart_type) {
+        current_chart_type = e.detail.chart_type;
+        switch (current_chart_type) {
             case 'chart':
                 draw_chart();
                 break;
@@ -920,7 +923,41 @@ function create_transaction_plot(t_indicator, plot_style) {
         data = global_data.daily_summary;
         change_date_range_of_data();
 
-        draw_chart();
+
+        switch (current_chart_type) {
+            case 'chart':
+                draw_chart();
+                break;
+            case 'stacked_bar':
+                transition_chart_type();
+                draw_stacked_bar_chart();
+                break;
+            case 'line_chart':
+                transition_chart_type();
+                draw_line_chart();
+                break;
+            case 'stacked':
+                transition_chart_type();
+                draw_stacked_chart();
+                break;
+            case 'pie':
+                transition_chart_type();
+                draw_pie_chart();
+                break;
+            case 'balvspend':
+                transition_chart_type();
+                draw_bal_v_spend();
+                break;
+
+
+            default:
+                draw_chart();
+            }
+
+
+
+
+//        draw_chart();
 
     }, false);
 
