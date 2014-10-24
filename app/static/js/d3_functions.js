@@ -747,12 +747,21 @@ function create_transaction_plot(t_indicator, plot_style) {
     function toggle_income_line() {
         console.log("toggling income line now...");
 
+        //this needs to check if income line is currently on, and switch.
+        var line_state = $("#income_toggle")[0].checked;
+        console.log(line_state);
+
+        if (line_state === false) {
+            d3.select(".line").remove();  //this might end up being to broad of a remove()...
+            return;
+        }
+
         var line = d3.svg.line()
-            .x(function(d, i) {
+            .x(function (d, i) {
                 return x(d.day);
             })
-            .y(function(d, i) {
-               return y(30);
+            .y(function (d, i) {
+                return y(30);
             });
 
         var svg = d3.select(".chart_area").append("g");
