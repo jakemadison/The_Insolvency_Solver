@@ -1,0 +1,6 @@
+#Ignore temp stuff
+/tmp
+*.py[cod]
+
+#Ignore IDE stuff
+.idea/
