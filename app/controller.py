@@ -1,6 +1,6 @@
 from __future__ import print_function
 from app import db
-from app.models import CurrentRates, TransactionHistory, DailyHistory
+from app.models import CurrentRates, TransactionHistory, DailyHistory, User
 from sqlalchemy import func, cast, DATE
 from datetime import datetime
 
@@ -254,10 +254,18 @@ if __name__ == "__main__":
     # transaction = TransactionHistory(10, 'Booze')
     # print(func.DATE(transaction.timestamp).execute())
 
-
-
-
-
     # t_list = db.session.query(TransactionHistory).order_by(TransactionHistory.timestamp.desc()).all()
     # for t in t_list:
     #     update_daily_history(t)
+
+
+def add_user(resp):
+
+    # some auths contain a nick, some don't, use first portion of email if not
+    nickname = resp.nickname
+    if nickname is None or nickname == "":
+        nickname = resp.email.split('@')[0]
+
+    user = User(nickname=nickname, email=resp.email)
+    db.session.add(user)
+    db.session.commit()

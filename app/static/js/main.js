@@ -173,3 +173,42 @@ window.onload = function(){
 };
 
 $('#login_modal').modal('show');
+
+
+
+function gmail_login(openid) {
+
+    console.log('start gmail login');
+    console.log(openid);
+
+    var u = openid.search('<username>');
+
+    console.log(u);
+
+    if (u != -1) {
+        // if openid requires username
+        var user = prompt('Enter your Google username:');
+        openid = openid.substr(0, u) + user;
+        console.log(openid);
+    }
+
+    console.log(openid);
+
+
+//    $.post('/f_login', {url:openid});
+
+   var form = document.createElement("form");
+    form.setAttribute("method", "post");
+    form.setAttribute("action", "/login_user");
+
+    var hiddenField = document.createElement("input");
+    hiddenField.setAttribute("name", "url");
+    hiddenField.setAttribute("value", openid);
+    form.appendChild(hiddenField);
+
+    document.body.appendChild(form);
+    form.submit();
+
+    console.log('done!!!!');
+    return false;
+}
