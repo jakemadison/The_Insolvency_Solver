@@ -172,3 +172,4 @@ window.onload = function(){
 
 };
 
+$('#login_modal').modal('show');
