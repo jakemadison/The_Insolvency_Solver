@@ -1,6 +1,6 @@
 from __future__ import print_function
 from app import app
-from flask import render_template, request, jsonify, redirect, url_for, g
+from flask import render_template, request, jsonify, redirect, url_for, g, session
 from controller import get_current_rates, get_sum_category_per_day, update_rates, execute_transaction
 from controller import add_user, get_recent_transactions, get_daily_summary, get_filtered_summary
 from datetime import datetime, timedelta
@@ -13,11 +13,78 @@ from app import lm, oid
 def before_request():
     print("NEW REQUEST:")
     g.user = current_user
+    print("user: ", current_user)
+
+
+#####
+# Functions for handling user login:
+#####
+@lm.user_loader
+def load_user(id):
+    print('maybe I dont know who the user is', g.user)
+
+    return User.query.get(int(id))
+
+
+@oid.loginhandler
+@app.route('/login_user', methods=['GET', 'POST'])
+def login_user():
+
+    print('I am attempting to login now...')
+
+    try:
+        url = request.form["url"]
+    except Exception, e:
+        return jsonify({'there were so many errors': str(e)})
+
+    test = oid.try_login(url, ask_for=['nickname', 'email'])
+    return test
+
+
+@oid.after_login
+def after_login(resp):
+
+    print('running after_login function now...')
+
+    if resp.email is None or resp.email == "":
+        print('Invalid login. Please try again.')
+        return redirect(url_for('/index'))
+
+    user = User.query.filter_by(email=resp.email).first()
+
+    # if totally new user:
+    if user is None:
+        print('response: {0}'.format(resp))
+
+        add_user(resp)
+        user = User.query.filter_by(email=resp.email).first()
+
+    login_user(user, remember=True)
+
+    print('user post login: ', user)
+
+    return redirect(request.args.get('next') or url_for('/index'))
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    print("successful logout for user: {0}".format(g.user))
+    return redirect(url_for('index'))
+
+
+
+
+
 
 
 @app.route('/')
 @app.route('/index')
+@oid.loginhandler
 def index():
+
+    if g.user is None or not g.user.is_authenticated():
+        pass
 
     rates = get_current_rates()
     transactions = get_recent_transactions()
@@ -252,54 +319,3 @@ def get_daily_metrics():
     return jsonify({"summary": daily_summary, "success": True})
 
 
-#####
-# Functions for handling user login:
-#####
-@lm.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
-
-
-@app.route('/login_user', methods=['GET', 'POST'])
-@oid.loginhandler
-def login_user():
-
-    print('I am attempting to login now...')
-
-    try:
-        url = request.form["url"]
-    except Exception, e:
-        return jsonify({'there were so many errors': str(e)})
-
-    test = oid.try_login(url, ask_for=['nickname', 'email'])
-    return test
-
-
-@oid.after_login
-def after_login(resp):
-
-    print('running after_login function now...')
-
-    if resp.email is None or resp.email == "":
-        print('Invalid login. Please try again.')
-        return redirect(url_for('index'))
-
-    user = User.query.filter_by(email=resp.email).first()
-
-    # if totally new user:
-    if user is None:
-        print('response: {0}'.format(resp))
-
-        add_user(resp)
-        user = User.query.filter_by(email=resp.email).first()
-
-    login_user(user)
-
-    return redirect(request.args.get('next') or url_for('.index'))
-
-
-@app.route('/logout')
-def logout():
-    logout_user()
-    print("successful logout for user: {0}".format(g.user))
-    return redirect(url_for('/index'))
