@@ -1,6 +1,7 @@
 from __future__ import print_function
 from app import app
-from flask import render_template, request, jsonify, redirect, url_for, g, session
+from flask import render_template, request, jsonify, redirect, url_for, session
+from flask import g
 from controller import get_current_rates, get_sum_category_per_day, update_rates, execute_transaction
 from controller import add_user, get_recent_transactions, get_daily_summary, get_filtered_summary
 from datetime import datetime, timedelta
@@ -13,6 +14,8 @@ from app import lm, oid
 def before_request():
     print("NEW REQUEST:")
     g.user = current_user
+    print(dir(g))
+    # print(g)
     print("user: ", current_user)
 
 
@@ -26,8 +29,9 @@ def load_user(id):
     return User.query.get(int(id))
 
 
-@oid.loginhandler
+# why does this URL get hit twice? once with get and once with post?
 @app.route('/login_user', methods=['GET', 'POST'])
+@oid.loginhandler
 def login_user():
 
     print('I am attempting to login now...')
@@ -35,10 +39,15 @@ def login_user():
     try:
         url = request.form["url"]
     except Exception, e:
+        # pass
+        # url = 'https://www.google.com/accounts/o8/id'
         return jsonify({'there were so many errors': str(e)})
 
-    test = oid.try_login(url, ask_for=['nickname', 'email'])
-    return test
+    oid_results = oid.try_login(url, ask_for=['nickname', 'email'])
+
+    print('oid results are: ', oid_results)
+
+    return oid_results
 
 
 @oid.after_login
@@ -60,11 +69,18 @@ def after_login(resp):
         user = User.query.filter_by(email=resp.email).first()
 
     login_user(user, remember=True)
+    g.user = user
+    g.test = 'this is a test'
+    print(dir(g))
+    print('current_user', current_user)
+    print('user post login: ', user, g.user)
 
-    print('user post login: ', user)
+    return redirect(oid.get_next_url())
 
-    return redirect(request.args.get('next') or url_for('/index'))
-
+    # return jsonify({'success': True})
+    #
+    # return redirect(request.args.get('next') or url_for('index'))
+    # return redirect(request.args.get('next'))
 
 @app.route('/logout')
 def logout():
