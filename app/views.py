@@ -11,12 +11,12 @@ from app import lm, oid
 
 
 @app.before_request
-def before_request():
+def before_request_happens():
     print("NEW REQUEST:")
     g.user = current_user
-    print(dir(g))
-    # print(g)
-    print("user: ", current_user)
+
+    print('current user is: ', g.user)
+
 
 
 #####
@@ -24,71 +24,63 @@ def before_request():
 #####
 @lm.user_loader
 def load_user(id):
-    print('maybe I dont know who the user is', g.user)
-
     return User.query.get(int(id))
 
 
-# why does this URL get hit twice? once with get and once with post?
 @app.route('/login_user', methods=['GET', 'POST'])
 @oid.loginhandler
-def login_user():
+def login_user_function():
 
     print('I am attempting to login now...')
 
     try:
         url = request.form["url"]
     except Exception, e:
-        # pass
-        # url = 'https://www.google.com/accounts/o8/id'
+
         return jsonify({'there were so many errors': str(e)})
 
-    oid_results = oid.try_login(url, ask_for=['nickname', 'email'])
+    print('getting oid results now: ')
 
-    print('oid results are: ', oid_results)
+    oid_results = oid.try_login(url, ask_for=['nickname', 'email'])
 
     return oid_results
 
 
 @oid.after_login
-def after_login(resp):
+def after_login_function(resp):
 
     print('running after_login function now...')
+
+    user = g.user
 
     if resp.email is None or resp.email == "":
         print('Invalid login. Please try again.')
         return redirect(url_for('/index'))
-
-    user = User.query.filter_by(email=resp.email).first()
 
     # if totally new user:
     if user is None:
         print('response: {0}'.format(resp))
 
         add_user(resp)
-        user = User.query.filter_by(email=resp.email).first()
+
+    user = User.query.filter_by(email=resp.email).first()
+
+    print('Now attempting to log in now: ', user)
 
     login_user(user, remember=True)
-    g.user = user
-    g.test = 'this is a test'
-    print(dir(g))
-    print('current_user', current_user)
-    print('user post login: ', user, g.user)
 
-    return redirect(oid.get_next_url())
+    # return redirect(oid.get_next_url())
 
     # return jsonify({'success': True})
     #
-    # return redirect(request.args.get('next') or url_for('index'))
+    return redirect(request.args.get('next') or url_for('index'))
     # return redirect(request.args.get('next'))
 
 @app.route('/logout')
-def logout():
+def logout_view():
     logout_user()
     print("successful logout for user: {0}".format(g.user))
-    return redirect(url_for('index'))
-
-
+    return jsonify({'message': 'look how logged out you are!'})
 
 
 
@@ -97,10 +89,10 @@ def logout():
 @app.route('/')
 @app.route('/index')
 @oid.loginhandler
-def index():
+def build_index():
 
-    if g.user is None or not g.user.is_authenticated():
-        pass
+    # if g.user is None or not g.user.is_authenticated():
+    #     pass
 
     rates = get_current_rates()
     transactions = get_recent_transactions()
@@ -109,7 +101,7 @@ def index():
 
 
 @app.route('/settings')
-def settings():
+def get_settings():
     rates = get_current_rates()
 
     rates['monthly_balance'] = rates['income_per_month'] - (rates['rent'] + rates['bills'] + rates['other_costs'])
@@ -119,7 +111,7 @@ def settings():
 
 
 @app.route('/daily_summary')
-def daily_summary():
+def get_daily_summary():
     rates = get_current_rates()
     daily_summary = get_daily_summary()
 
