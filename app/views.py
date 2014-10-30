@@ -110,6 +110,14 @@ def get_settings():
     return render_template('settings.html', rates=rates)
 
 
+@app.route('change_info_display', methods=['POST'])
+def show_hide_info():
+    hiding = request.form['hidden']
+
+
+
+
+
 @app.route('/daily_summary')
 def get_daily_summary():
     rates = get_current_rates()

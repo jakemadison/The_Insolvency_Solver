@@ -1,7 +1,7 @@
 from __future__ import print_function
 from app import db
 from app.models import CurrentRates, TransactionHistory, DailyHistory, User
-from sqlalchemy import func, cast, DATE
+from sqlalchemy import func, cast, DATE, update
 from datetime import datetime
 
 
@@ -269,3 +269,8 @@ def add_user(resp):
     user = User(nickname=nickname, email=resp.email)
     db.session.add(user)
     db.session.commit()
+
+
+def change_info_view(user, show_or_hide):
+    user_record = db.session.query(User).filter_by(User.id == user.id).first()
+    stmt = update(User).where(User.c.id==user.id).values(hidden_info_pref=show_or_hide)

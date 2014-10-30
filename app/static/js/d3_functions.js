@@ -349,10 +349,22 @@ function create_transaction_plot(t_indicator, plot_style) {
           .data(function (d) { return d.mapping; }) //A
         .enter().append("rect")
           .attr("width", x.rangeBand())
-          .attr("y", function (d) { return y(d.y1); })
-          .attr("height", function (d) { return y(d.y0) - y(d.y1); })
+//          .attr("y", function (d) { return y(d.y1); })
+//          .attr("height", function (d) { return y(d.y0) - y(d.y1); })
+            .attr("y", y(0))
+            .attr("height", 0)
           .style("fill", function (d) { return color(d.name); })
           .style("stroke", "grey");
+
+
+        d3.selectAll("rect").transition()
+          .attr("y", function (d) { return y(d.y1); })
+          .attr("height", function (d) { return y(d.y0) - y(d.y1); })
+          .delay(function (d, i) {
+                return i*10;
+            });
+
+
 
 
         draw_legend(svg, color);

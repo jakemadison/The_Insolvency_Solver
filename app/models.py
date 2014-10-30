@@ -88,6 +88,7 @@ class User(db.Model):
     email = db.Column(db.String(120), index=True, unique=True)
     nickname = db.Column(db.String(64), index=True, unique=True)
     openid = db.Column(db.String(64), index=True, unique=True)
+    hidden_info_pref = db.Column(db.Boolean, default=False)
 
     def is_authenticated(self):
         return True

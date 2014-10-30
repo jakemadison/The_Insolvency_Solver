@@ -86,9 +86,18 @@
         </div>
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
+
+              {% if not g.user.hidden_info_pref %}
+
             <li><a href="#" id="about_link" style="display: none;">?</a></li>
+
+              {%  else %}
+
+              <li><a href="#" id="about_link" style="">?</a></li>
             <!--<li><a href="#"></a></li>-->
             <!--<li><a href="#"></a></li>-->
+
+              {% endif %}
           </ul>
           <!--<form class="navbar-form navbar-right">-->
             <!--<input type="text" class="form-control" placeholder="Search...">-->
@@ -130,8 +139,19 @@
 
             <div class="col-lg-8">
             <h1 class="title">The Insolvency Solver</h1>
+
+
+
+            {% if not g.user.hidden_info_pref %}
                 <div class="alert alert-success well-sm">
-             <div id="description" class="" >
+            {% else %}
+                <div class="alert alert-success well-sm" style="display: none">
+             {%  endif %}
+
+
+
+                <div id="description" class="" >
+
                  <span id='close'>X</span>
         <p>The Insolvency Solver is a tool to help save money.  It functions by taking your rent, bills,
         and other fixed costs, subtracting them from your monthly pay, and applying a daily
@@ -142,9 +162,14 @@
             Meanwhile, your actual wage is being turned into savings (hopefully).</p>
 
              </div>
-
-
           </div>
+
+
+
+
+
+
+
 
 {#        <hr>#}
 
