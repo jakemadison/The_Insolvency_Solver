@@ -58,9 +58,8 @@ def after_login_function(resp):
         return redirect(url_for('/index'))
 
     # if totally new user:
-    if user is None:
+    if user is None or user.is_authenticated() is False:
         print('response: {0}'.format(resp))
-
         add_user(resp)
 
     user = User.query.filter_by(email=resp.email).first()
@@ -110,7 +109,7 @@ def get_settings():
     return render_template('settings.html', rates=rates)
 
 
-@app.route('change_info_display', methods=['POST'])
+@app.route('/change_info_display', methods=['POST'])
 def show_hide_info():
     hiding = request.form['hidden']
 
