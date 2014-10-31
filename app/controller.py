@@ -272,5 +272,6 @@ def add_user(resp):
 
 
 def change_info_view(user, show_or_hide):
-    user_record = db.session.query(User).filter_by(User.id == user.id).first()
-    stmt = update(User).where(User.c.id==user.id).values(hidden_info_pref=show_or_hide)
+    qry = db.session.query(User).filter_by(id=user.id)
+    qry.update({"hidden_info_pref": show_or_hide})
+    db.session.commit()

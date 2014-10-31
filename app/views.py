@@ -3,7 +3,7 @@ from app import app
 from flask import render_template, request, jsonify, redirect, url_for, session
 from flask import g
 from controller import get_current_rates, get_sum_category_per_day, update_rates, execute_transaction
-from controller import add_user, get_recent_transactions, get_daily_summary, get_filtered_summary
+from controller import add_user, get_recent_transactions, get_daily_summary, get_filtered_summary, change_info_view
 from datetime import datetime, timedelta
 from flask.ext.login import login_user, logout_user, current_user
 from models import User
@@ -112,6 +112,12 @@ def get_settings():
 @app.route('/change_info_display', methods=['POST'])
 def show_hide_info():
     hiding = request.form['hidden']
+    user = g.user
+    print(hiding, user)
+    change_info_view(user, hiding)
+
+    return jsonify({'success': True})
+
 
 
 

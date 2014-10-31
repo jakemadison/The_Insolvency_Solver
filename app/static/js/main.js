@@ -155,7 +155,7 @@ window.onload = function(){
         .style.display = "none";
         document.getElementById('about_link').style.display="";
 
-        $.post( "/change_info_display", { hidden: true});
+        $.post( "/change_info_display", { hidden: 1});
 
 
         return false;
@@ -168,7 +168,7 @@ window.onload = function(){
         .style.display = "";
 
         this.style.display="none";
-        $.post( "/change_info_display", { hidden: true});
+        $.post( "/change_info_display", { hidden: 0});
         return true;
     };
 
