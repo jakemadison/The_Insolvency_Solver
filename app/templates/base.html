@@ -122,6 +122,13 @@
                   <img id="pic">
               </a>
             <!--<li class="active">-->
+
+              {% if g.user.is_authenticated() %}
+                  <div class="alert alert-dismissable alert-success">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+              <p>Hi, <a href="#" class="alert-link" title="Change your Nickname?">{{ g.user.nickname }}</a>!</p></div>
+              {% endif %}
+
               <li>
               <a href="/index">Main</a></li>
             <!--<li><a href="">Recent Transactions</a></li>-->
