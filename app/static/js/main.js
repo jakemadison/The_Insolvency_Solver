@@ -21,8 +21,6 @@ $(function(){
 });
 
 
-
-
 var submit_transaction = function() {
 
     var transaction_amount = $('#transaction_amount').val();
@@ -175,15 +173,10 @@ window.onload = function(){
 
 };
 
-document.getElementById('logout_button').onclick = function(){
-    $.get("/logout").success(function() {
-        window.location.reload(true)});
-    };
 
-
+//Login/Logout stuff:
 
 $('#login_modal').modal('show');
-
 
 
 function gmail_login(openid) {
@@ -222,3 +215,8 @@ function gmail_login(openid) {
     console.log('done!!!!');
     return false;
 }
+
+document.getElementById('logout_button').onclick = function(){
+    $.get("/logout").success(function() {
+        window.location.reload(true)});
+    };
