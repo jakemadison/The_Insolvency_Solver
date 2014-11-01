@@ -89,15 +89,16 @@
 
               {% if not g.user.hidden_info_pref %}
 
-            <li><a href="#" id="about_link" style="display: none;">?</a></li>
+            <li><a href="#" id="about_link" style="display: none;"></a></li>
 
               {%  else %}
 
-              <li><a href="#" id="about_link" style="">?</a></li>
+              <li><a href="#" id="about_link" style=""><span class="glyphicon glyphicon-info-sign"></span></a></li>
             <!--<li><a href="#"></a></li>-->
             <!--<li><a href="#"></a></li>-->
 
               {% endif %}
+          <li><a><span class="glyphicon glyphicon-off" id="logout_button" style="cursor: pointer"></span></a></li>
           </ul>
           <!--<form class="navbar-form navbar-right">-->
             <!--<input type="text" class="form-control" placeholder="Search...">-->

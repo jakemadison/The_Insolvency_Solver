@@ -79,6 +79,11 @@ def after_login_function(resp):
 def logout_view():
     logout_user()
     print("successful logout for user: {0}".format(g.user))
+
+    # rates = get_current_rates()
+    # transactions = get_recent_transactions()
+    # return render_template('index.html', title='Insolvency_Solver',
+    #                        rates=rates, transactions=transactions)
     return jsonify({'message': 'look how logged out you are!'})
 
 

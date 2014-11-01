@@ -175,6 +175,13 @@ window.onload = function(){
 
 };
 
+document.getElementById('logout_button').onclick = function(){
+    $.get("/logout").success(function() {
+        window.location.reload(true)});
+    };
+
+
+
 $('#login_modal').modal('show');
 
 
