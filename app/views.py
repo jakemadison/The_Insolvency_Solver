@@ -125,9 +125,6 @@ def show_hide_info():
 
 
 
-
-
-
 @app.route('/daily_summary')
 def get_daily_summary_view():
     rates = get_current_rates()

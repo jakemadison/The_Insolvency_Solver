@@ -31,6 +31,7 @@ class DailyHistory(db.Model):
     credits = db.Column(db.Integer, default=0)
     debits = db.Column(db.Integer, default=0)
     balance = db.Column(db.Integer, default=0)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
     def __init__(self, day):
 
@@ -74,6 +75,7 @@ class TransactionHistory(db.Model):
     timestamp = db.Column(db.TIMESTAMP)
     amount = db.Column(db.Integer, default=0)
     purchase_type = db.Column(db.String(64), default=None)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
     def __init__(self, amount, transaction_timestamp, purchase_type=None):
         self.amount = amount
