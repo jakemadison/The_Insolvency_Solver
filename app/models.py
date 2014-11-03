@@ -92,6 +92,12 @@ class User(db.Model):
     openid = db.Column(db.String(64), index=True, unique=True)
     hidden_info_pref = db.Column(db.Boolean, default=False)
 
+    def is_guest(self):
+        if self.email == 'guest@guest.com':
+            return True
+        else:
+            return False
+
     def is_authenticated(self):
         return True
 
