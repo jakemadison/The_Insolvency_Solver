@@ -220,3 +220,41 @@ document.getElementById('logout_button').onclick = function(){
     $.get("/logout").success(function() {
         window.location.reload(true)});
     };
+
+
+
+
+
+
+//this needs to remember an actual float, otherwise we will never increase.
+
+
+function set_initial_balance() {
+    var current_balance_figure = parseFloat(document.getElementById('balance_figure').innerHTML);
+    var seconds_per_day = 86400;
+    var increase_per_second = (PER_DIEM*100)/seconds_per_day;
+
+    var d = new Date(), e = new Date(d);
+    var sSinceMidnight = (e - d.setHours(0,0,0,0)) / 1000;
+
+
+    document.getElementById('balance_figure').innerHTML = String((sSinceMidnight*increase_per_second/100).toFixed(2));
+
+
+    return increase_per_second
+
+
+}
+
+
+
+function increment_balance(increase) {
+    var current_balance_figure = parseFloat(document.getElementById('balance_figure').innerHTML);
+    console.log('current balance', current_balance_figure, 'increase', increase);
+    current_balance_figure += (increase/100);
+    document.getElementById('balance_figure').innerHTML = String(current_balance_figure.toFixed(2));
+}
+
+
+var increase_amount = set_initial_balance();
+setInterval('increment_balance(increase_amount)', 1000);

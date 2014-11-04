@@ -34,6 +34,9 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+<script type=text/javascript>
+        PER_DIEM = '{{ rates.daily }}';
+</script>
 
 
   </head>
@@ -186,9 +189,13 @@
 <div class="panel panel-default well well-sm">
 <div class="row">
 {% if rates.balance >= 0 %}
-    <div id="current_balance" class="col-md-6"><h1 class="balance_text positive_balance">Current Balance: <span id="">${{ rates.balance }}</span></h1></div>
+    <div id="current_balance" class="col-md-6">
+        <h1 class="balance_text positive_balance">Current Balance:
+            $<span id="balance_figure">{{ rates.balance }}</span></h1></div>
 {% else %}
-    <div id="current_balance" class="col-md-6"><h1 class="balance_text negative_balance">Current Balance: ${{ rates.balance }}</h1></div>
+    <div id="current_balance" class="col-md-6">
+        <h1 class="balance_text negative_balance">Current Balance:
+            $<span id="balance_figure">{{ rates.balance }}</span></h1></div>
 {% endif %}
 
         <div class="col-md-4 pull-right">
