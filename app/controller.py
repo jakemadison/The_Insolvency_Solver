@@ -244,21 +244,6 @@ def insert_new_day(date=None):
     print('created new row for day: {0}'.format(new_day))
 
 
-if __name__ == "__main__":
-    # rates = get_current_rates()
-    # update_rates(rates)
-    # execute_transaction(13)
-    print(get_filtered_summary(['Booze', 'Smokes', 'Cab', 'Dinning Out', 'Groceries', 'Coffee', 'Bar']))
-
-
-    # transaction = TransactionHistory(10, 'Booze')
-    # print(func.DATE(transaction.timestamp).execute())
-
-    # t_list = db.session.query(TransactionHistory).order_by(TransactionHistory.timestamp.desc()).all()
-    # for t in t_list:
-    #     update_daily_history(t)
-
-
 def add_user(resp):
 
     # some auths contain a nick, some don't, use first portion of email if not
@@ -275,3 +260,19 @@ def change_info_view(user, show_or_hide):
     qry = db.session.query(User).filter_by(id=user.id)
     qry.update({"hidden_info_pref": show_or_hide})
     db.session.commit()
+
+
+if __name__ == "__main__":
+    # rates = get_current_rates()
+    # update_rates(rates)
+    # execute_transaction(13)
+    print(get_filtered_summary(['Booze', 'Smokes', 'Cab', 'Dinning Out', 'Groceries', 'Coffee', 'Bar']))
+
+
+    # transaction = TransactionHistory(10, 'Booze')
+    # print(func.DATE(transaction.timestamp).execute())
+
+    # t_list = db.session.query(TransactionHistory).order_by(TransactionHistory.timestamp.desc()).all()
+    # for t in t_list:
+    #     update_daily_history(t)
+
