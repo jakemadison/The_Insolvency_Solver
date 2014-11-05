@@ -9,6 +9,7 @@ class CurrentRates(db.Model):
     __tablename__ = 'current_rates'
 
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     type = db.Column(db.String(64), unique=True)
     amount = db.Column(db.Integer, default=0)
 
