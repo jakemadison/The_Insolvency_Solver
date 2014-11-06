@@ -237,8 +237,10 @@ function set_initial_balance() {
     var d = new Date(), e = new Date(d);
     var sSinceMidnight = (e - d.setHours(0,0,0,0)) / 1000;
 
+    var amount_today = parseFloat(current_balance_figure) + sSinceMidnight/1000;
 
-    document.getElementById('balance_figure').innerHTML = String((sSinceMidnight*increase_per_second/100).toFixed(2));
+
+    document.getElementById('balance_figure').innerHTML = String(amount_today.toFixed(5));
 
 
     return increase_per_second
@@ -252,9 +254,11 @@ function increment_balance(increase) {
     var current_balance_figure = parseFloat(document.getElementById('balance_figure').innerHTML);
     console.log('current balance', current_balance_figure, 'increase', increase);
     current_balance_figure += (increase/100);
-    document.getElementById('balance_figure').innerHTML = String(current_balance_figure.toFixed(2));
+    document.getElementById('balance_figure').innerHTML = String(current_balance_figure.toFixed(5));
 }
 
 
 var increase_amount = set_initial_balance();
 setInterval('increment_balance(increase_amount)', 1000);
+
+
