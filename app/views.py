@@ -107,18 +107,18 @@ def build_index():
     #     pass
     user = g.user
 
-
-
-    rates = get_current_rates()
-    transactions = get_recent_transactions()
+    rates = get_current_rates(user)
+    transactions = get_recent_transactions(user)
     return render_template('index.html', title='Insolvency_Solver',
                            rates=rates, transactions=transactions, u=user)
 
 
 @app.route('/settings')
 def get_settings():
-    rates = get_current_rates()
+
     user = g.user
+
+    rates = get_current_rates(user)
 
     rates['monthly_balance'] = rates['income_per_month'] - (rates['rent'] + rates['bills'] + rates['other_costs'])
     rates['max_spending'] = rates['monthly_balance']/30
@@ -138,9 +138,11 @@ def show_hide_info():
 
 @app.route('/daily_summary')
 def get_daily_summary_view():
-    rates = get_current_rates()
-    daily_summary = get_daily_summary()
+
     user = g.user
+
+    rates = get_current_rates(user)
+    daily_summary = get_daily_summary()
 
     return render_template('daily_summary.html', rates=rates, daily_summary=daily_summary, u=user)
 
@@ -148,8 +150,8 @@ def get_daily_summary_view():
 @app.route('/transaction_metrics')
 def transaction_metrics():
     user = g.user
-    rates = get_current_rates()
-    transactions = get_recent_transactions()
+    rates = get_current_rates(user)
+    transactions = get_recent_transactions(user)
 
     transaction_categories = list(set([t['purchase_type'] for t in transactions]))
     transaction_categories.sort()
@@ -162,14 +164,14 @@ def transaction_metrics():
 @app.route('/metrics')
 def metrics():
     user = g.user
-    rates = get_current_rates()
+    rates = get_current_rates(user)
     return render_template('metrics.html', rates=rates, u=user)
 
 
 @app.route('/calendar')
 def calendar():
     user = g.user
-    rates = get_current_rates()
+    rates = get_current_rates(user)
     return render_template('calendar.html', rates=rates, u=user)
 
 
@@ -177,10 +179,12 @@ def calendar():
 @app.route('/submit_monthly', methods=['POST'])
 def submit_monthly():
 
+    user = g.user
+
     updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems()}
     print('update received with values: {0}'.format(updates_rates_dict))
 
-    current_rates = get_current_rates()
+    current_rates = get_current_rates(user)
 
     monthly_balance = updates_rates_dict['income_per_month'] - (updates_rates_dict['rent'] +
                                                                 updates_rates_dict['bills'] +
@@ -198,6 +202,7 @@ def submit_monthly():
 @app.route('/submit_savings', methods=['POST'])
 def submit_savings():
 
+    user = g.user
     updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems()}
     print('update received with values: {0}'.format(updates_rates_dict))
 
@@ -205,23 +210,28 @@ def submit_savings():
                                                             updates_rates_dict['bills'] +
                                                             updates_rates_dict['other_costs'])
 
-    result = update_rates(updates_rates_dict)
+    result = update_rates(user, updates_rates_dict)
 
     return redirect(url_for('settings'))
 
 
 @app.route('/submit_spending', methods=['POST'])
 def submit_spending():
+    user = g.user
 
     updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems()}
     print('update received with values: {0}'.format(updates_rates_dict))
-    result = update_rates(updates_rates_dict)
+    result = update_rates(user, updates_rates_dict)
 
     return redirect(url_for('settings'))
 
 
 @app.route('/submit_transaction', methods=['POST'])
 def submit_transaction():
+
+    """This is the main entry point for submitting a new transaction to the DB"""
+
+    user = g.user
 
     print('transaction submitted.')
 
@@ -237,7 +247,7 @@ def submit_transaction():
         transaction_date = request.form['transaction_date']
     except ValueError, e:
         print('value error on input: {0}'.format(str(e)))
-        return redirect(url_for('index'))
+        return redirect(url_for('build_index'))
 
     print('received a new transaction, amount: {0}, type: {1}, date: {2}'.format(transaction_amount,
                                                                                  purchase_type,
@@ -254,11 +264,11 @@ def submit_transaction():
 
     # move this back up after finished with testing of transaction date.
     if transaction_amount == 0:
-        return redirect(url_for('index'))
+        return redirect(url_for('build_index'))
 
-    execute_transaction(transaction_amount, purchase_type, parsed_date)
+    execute_transaction(user, transaction_amount, purchase_type, parsed_date)
 
-    return redirect(url_for('index'))
+    return redirect(url_for('build_index'))
 
 
 #ROUTES FOR METRICS:

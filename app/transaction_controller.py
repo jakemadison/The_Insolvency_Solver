@@ -6,7 +6,7 @@ from app import db
 from sqlalchemy import func
 
 
-def execute_transaction(amount, purchase_type, date=None):
+def execute_transaction(user, amount, purchase_type, date=None):
 
     # transaction needs to take in a date param optionally, and modify model defaults.
 
@@ -23,7 +23,7 @@ def execute_transaction(amount, purchase_type, date=None):
     # insert a transaction & update balance.
     #This should include adding system time when button was pressed, which can then be gathered for Daily View
 
-    new_transaction = TransactionHistory(amount, timestamp, purchase_type)
+    new_transaction = TransactionHistory(user.id, amount, timestamp, purchase_type)
     print('new transaction created: {0}, {1}'.format(new_transaction.amount, new_transaction.timestamp))
 
     # print('dying now....')
@@ -33,18 +33,18 @@ def execute_transaction(amount, purchase_type, date=None):
     db.session.commit()
 
     # this will need to change if the day is not today...
-    update_daily_history(new_transaction, start_date=timestamp.date())
+    update_daily_history(user, new_transaction, start_date=timestamp.date())
 
-    current_rates = get_current_rates()
+    current_rates = get_current_rates(user)
     current_rates['balance'] -= amount  # at this point, all transactions are debits.
-    update_rates(current_rates)
+    update_rates(user, current_rates)
 
 
-def get_recent_transactions(start=None, end=None):
+def get_recent_transactions(user, start=None, end=None):
 
     """get all recent transactions"""
 
-    recent_transactions = db.session.query(TransactionHistory)
+    recent_transactions = db.session.query(TransactionHistory).filter(TransactionHistory.user_id == user.id)
 
     if start and end:
 

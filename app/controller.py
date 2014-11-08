@@ -27,14 +27,15 @@ def get_daily_summary(start_date=None, end_date=None):
     return daily_list
 
 
-def update_daily_history(transaction, start_date):
+def update_daily_history(user, transaction, start_date):
     """following a transaction, update our daily history values"""
 
     # discover if we already have a day record.  If we do, update that one =+ transaction
     # if we do not, then add a new one.  Should be able to use this to populate existing records
     # transaction = TransactionHistory(10, 'Booze')
 
-    existing_days = get_day_rows(start_date)
+    existing_days = db.session.query(DailyHistory).filter(DailyHistory.day >= start_date,
+                                                          DailyHistory.user_id == user.id).all()
 
     for day in existing_days:
 

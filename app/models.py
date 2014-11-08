@@ -10,7 +10,7 @@ class CurrentRates(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    type = db.Column(db.String(64), unique=True)
+    type = db.Column(db.String(64), unique=False)
     amount = db.Column(db.Integer, default=0)
 
     def __repr__(self):
@@ -78,7 +78,8 @@ class TransactionHistory(db.Model):
     purchase_type = db.Column(db.String(64), default=None)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
-    def __init__(self, amount, transaction_timestamp, purchase_type=None):
+    def __init__(self, user_id, amount, transaction_timestamp, purchase_type=None):
+        self.user_id = user_id
         self.amount = amount
         self.timestamp = transaction_timestamp
         self.purchase_type = purchase_type
