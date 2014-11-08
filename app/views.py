@@ -18,6 +18,10 @@ def before_request_happens():
     print("NEW REQUEST:")
     g.user = current_user
 
+    if g.user.is_anonymous():
+        user = User.query.filter_by(email='guest@guest.com').first()
+        g.user = user
+
     print('current user is: ', g.user)
 
 
@@ -103,8 +107,7 @@ def build_index():
     #     pass
     user = g.user
 
-    if user.is_anonymous():
-        user = User.query.filter_by(email='guest@guest.com').first()
+
 
     rates = get_current_rates()
     transactions = get_recent_transactions()
@@ -120,7 +123,7 @@ def get_settings():
     rates['monthly_balance'] = rates['income_per_month'] - (rates['rent'] + rates['bills'] + rates['other_costs'])
     rates['max_spending'] = rates['monthly_balance']/30
 
-    return render_template('settings.html', rates=rates, user=user)
+    return render_template('settings.html', rates=rates, u=user)
 
 
 @app.route('/change_info_display', methods=['POST'])
@@ -139,7 +142,7 @@ def get_daily_summary_view():
     daily_summary = get_daily_summary()
     user = g.user
 
-    return render_template('daily_summary.html', rates=rates, daily_summary=daily_summary, user=user)
+    return render_template('daily_summary.html', rates=rates, daily_summary=daily_summary, u=user)
 
 
 @app.route('/transaction_metrics')
@@ -153,21 +156,21 @@ def transaction_metrics():
 
     return render_template('transaction_metrics.html', rates=rates,
                            transactions=transactions,
-                           transaction_categories=transaction_categories, user=user)
+                           transaction_categories=transaction_categories, u=user)
 
 
 @app.route('/metrics')
 def metrics():
     user = g.user
     rates = get_current_rates()
-    return render_template('metrics.html', rates=rates, user=user)
+    return render_template('metrics.html', rates=rates, u=user)
 
 
 @app.route('/calendar')
 def calendar():
     user = g.user
     rates = get_current_rates()
-    return render_template('calendar.html', rates=rates, user=user)
+    return render_template('calendar.html', rates=rates, u=user)
 
 
 # POST ROUTES:

@@ -221,6 +221,7 @@ document.getElementById('logout_button').onclick = function(){
     console.log(USER_EMAIL);
 
     if (USER_EMAIL == 'guest@guest.com') {
+        console.log("i am guest!");
         $('#login_modal').modal('show');
     }
 
