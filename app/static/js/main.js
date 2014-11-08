@@ -176,7 +176,7 @@ window.onload = function(){
 
 //Login/Logout stuff:
 
-$('#login_modal').modal('show');
+//$('#login_modal').modal('show');
 
 
 function gmail_login(openid) {
@@ -217,10 +217,18 @@ function gmail_login(openid) {
 }
 
 document.getElementById('logout_button').onclick = function(){
-    $.get("/logout").success(function() {
-        window.location.reload(true)});
-    };
 
+    console.log(USER_EMAIL);
+
+    if (USER_EMAIL == 'guest@guest.com') {
+        $('#login_modal').modal('show');
+    }
+
+    else {
+        $.get("/logout").success(function() {
+            window.location.reload(true)});
+        }
+};
 
 
 
@@ -252,7 +260,7 @@ function set_initial_balance() {
 
 function increment_balance(increase) {
     var current_balance_figure = parseFloat(document.getElementById('balance_figure').innerHTML);
-    console.log('current balance', current_balance_figure, 'increase', increase);
+//    console.log('current balance', current_balance_figure, 'increase', increase);
     current_balance_figure += (increase/100);
     document.getElementById('balance_figure').innerHTML = String(current_balance_figure.toFixed(5));
 }

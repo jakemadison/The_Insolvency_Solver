@@ -101,21 +101,26 @@ def build_index():
 
     # if g.user is None or not g.user.is_authenticated():
     #     pass
+    user = g.user
+
+    if user.is_anonymous():
+        user = User.query.filter_by(email='guest@guest.com').first()
 
     rates = get_current_rates()
     transactions = get_recent_transactions()
     return render_template('index.html', title='Insolvency_Solver',
-                           rates=rates, transactions=transactions)
+                           rates=rates, transactions=transactions, u=user)
 
 
 @app.route('/settings')
 def get_settings():
     rates = get_current_rates()
+    user = g.user
 
     rates['monthly_balance'] = rates['income_per_month'] - (rates['rent'] + rates['bills'] + rates['other_costs'])
     rates['max_spending'] = rates['monthly_balance']/30
 
-    return render_template('settings.html', rates=rates)
+    return render_template('settings.html', rates=rates, user=user)
 
 
 @app.route('/change_info_display', methods=['POST'])
@@ -128,17 +133,18 @@ def show_hide_info():
     return jsonify({'success': True})
 
 
-
 @app.route('/daily_summary')
 def get_daily_summary_view():
     rates = get_current_rates()
     daily_summary = get_daily_summary()
+    user = g.user
 
-    return render_template('daily_summary.html', rates=rates, daily_summary=daily_summary)
+    return render_template('daily_summary.html', rates=rates, daily_summary=daily_summary, user=user)
 
 
 @app.route('/transaction_metrics')
 def transaction_metrics():
+    user = g.user
     rates = get_current_rates()
     transactions = get_recent_transactions()
 
@@ -147,19 +153,21 @@ def transaction_metrics():
 
     return render_template('transaction_metrics.html', rates=rates,
                            transactions=transactions,
-                           transaction_categories=transaction_categories)
+                           transaction_categories=transaction_categories, user=user)
 
 
 @app.route('/metrics')
 def metrics():
+    user = g.user
     rates = get_current_rates()
-    return render_template('metrics.html', rates=rates)
+    return render_template('metrics.html', rates=rates, user=user)
 
 
 @app.route('/calendar')
 def calendar():
+    user = g.user
     rates = get_current_rates()
-    return render_template('calendar.html', rates=rates)
+    return render_template('calendar.html', rates=rates, user=user)
 
 
 # POST ROUTES:
