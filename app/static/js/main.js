@@ -267,7 +267,7 @@ function increment_balance(increase) {
 }
 
 
-var increase_amount = set_initial_balance();
-setInterval('increment_balance(increase_amount)', 1000);
+//var increase_amount = set_initial_balance();
+//setInterval('increment_balance(increase_amount)', 1000);
 
 

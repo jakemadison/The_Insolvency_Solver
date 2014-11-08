@@ -4,7 +4,7 @@
         <!--<hr>-->
 
 
-<legend>Total Monthly Balance:  ${{ rates.monthly_balance }}</legend>
+<legend>Total Monthly Balance:  $<span id="monthly_balance">{{ rates.monthly_balance }}</span></legend>
 
  <div class="input-group">
 
@@ -12,6 +12,7 @@
      and the amount of money saved each month:</span>
 	  <label>Daily Credits: <span id="spending_value">{{rates.daily}}</span></label>
         <label class="pull-right">Monthly Savings: <span id="savings_value">{{rates.savings_per_month}}  </span></label>
+
 <input type="range" min="0" max="{{rates.max_spending}}" value="{{rates.daily}}" id="spending_slider">
       <!--<span class="input-group-btn">-->
                 <button class="btn btn-primary btn-sm pull-right" type="submit">Submit</button>
@@ -24,7 +25,8 @@
 
     document.getElementById('spending_slider').addEventListener('input', function() {
        var value = parseFloat(this.value);
-       var savings = Math.floor(2921 - (value*30));
+       var monthly_bal = parseFloat(document.getElementById('monthly_balance').innerHTML);
+       var savings = Math.floor(monthly_bal - (value*30));
 //       console.log("value: ", value, "savings:", savings);
 
        document.getElementById('spending_value').innerHTML = value;
