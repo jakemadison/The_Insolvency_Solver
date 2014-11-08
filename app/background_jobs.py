@@ -2,18 +2,20 @@ from __future__ import print_function
 from controller import get_day_rows, insert_new_day
 from rates_controller import get_current_rates, update_rates
 from datetime import datetime
+from app import db
+from models import User
 
 
-def daily_increase():
-    current_rates = get_current_rates()
+def daily_increase(user):
+    current_rates = get_current_rates(user)
     daily_rate = current_rates.get('daily', False)
 
     if daily_rate:
         current_rates['balance'] += daily_rate
-        update_rates(current_rates)
+        update_rates(user, current_rates)
 
 
-def create_new_day():
+def create_new_day(user):
     # check for the existence of a day row as a precaution.  If it doesn't exist, create a new row
     today = datetime.now().date()
     existing = get_day_rows(today)
@@ -22,23 +24,26 @@ def create_new_day():
 
     if not existing:
         print('no existing record found.  Inserting a new day.')
-        insert_new_day(today)
+        insert_new_day(user, today)
         return True
 
     else:
         return False
 
 
-def _set_direct_balance(amt):
-    current_rates = get_current_rates()
+def _set_direct_balance(amt, user):
+    current_rates = get_current_rates(user)
     current_rates['balance'] = amt
-    update_rates(current_rates)
+    update_rates(user, current_rates)
 
 
 if __name__ == "__main__":
 
-    # increase current rates:
-    daily_increase()
+    users = db.session.query(User).all()
 
-    # insert a new day row in daily summary:
-    create_new_day()
+    for user in users:
+        # increase current rates:
+        daily_increase(user)
+
+        # insert a new day row in daily summary:
+        create_new_day(user)

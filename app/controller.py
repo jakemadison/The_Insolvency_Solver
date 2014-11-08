@@ -57,13 +57,13 @@ def get_day_rows(start_date):
     return day_rows
 
 
-def insert_new_day(date=None):
+def insert_new_day(user, date=None):
     """insert a new day row at specified date. Used for creating a new day"""
 
     if date is None:
         date = datetime.now()  # this might need to be .date() as well..
 
-    new_day = DailyHistory(date)
+    new_day = DailyHistory(date, user.id)
     db.session.add(new_day)
     db.session.commit()
     print('created new row for day: {0}'.format(new_day))

@@ -1,6 +1,7 @@
 from __future__ import print_function
-from models import User, CurrentRates
+from models import User, CurrentRates, DailyHistory
 from app import db
+from datetime import datetime
 
 
 def add_user(resp):
@@ -26,8 +27,9 @@ def add_user(resp):
 
     db.session.commit()
 
-
     # add a line in Daily History for new user:
+    db.session.add(DailyHistory(datetime.now(), user.id))
+    db.session.commit()
 
 
 def change_info_view(user, show_or_hide):
