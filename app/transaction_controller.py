@@ -1,6 +1,7 @@
 from datetime import datetime
 from models import TransactionHistory, DailyHistory
-from controller import update_daily_history, update_rates, get_current_rates
+from controller import update_daily_history
+from rates_controller import update_rates, get_current_rates
 from app import db
 from sqlalchemy import func
 

@@ -9,9 +9,13 @@ def add_user(resp):
     if nickname is None or nickname == "":
         nickname = resp.email.split('@')[0]
 
+    # Add a new user to the user table:
     user = User(nickname=nickname, email=resp.email)
     db.session.add(user)
     db.session.commit()
+
+
+    # Add a line in rates table for our new user:
 
 
 def change_info_view(user, show_or_hide):

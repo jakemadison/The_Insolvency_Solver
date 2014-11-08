@@ -1,5 +1,6 @@
 from __future__ import print_function
-from controller import get_current_rates, update_rates, get_day_rows, insert_new_day
+from controller import get_day_rows, insert_new_day
+from rates_controller import get_current_rates, update_rates
 from datetime import datetime
 
 

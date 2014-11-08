@@ -2,7 +2,7 @@ from __future__ import print_function
 from app import app
 from flask import render_template, request, jsonify, redirect, url_for
 from flask import g
-from controller import get_current_rates, update_rates
+from rates_controller import get_current_rates, update_rates
 from user_controller import add_user, change_info_view
 from controller import get_daily_summary
 from transaction_controller import get_recent_transactions, get_filtered_summary
@@ -54,18 +54,20 @@ def after_login_function(resp):
 
     print('running after_login function now...')
 
-    user = g.user
+    # user = g.user
 
     if resp.email is None or resp.email == "":
         print('Invalid login. Please try again.')
         return redirect(url_for('/index'))
 
+    user = User.query.filter_by(email=resp.email).first()
+
     # if totally new user:
-    if user is None or user.is_authenticated() is False:
+    # if user is None or user.is_authenticated() is False:
+    if user is None:
         print('response: {0}'.format(resp))
         add_user(resp)
-
-    user = User.query.filter_by(email=resp.email).first()
+        user = User.query.filter_by(email=resp.email).first()
 
     print('Now attempting to log in now: ', user)
 
@@ -77,6 +79,7 @@ def after_login_function(resp):
     #
     return redirect(request.args.get('next') or url_for('index'))
     # return redirect(request.args.get('next'))
+
 
 @app.route('/logout')
 def logout_view():
@@ -90,9 +93,7 @@ def logout_view():
     return jsonify({'message': 'look how logged out you are!'})
 
 
-
-
-
+# Main Page Building Routes:
 @app.route('/')
 @app.route('/index')
 @oid.loginhandler
