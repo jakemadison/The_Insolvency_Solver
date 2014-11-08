@@ -1,9 +1,11 @@
-from models import User
+from __future__ import print_function
+from models import User, CurrentRates
 from app import db
 
 
 def add_user(resp):
 
+    print('new user found!', resp)
     # some auths contain a nick, some don't, use first portion of email if not
     nickname = resp.nickname
     if nickname is None or nickname == "":
@@ -14,8 +16,18 @@ def add_user(resp):
     db.session.add(user)
     db.session.commit()
 
-
     # Add a line in rates table for our new user:
+    current_rates_init = [('rent', 500, user.id), ('bills', 500, user.id), ('balance', 30, user.id),
+                          ('daily', 30, user.id), ('income_per_month', 2000, user.id),
+                          ('other_costs', 0, user.id), ('savings_per_month', 1000, user.id)]
+
+    for each_rate in current_rates_init:
+        db.session.add(CurrentRates(each_rate[0], each_rate[1], each_rate[2]))
+
+    db.session.commit()
+
+
+    # add a line in Daily History for new user:
 
 
 def change_info_view(user, show_or_hide):

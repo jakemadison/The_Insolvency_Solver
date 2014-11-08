@@ -13,6 +13,11 @@ class CurrentRates(db.Model):
     type = db.Column(db.String(64), unique=False)
     amount = db.Column(db.Integer, default=0)
 
+    def __init__(self, rate_type, amount, user_id):
+        self.type = rate_type
+        self.amount = amount
+        self.user_id = user_id
+
     def __repr__(self):
         r = str({"type": self.type, "amount": self.amount})
         return r
