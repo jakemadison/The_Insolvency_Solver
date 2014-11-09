@@ -50,8 +50,8 @@
 
     <div id="entry_forms">
         <form action="/submit_monthly" method="post" class="form-horizontal">
+{#         <form class="form-horizontal">#}
             <fieldset>
-
 
                 <span class="help-block">Input your monthly fixed costs and monthly pay below, and we'll calculate
                 what your remaining monthly balance amounts to!</span>
@@ -59,102 +59,44 @@
             <div class="form-group">
                 <label for="rent" class="col-lg-2 control-label">Rent</label>
                 <div class="col-lg-10">
-                    <input type="text" id="rent" class="form-control" placeholder="{{  rates.rent }}">
+                    <input type="number" id="rent" name="rent" class="form-control" placeholder="{{ rates.rent }}">
                 </div>
             </div>
             <div class="form-group">
                 <label for="bills" class="col-lg-2 control-label">Bills</label>
                 <div class="col-lg-10">
-                    <input type="text" id="bills" class="form-control" placeholder="{{  rates.bills }}">
+                    <input type="number" id="bills" name="bills" class="form-control" placeholder="{{ rates.bills }}">
                 </div>
             </div>
             <div class="form-group">
                 <label for="other_costs" class="col-lg-2 control-label">Other Costs</label>
                 <div class="col-lg-10">
-                    <input type="text" id = "other_costs" class="form-control" placeholder="{{  rates.other_costs }}">
+                    <input type="number" name="other_costs"
+                           id="other_costs" class="form-control" placeholder="{{ rates.other_costs }}">
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="income_per_month" class="col-lg-2 control-label">Income per Month</label>
                 <div class="col-lg-10">
-                    <input type="text" id= "income_per_month" class="form-control" placeholder="{{  rates.income_per_month }}">
+                    <input type="number" name="income_per_month" id="income_per_month" class="form-control"
+                           placeholder="{{ rates.income_per_month }}">
                 </div>
             </div>
 
             <div class="form-group">
                 <div class="col-lg-10 col-lg-offset-2">
-
                     <button type="submit" class="btn btn-primary pull-right btn-sm">Submit</button>
                 </div>
             </div>
             </fieldset>
 
-{#            <p>Rent:  $ <input type="text" name="rent" value="{{ rates.rent }}"></p>#}
-{#            <p>Bills:  $ <input type="text" name="bills" value="{{ rates.bills }}"></p>#}
-{#            <p>Other Fixed Costs per Month:  $ <input type="text" name="other_costs" value="{{ rates.other_costs }}"></p>#}
-{#            <p>Income per Month:  $ <input type="text" name="income_per_month" value="{{ rates.income_per_month }}"></p>#}
-{#            <input type="submit" value="Update">#}
          </form>
-
-
-
-
-
-
     </div>
 
 
 
-{#    <hr>#}
-
-{#    <div class="input-group">#}
-{#  <span class="input-group-addon">$</span>#}
-{#  <input type="text" class="form-control">#}
-{#  <span class="input-group-addon">.00</span>#}
-{##}
-{#      <span class="input-group-addon">$</span>#}
-{#  <input type="text" class="form-control">#}
-{#  <span class="input-group-addon">.00</span>#}
-{#    </div>#}
-
-
-    <!--<div id="savings_forms">-->
-        <!--<form action="/submit_savings" method="post" class="form-horizontal">-->
-            <!--<label for="savings_per_month" class="control-label">Savings per Month:</label>-->
-            <!--<div class="input-group">-->
-                <!--<input type="text" id="savings_per_month" name="savings_per_month" value="{{ rates.savings_per_month }}" class="form-control">-->
-                <!--<span class="input-group-btn">-->
-                <!--<button class="btn btn-default" type="submit">Submit</button>-->
-                 <!--</span>-->
-                <!--</div>-->
-<!--{#            <input type="submit" value="Update">#}-->
-        <!--</form>-->
-    <!--</div>-->
-
 <hr>
-
-    <!--<div id="spending_forms" class="form-group">-->
-        <!--<form action="/submit_spending" method="post" class="form-horizontal">-->
-            <!--<label for="daily" class="control-label">Daily Credits:</label>-->
-               <!--<div class="input-group">-->
-                <!--<input type="text" id="daily" name="daily" class="form-control" value="{{ rates.daily }}" class="form-control">-->
-                <!--<span class="input-group-btn">-->
-                <!--<button class="btn btn-default" type="submit">Submit</button>-->
-                 <!--</span>-->
-                   <!--</div>-->
-<!--{#            <input type="submit" value="Update">#}-->
-        <!--</form>-->
-    <!--</div>-->
-
-{#    <hr>#}
-
-
-
-
-
-
-
 
 
 </div>

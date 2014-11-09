@@ -179,24 +179,57 @@ def calendar():
 @app.route('/submit_monthly', methods=['POST'])
 def submit_monthly():
 
+    """receives a set of updated figures for monthly income & costs.  determines what our original ratio of
+    spending vs. savings was, and attempts to apply that ratio to the new monthly net balance, in order to set a new
+    daily credits vs. monthly spending fulcrum"""
+
     user = g.user
 
-    updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems()}
+    # this needs to be able to deal with missing values, and validation of values coming in too
+    # I can receive changes in bills, rent, other, and income
+
+    updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems() if k and v}
     print('update received with values: {0}'.format(updates_rates_dict))
 
     current_rates = get_current_rates(user)
+
+    # fill out missing values in update_rates:
+    for rate, value in current_rates.iteritems():
+        if rate not in updates_rates_dict:
+            updates_rates_dict[rate] = current_rates[rate]
+
+    old_monthly_balance = current_rates['income_per_month'] - (current_rates['rent'] +
+                                                               current_rates['bills'] +
+                                                               current_rates['other_costs'])
 
     monthly_balance = updates_rates_dict['income_per_month'] - (updates_rates_dict['rent'] +
                                                                 updates_rates_dict['bills'] +
                                                                 updates_rates_dict['other_costs'])
 
-    monthly_spending = current_rates['daily'] * 30
+    # discover the ratio of spending vs savings in our old rates:
+    old_monthly_spending = current_rates['daily'] * 30
+    current_credit_ratio = float(old_monthly_spending)/float(old_monthly_balance)
 
-    updates_rates_dict['savings_per_month'] = monthly_balance - monthly_spending
+    if monthly_balance < 0:
+        return jsonify({'message':
+                        'monthly costs exceed monthly income. You wont be able to save any money with me :<'})
 
-    result = update_rates(updates_rates_dict)
+    # using our previous ratio, determine the new spending amount given the new monthly balance:
+    new_monthly_spending = current_credit_ratio * monthly_balance
+    updates_rates_dict['daily'] = int(new_monthly_spending / 30)
+    updates_rates_dict['savings_per_month'] = int(monthly_balance - new_monthly_spending)
 
-    return redirect(url_for('settings'))
+    # This can get moved higher now...
+    if len(updates_rates_dict) == 0:
+        return jsonify({'updating with the following': updates_rates_dict,
+                        'current rates': current_rates,
+                        'month balance': monthly_balance,
+                        'current ratio': current_credit_ratio,
+                        'new spending': new_monthly_spending})
+
+    result = update_rates(user, updates_rates_dict)
+
+    return redirect(url_for('get_settings'))
 
 
 @app.route('/submit_savings', methods=['POST'])
