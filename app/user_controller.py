@@ -1,7 +1,13 @@
 from __future__ import print_function
-from models import User, CurrentRates, DailyHistory
+from app.models import User, CurrentRates, DailyHistory
 from app import db
 from datetime import datetime
+
+
+def get_all_users():
+
+    users = db.session.query(User).all()
+    return users
 
 
 def add_user(resp):
@@ -36,3 +42,9 @@ def change_info_view(user, show_or_hide):
     qry = db.session.query(User).filter_by(id=user.id)
     qry.update({"hidden_info_pref": show_or_hide})
     db.session.commit()
+
+
+if __name__ == "__main__":
+    users = get_all_users()
+    for u in users:
+        print(u)

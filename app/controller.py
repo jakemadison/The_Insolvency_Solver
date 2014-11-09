@@ -74,7 +74,7 @@ if __name__ == "__main__":
     # update_rates(rates)
     # execute_transaction(13)
     # print(get_filtered_summary(['Booze', 'Smokes', 'Cab', 'Dinning Out', 'Groceries', 'Coffee', 'Bar']))
-    pass
+    print('testing.....')
 
     # transaction = TransactionHistory(10, 'Booze')
     # print(func.DATE(transaction.timestamp).execute())

@@ -1,5 +1,6 @@
+from __future__ import print_function
 from app import db
-from models import CurrentRates
+from app.models import CurrentRates
 
 
 def get_current_rates(user):
@@ -25,3 +26,7 @@ def update_rates(user, new_rates_dict):
         print('current values should be: {0}'.format(cr))
 
     return True
+
+
+if __name__ == "__main__":
+    print('testing...')

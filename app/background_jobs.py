@@ -1,9 +1,8 @@
 from __future__ import print_function
+from user_controller import get_all_users
 from controller import get_day_rows, insert_new_day
 from rates_controller import get_current_rates, update_rates
 from datetime import datetime
-from app import db
-from models import User
 
 
 def daily_increase(user):
@@ -39,11 +38,11 @@ def _set_direct_balance(amt, user):
 
 if __name__ == "__main__":
 
-    users = db.session.query(User).all()
+    users = get_all_users()
 
-    for user in users:
+    for u in users:
         # increase current rates:
-        daily_increase(user)
+        daily_increase(u)
 
         # insert a new day row in daily summary:
-        create_new_day(user)
+        create_new_day(u)
