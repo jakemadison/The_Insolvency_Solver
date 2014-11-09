@@ -15,7 +15,7 @@
 
 <input type="range" min="0" max="{{rates.max_spending}}" value="{{rates.daily}}" id="spending_slider">
       <!--<span class="input-group-btn">-->
-                <button class="btn btn-primary btn-sm pull-right" type="submit">Submit</button>
+                <button class="btn btn-primary btn-sm pull-right" type="submit" onclick="submit_credit_change()">Submit</button>
      <!--</span>-->
 
 </div>
@@ -32,6 +32,12 @@
        document.getElementById('spending_value').innerHTML = value;
        document.getElementById('savings_value').innerHTML = savings;
     });
+
+    function submit_credit_change() {
+        var slider = document.getElementById('spending_slider');
+        console.log("submitting credit change...", slider.value);
+
+    }
 
 
 

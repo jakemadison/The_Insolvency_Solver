@@ -4,10 +4,10 @@ from app.models import DailyHistory
 from datetime import datetime
 
 
-def get_daily_summary(start_date=None, end_date=None):
+def get_daily_summary(user, start_date=None, end_date=None):
     """retrieve a full summary of all days.  this is used by the views."""
 
-    daily_summary = db.session.query(DailyHistory)
+    daily_summary = db.session.query(DailyHistory).filter(DailyHistory.user_id == user.id)
 
     if start_date and end_date:
         daily_summary = daily_summary.filter(DailyHistory.day >= start_date, DailyHistory.day <= end_date)

@@ -142,7 +142,7 @@ def get_daily_summary_view():
     user = g.user
 
     rates = get_current_rates(user)
-    daily_summary = get_daily_summary()
+    daily_summary = get_daily_summary(user)
 
     return render_template('daily_summary.html', rates=rates, daily_summary=daily_summary, u=user)
 
