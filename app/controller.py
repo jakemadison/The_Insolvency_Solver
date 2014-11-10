@@ -51,9 +51,10 @@ def update_daily_history(user, transaction, start_date):
     return True
 
 
-def get_day_rows(start_date):
+def get_day_rows(user, start_date):
     """return all day rows >= dates.  Used by creating a new day"""
-    day_rows = db.session.query(DailyHistory).filter(DailyHistory.day >= start_date).all()
+    day_rows = db.session.query(DailyHistory).filter(DailyHistory.user_id == user.id,
+                                                     DailyHistory.day >= start_date).all()
     return day_rows
 
 

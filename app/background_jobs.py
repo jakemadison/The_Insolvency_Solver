@@ -17,7 +17,7 @@ def daily_increase(user):
 def create_new_day(user):
     # check for the existence of a day row as a precaution.  If it doesn't exist, create a new row
     today = datetime.now().date()
-    existing = get_day_rows(today)
+    existing = get_day_rows(user, today)
 
     print('check for existence of day revealed: {0}'.format(existing))
 
@@ -41,7 +41,14 @@ if __name__ == "__main__":
     users = get_all_users()
 
     for u in users:
+        if u.id == 1:
+            continue
+
+        print('increasing daily amounts for user: {0}'.format(u))
         # increase current rates:
         daily_increase(u)
+
+        print('creating new day row for user: {0}'.format(u))
         # insert a new day row in daily summary:
         create_new_day(u)
+        print('------')
