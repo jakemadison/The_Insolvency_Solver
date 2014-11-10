@@ -43,6 +43,5 @@ if __name__ == "__main__":
     for u in users:
         # increase current rates:
         daily_increase(u)
-
         # insert a new day row in daily summary:
         create_new_day(u)
