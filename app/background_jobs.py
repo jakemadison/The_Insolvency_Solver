@@ -41,8 +41,8 @@ if __name__ == "__main__":
     users = get_all_users()
 
     for u in users:
-        if u.id == 1:
-            continue
+        # if u.id == 1:
+        #     continue
 
         print('increasing daily amounts for user: {0}'.format(u))
         # increase current rates:
