@@ -1,3 +1,5 @@
+START_DATE = '01/10/14';
+
 $(function(){
     //Array of images
     var imageArray = ["fry_sm.png", "poor_zoidberg.png", "rich_bender.jpg",

@@ -1,5 +1,6 @@
+from __future__ import print_function
 from datetime import datetime
-from models import TransactionHistory, DailyHistory
+from app.models import TransactionHistory, DailyHistory, User
 from controller import update_daily_history
 from rates_controller import update_rates, get_current_rates
 from app import db
@@ -93,7 +94,7 @@ def generate_summary_on_transactions(transaction_list):
     return transaction_list
 
 
-def get_filtered_summary(filter_list):
+def get_filtered_summary(user, filter_list):
     """recreate a daily summary with certain transactions filtered out."""
 
     #ORMify this:
@@ -108,19 +109,40 @@ def get_filtered_summary(filter_list):
                                             TransactionHistory.purchase_type,
                                             func.sum(TransactionHistory.amount).label('amount'))
 
+    transaction_subquery = transaction_subquery.filter(TransactionHistory.user_id == user.id)
+
     transaction_subquery = transaction_subquery.filter(TransactionHistory.purchase_type.in_(filter_list))
 
     transaction_subquery = transaction_subquery.group_by(func.DATE(TransactionHistory.timestamp))
+
+    # print('subquery results: ')
+    # for x in transaction_subquery.all():
+    #     print(x)
+
+    # transaction subquery brings up the correct results, for sure, summed as we would expect.
+
     transaction_subquery = transaction_subquery.group_by(TransactionHistory.purchase_type).subquery()
 
-    full_query = db.session.query(DailyHistory.day, DailyHistory.credits, transaction_subquery)
-    full_query = full_query.outerjoin(transaction_subquery, DailyHistory.day == transaction_subquery.c.transaction_day)
+    full_query = db.session.query(DailyHistory.day, DailyHistory.credits,
+                                  transaction_subquery).filter(DailyHistory.user_id == user.id)
+
+    full_query = full_query.outerjoin(transaction_subquery,
+                                      DailyHistory.day == transaction_subquery.c.transaction_day)
 
     full_query = full_query.order_by(DailyHistory.day).order_by(transaction_subquery.c.transaction_day)
 
+    # print('full query results:')
+    # for x in full_query.all():
+    #     print(x)
+
+    # full_query = db.session.query(DailyHistory.day, DailyHistory.credits, transaction_subquery)
+    # full_query = full_query.filter(DailyHistory.user_id == user.id)  # this might break things...
+    # full_query = full_query.filter(DailyHistory.user_id == user.id, TransactionHistory.user_id == user.id)
+
     result = full_query.all()
 
-    # The following wonky code will transpose our row-wise data into a more usable column-wise format based on filters
+    # The following wonky code will transpose our row-wise data into a
+    # more usable column-wise format based on filters
         #Output Data Model:
     #datum = {day: date, cat1: amount1, cat2: amount2, total: amount1 + amount2, balance: prev_bal - total}
 
@@ -156,4 +178,13 @@ def get_filtered_summary(filter_list):
     for x in transformed_data:
         x['day'] = x['day'].strftime("%d/%m")
 
+    for each in transformed_data:
+        print(each)
+
     return transformed_data
+
+
+if __name__ == "__main__":
+    u = db.session.query(User).filter(User.id == 3).first()
+    fs = get_filtered_summary(u, ["Test", "Food"])
+    print(fs)

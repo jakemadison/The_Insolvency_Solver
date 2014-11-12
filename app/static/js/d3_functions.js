@@ -690,6 +690,7 @@ function create_transaction_plot(t_indicator, plot_style) {
 
     //Custom event listeners for changing dates/chart types
     document.addEventListener("newDates", function(e) {
+
         clear_chart();
         transition_chart();
 
@@ -779,6 +780,17 @@ function create_transaction_plot(t_indicator, plot_style) {
 
         console.log("here's global data: ", global_data);
         console.log("some details of event: ", e);
+
+        var new_start_date = new Date(2014, parseInt(global_data.daily_summary[0].day.substring(3,5))-1,
+                                            parseInt(global_data.daily_summary[0].day.substring(0,2)));
+
+        console.log("---> attempting to set datepicker start dates", new_start_date);
+        $('.input_daterange').datepicker('setStartDate', new_start_date);
+        $('.date').datepicker('setStartDate', new_start_date);
+
+//        $('.date').datepicker.setStartDate(global_data.daily_summary[0].day+"/2014");
+//        $('.input-daterange').setStartDate(global_data.daily_summary[0].day+"/2014");
+
 
         if (e.detail.transition_chart) {
 
