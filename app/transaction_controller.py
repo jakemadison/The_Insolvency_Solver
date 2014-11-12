@@ -111,7 +111,8 @@ def get_filtered_summary(user, filter_list):
 
     transaction_subquery = transaction_subquery.filter(TransactionHistory.user_id == user.id)
 
-    transaction_subquery = transaction_subquery.filter(TransactionHistory.purchase_type.in_(filter_list))
+    if len(filter_list) > 0:
+        transaction_subquery = transaction_subquery.filter(TransactionHistory.purchase_type.in_(filter_list))
 
     transaction_subquery = transaction_subquery.group_by(func.DATE(TransactionHistory.timestamp))
 

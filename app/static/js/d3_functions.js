@@ -785,6 +785,9 @@ function create_transaction_plot(t_indicator, plot_style) {
                                             parseInt(global_data.daily_summary[0].day.substring(0,2)));
 
         console.log("---> attempting to set datepicker start dates", new_start_date);
+
+//        var $j = jQuery.noConflict();
+
         $('.input_daterange').datepicker('setStartDate', new_start_date);
         $('.date').datepicker('setStartDate', new_start_date);
 

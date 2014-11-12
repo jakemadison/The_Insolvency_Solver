@@ -316,16 +316,17 @@ def get_spending_data():
     filters = request.args.get('filters', '')
     filter_array = [str(x) for x in filters.split(',')]
 
-    if len(filter_array):
-        print('getting daily summary with filter array')
-        daily_summary = get_filtered_summary(user, filter_array)
-    else:
-        daily_summary = get_daily_summary(user)
+    # if len(filter_array):
+    #     print('getting daily summary with filter array')
+    # daily_summary = get_filtered_summary(user, filter_array)
+    # else:
+    #     daily_summary = get_daily_summary(user)
+
+    # filtered daily summary can just do it all now.
+    daily_summary = get_filtered_summary(user, filter_array)
 
     transaction_summary = get_sum_category_per_day()
     transaction_categories = list(set([t['purchase_type'] for t in transaction_summary]))
-
-    print('--->', daily_summary)
 
     return jsonify({'transaction_summary': transaction_summary,
                     'daily_summary': daily_summary,
