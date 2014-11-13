@@ -565,6 +565,23 @@ function create_transaction_plot(t_indicator, plot_style) {
     }
 
 
+    function add_moving_average() {
+
+       var line = d3.svg.line()
+                    .interpolate("basis")
+                    .x(function(d) { return x(d.label); })
+                    .y(function(d) { return y(d.value); });
+
+        var svg = d3.select(".chart_area").append("g");
+
+        svg.append("path")
+          .attr("class", "line")
+          .attr("d", function (d) { return line(d.values); })
+          .style("stroke-width", "4px")
+          .style("fill", "none");
+    }
+
+
     function toggle_income_line() {
         console.log("toggling income line now...");
 
@@ -573,7 +590,7 @@ function create_transaction_plot(t_indicator, plot_style) {
         console.log(line_state);
 
         if (line_state === false) {
-            d3.select(".line").remove();  //this might end up being to broad of a remove()...
+            d3.select(".line").remove();  //this might end up being too broad of a remove()...
             return;
         }
 
@@ -582,7 +599,7 @@ function create_transaction_plot(t_indicator, plot_style) {
                 return x(d.day);
             })
             .y(function (d, i) {
-                return y(30);
+                return y(PER_DIEM);
             });
 
         var svg = d3.select(".chart_area").append("g");
