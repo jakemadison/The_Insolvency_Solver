@@ -806,7 +806,8 @@ function create_transaction_plot(t_indicator, plot_style) {
 //        var $j = jQuery.noConflict();
 
         $('.input-daterange').datepicker('setStartDate', new_start_date);  //this is not setting startdate properly..
-        $('#date_start').attr("value", '01/10/2014');
+        $('.input-daterange').datepicker('setStartDate', new Date(2014, 10, 3));
+        $('#date_start').attr("value", '03/10/2014');
         $('.date').datepicker('setStartDate', new_start_date);
 
 //        $('.date').datepicker.setStartDate(global_data.daily_summary[0].day+"/2014");
