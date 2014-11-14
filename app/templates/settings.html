@@ -13,10 +13,12 @@
 	  <label>Daily Credits: <span id="spending_value">{{rates.daily}}</span></label>
         <label class="pull-right">Monthly Savings: <span id="savings_value">{{rates.savings_per_month}}  </span></label>
 
-<input type="range" min="0" max="{{rates.max_spending}}" value="{{rates.daily}}" id="spending_slider">
+<form action="/submit_savings" method="post" class="form-horizontal">
+<input type="range" min="0" max="{{rates.max_spending}}" value="{{rates.daily}}" id="spending_slider" name="daily">
       <!--<span class="input-group-btn">-->
                 <button class="btn btn-primary btn-sm pull-right" type="submit" onclick="submit_credit_change()">Submit</button>
      <!--</span>-->
+</form>
 
 </div>
 

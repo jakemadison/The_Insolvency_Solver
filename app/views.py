@@ -236,16 +236,24 @@ def submit_monthly():
 def submit_savings():
 
     user = g.user
-    updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems()}
+    updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems() if k and v}
     print('update received with values: {0}'.format(updates_rates_dict))
 
-    monthly_balance = updates_rates_dict['income_per_month'] - (updates_rates_dict['rent'] +
-                                                            updates_rates_dict['bills'] +
-                                                            updates_rates_dict['other_costs'])
+    current_rates = get_current_rates(user)
+    # fill out missing values in update_rates:
+    for rate, value in current_rates.iteritems():
+        if rate not in updates_rates_dict:
+            updates_rates_dict[rate] = current_rates[rate]
+
+    monthly_balance = current_rates['income_per_month'] - (current_rates['rent'] +
+                                                           current_rates['bills'] +
+                                                           current_rates['other_costs'])
+
+    updates_rates_dict['savings_per_month'] = monthly_balance - (updates_rates_dict['daily'] * 30)
 
     result = update_rates(user, updates_rates_dict)
 
-    return redirect(url_for('settings'))
+    return redirect(url_for('get_settings'))
 
 
 @app.route('/submit_spending', methods=['POST'])
