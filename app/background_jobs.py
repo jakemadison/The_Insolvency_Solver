@@ -4,6 +4,12 @@ from controller import get_day_rows, insert_new_day
 from rates_controller import get_current_rates, update_rates
 from datetime import datetime
 
+import logging
+from app import setup_logger
+logger = logging.getLogger(__name__)
+setup_logger(logger)
+logger.setLevel(logging.INFO)
+
 
 def daily_increase(user):
     current_rates = get_current_rates(user)
@@ -19,10 +25,10 @@ def create_new_day(user):
     today = datetime.now().date()
     existing = get_day_rows(user, today)
 
-    print('check for existence of day revealed: {0}'.format(existing))
+    logger.info('check for existence of day revealed: {0}'.format(existing))
 
     if not existing:
-        print('no existing record found.  Inserting a new day.')
+        logger.info('no existing record found.  Inserting a new day.')
         insert_new_day(user, today)
         return True
 
@@ -44,11 +50,11 @@ if __name__ == "__main__":
         # if u.id == 1:
         #     continue
 
-        print('increasing daily amounts for user: {0}'.format(u))
+        logger.info('increasing daily amounts for user: {0}'.format(u))
         # increase current rates:
         daily_increase(u)
 
-        print('creating new day row for user: {0}'.format(u))
+        logger.info('creating new day row for user: {0}'.format(u))
         # insert a new day row in daily summary:
         create_new_day(u)
-        print('------')
+        logger.info('------')

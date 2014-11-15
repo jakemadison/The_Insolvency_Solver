@@ -12,17 +12,23 @@ from flask.ext.login import login_user, logout_user, current_user
 from models import User
 from app import lm, oid
 
+import logging
+from app import setup_logger
+logger = logging.getLogger(__name__)
+setup_logger(logger)
+logger.setLevel(logging.INFO)
+
 
 @app.before_request
 def before_request_happens():
-    print("NEW REQUEST:")
+    logger.info("NEW REQUEST:")
     g.user = current_user
 
     if g.user.is_anonymous():
         user = User.query.filter_by(email='guest@guest.com').first()
         g.user = user
 
-    print('current user is: ', g.user)
+    logger.info('current user is: {0}'.format(g.user))
 
 
 
@@ -38,7 +44,7 @@ def load_user(id):
 @oid.loginhandler
 def login_user_function():
 
-    print('I am attempting to login now...')
+    logger.info('I am attempting to login now...')
 
     try:
         url = request.form["url"]
@@ -46,7 +52,7 @@ def login_user_function():
 
         return jsonify({'there were so many errors': str(e)})
 
-    print('getting oid results now: ')
+    logger.info('getting oid results now: ')
 
     oid_results = oid.try_login(url, ask_for=['nickname', 'email'])
 
@@ -56,12 +62,12 @@ def login_user_function():
 @oid.after_login
 def after_login_function(resp):
 
-    print('running after_login function now...')
+    logger.info('running after_login function now...')
 
     # user = g.user
 
     if resp.email is None or resp.email == "":
-        print('Invalid login. Please try again.')
+        logger.warn('Invalid login. Please try again.')
         return redirect(url_for('/index'))
 
     user = User.query.filter_by(email=resp.email).first()
@@ -69,11 +75,11 @@ def after_login_function(resp):
     # if totally new user:
     # if user is None or user.is_authenticated() is False:
     if user is None:
-        print('response: {0}'.format(resp))
+        logger.info('response: {0}'.format(resp))
         add_user(resp)
         user = User.query.filter_by(email=resp.email).first()
 
-    print('Now attempting to log in now: ', user)
+    logger.info('Now attempting to log in now: {0}'.format(user))
 
     login_user(user, remember=True)
 
@@ -88,7 +94,7 @@ def after_login_function(resp):
 @app.route('/logout')
 def logout_view():
     logout_user()
-    print("successful logout for user: {0}".format(g.user))
+    logger.info("successful logout for user: {0}".format(g.user))
 
     # rates = get_current_rates()
     # transactions = get_recent_transactions()
@@ -130,7 +136,7 @@ def get_settings():
 def show_hide_info():
     hiding = request.form['hidden']
     user = g.user
-    print(hiding, user)
+    logger.info("hiding: {0}, user: {1}".format(hiding, user))
     change_info_view(user, hiding)
 
     return jsonify({'success': True})
@@ -189,7 +195,7 @@ def submit_monthly():
     # I can receive changes in bills, rent, other, and income
 
     updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems() if k and v}
-    print('update received with values: {0}'.format(updates_rates_dict))
+    logger.info('update received with values: {0}'.format(updates_rates_dict))
 
     current_rates = get_current_rates(user)
 
@@ -237,7 +243,7 @@ def submit_savings():
 
     user = g.user
     updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems() if k and v}
-    print('update received with values: {0}'.format(updates_rates_dict))
+    logger.info('update received with values: {0}'.format(updates_rates_dict))
 
     current_rates = get_current_rates(user)
     # fill out missing values in update_rates:
@@ -261,7 +267,7 @@ def submit_spending():
     user = g.user
 
     updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems()}
-    print('update received with values: {0}'.format(updates_rates_dict))
+    logger.info('update received with values: {0}'.format(updates_rates_dict))
     result = update_rates(user, updates_rates_dict)
 
     return redirect(url_for('settings'))
@@ -274,7 +280,7 @@ def submit_transaction():
 
     user = g.user
 
-    print('transaction submitted.')
+    logger.info('transaction submitted.')
 
     try:
         transaction_amount = request.form['transaction']
@@ -287,12 +293,12 @@ def submit_transaction():
         purchase_type = request.form['purchase']
         transaction_date = request.form['transaction_date']
     except ValueError, e:
-        print('value error on input: {0}'.format(str(e)))
+        logger.warn('value error on input: {0}'.format(str(e)))
         return redirect(url_for('build_index'))
 
-    print('received a new transaction, amount: {0}, type: {1}, date: {2}'.format(transaction_amount,
-                                                                                 purchase_type,
-                                                                                 transaction_date))
+    logger.info('received a new transaction, amount: {0}, type: {1}, date: {2}'.format(transaction_amount,
+                                                                                       purchase_type,
+                                                                                       transaction_date))
 
     if purchase_type:
         purchase_type = purchase_type.title()
@@ -362,7 +368,7 @@ def get_transaction_metrics():
 
     if start_date != '0' and end_date != '0':
 
-        print("got it!")
+        logger.info("got it!")
         start = datetime.strptime(start_date, '%d/%m/%Y')
         # delta = timedelta(days=1)
         # start = start - delta
@@ -389,13 +395,13 @@ def get_daily_metrics():
     end_date = request.args.get('end_date', None)
     filters = request.args.get('filters', None)
 
-    print('hey guess what???? I received: {0}, {1}'.format(start_date, end_date))
-    print('hey guess what???? I received: {0}'.format(filters))
+    logger.info('hey guess what???? I received: {0}, {1}'.format(start_date, end_date))
+    logger.info('hey guess what???? I received: {0}'.format(filters))
 
     filter_array = [str(x) for x in filters.split(',')]
 
     if len(filter_array):
-        print('yerrrrp', filter_array)
+        logger.info('yerrrrp {0}'.format(filter_array))
 
     if start_date != '0' and end_date != '0':
         start = datetime.strptime(start_date, '%d/%m/%Y')

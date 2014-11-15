@@ -3,6 +3,12 @@ from app import db
 from app.models import DailyHistory
 from datetime import datetime
 
+import logging
+from app import setup_logger
+logger = logging.getLogger(__name__)
+setup_logger(logger)
+logger.setLevel(logging.INFO)
+
 
 def get_daily_summary(user, start_date=None, end_date=None):
     """retrieve a full summary of all days.  this is used by the views."""
@@ -39,7 +45,7 @@ def update_daily_history(user, transaction, start_date):
 
     for day in existing_days:
 
-        print('updating existing row: {0}'.format(day.day))
+        logger.info('updating existing row: {0}'.format(day.day))
 
         if day.day == start_date:
             day.update_day(transaction.amount)
@@ -67,7 +73,7 @@ def insert_new_day(user, date=None):
     new_day = DailyHistory(date, user.id)
     db.session.add(new_day)
     db.session.commit()
-    print('created new row for day: {0}'.format(new_day))
+    logger.info('created new row for day: {0}'.format(new_day))
 
 
 if __name__ == "__main__":
@@ -75,7 +81,7 @@ if __name__ == "__main__":
     # update_rates(rates)
     # execute_transaction(13)
     # print(get_filtered_summary(['Booze', 'Smokes', 'Cab', 'Dinning Out', 'Groceries', 'Coffee', 'Bar']))
-    print('testing.....')
+    logger.info('testing.....')
 
     # transaction = TransactionHistory(10, 'Booze')
     # print(func.DATE(transaction.timestamp).execute())

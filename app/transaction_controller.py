@@ -6,12 +6,18 @@ from rates_controller import update_rates, get_current_rates
 from app import db
 from sqlalchemy import func
 
+import logging
+from app import setup_logger
+logger = logging.getLogger(__name__)
+setup_logger(logger)
+logger.setLevel(logging.INFO)
+
 
 def execute_transaction(user, amount, purchase_type, date=None):
 
     # transaction needs to take in a date param optionally, and modify model defaults.
 
-    print(type(date), type(datetime.today()), datetime.today())
+    logger.info("{0}, {1}, {2}".format(type(date), type(datetime.today()), datetime.today()))
 
     # okay, so execute now gets a date in the form of a day.
     if datetime.today().date() == date.date():
@@ -19,13 +25,13 @@ def execute_transaction(user, amount, purchase_type, date=None):
     else:
         timestamp = date
 
-    print('received transaction for timestamp: {0}'.format(timestamp))
+    logger.info('received transaction for timestamp: {0}'.format(timestamp))
 
     # insert a transaction & update balance.
     #This should include adding system time when button was pressed, which can then be gathered for Daily View
 
     new_transaction = TransactionHistory(user.id, amount, timestamp, purchase_type)
-    print('new transaction created: {0}, {1}'.format(new_transaction.amount, new_transaction.timestamp))
+    logger.info('new transaction created: {0}, {1}'.format(new_transaction.amount, new_transaction.timestamp))
 
     # print('dying now....')
     # return True
@@ -89,7 +95,7 @@ def generate_summary_on_transactions(transaction_list):
     start_date = transaction_list[-1]["timestamp"]
     end_date = transaction_list[0]["timestamp"]
 
-    print(start_date, end_date)
+    logger.info("{0}, {1}".format(start_date, end_date))
 
     return transaction_list
 
@@ -180,7 +186,7 @@ def get_filtered_summary(user, filter_list):
         x['day'] = x['day'].strftime("%d/%m")
 
     for each in transformed_data:
-        print(each)
+        logger.info(each)
 
     return transformed_data
 
@@ -188,4 +194,4 @@ def get_filtered_summary(user, filter_list):
 if __name__ == "__main__":
     u = db.session.query(User).filter(User.id == 3).first()
     fs = get_filtered_summary(u, ["Test", "Food"])
-    print(fs)
+    logger.info(fs)

@@ -3,6 +3,12 @@ from app.models import User, CurrentRates, DailyHistory
 from app import db
 from datetime import datetime
 
+import logging
+from app import setup_logger
+logger = logging.getLogger(__name__)
+setup_logger(logger)
+logger.setLevel(logging.INFO)
+
 
 def get_all_users():
 
@@ -12,7 +18,7 @@ def get_all_users():
 
 def add_user(resp):
 
-    print('new user found!', resp)
+    logger.info('new user found! {0}'.format(resp))
     # some auths contain a nick, some don't, use first portion of email if not
     nickname = resp.nickname
     if nickname is None or nickname == "":
@@ -47,4 +53,4 @@ def change_info_view(user, show_or_hide):
 if __name__ == "__main__":
     users = get_all_users()
     for u in users:
-        print(u)
+        logger.info(u)

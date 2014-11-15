@@ -3,6 +3,12 @@ from app import db
 from datetime import datetime, timedelta
 from sqlalchemy import func
 
+import logging
+from app import setup_logger
+logger = logging.getLogger(__name__)
+setup_logger(logger)
+logger.setLevel(logging.INFO)
+
 
 class CurrentRates(db.Model):
 
@@ -48,8 +54,8 @@ class DailyHistory(db.Model):
         self.credits = current_rate
 
         prev_day = day - timedelta(days=1)
-        print(prev_day)
-        print(current_rate)
+        logger.info(prev_day)
+        logger.info(current_rate)
         prev_balance = db.session.query(DailyHistory).filter(DailyHistory.day == func.DATE(prev_day)).first()
 
         if prev_balance is None:
@@ -59,7 +65,7 @@ class DailyHistory(db.Model):
             prev_balance = prev_balance.balance
             self.balance = prev_balance
 
-        print(prev_balance)
+        logger.info(prev_balance)
 
         self.balance += current_rate
 
