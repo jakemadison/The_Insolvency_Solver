@@ -16,6 +16,10 @@ def setup_logger(logger_instance):
     formatter = logging.Formatter('(%(asctime)s: %(name)s: %(levelname)s): %(message)s')
     ch.setFormatter(formatter)
     logger_instance.addHandler(ch)
+    hdlr = logging.FileHandler('./insolvency_logger.log')
+    hdlr.setFormatter(formatter)
+    logger.addHandler(hdlr)
+
 
 logger = logging.getLogger(__name__)
 setup_logger(logger)
