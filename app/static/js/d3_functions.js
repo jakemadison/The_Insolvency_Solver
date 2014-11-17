@@ -695,7 +695,6 @@ function create_transaction_plot(t_indicator, plot_style) {
 
             }
 
-
         }
         else {
             //default behaviour should be to chop off most recent two-week period:
@@ -721,31 +720,38 @@ function create_transaction_plot(t_indicator, plot_style) {
         switch (current_chart_type) {
             case 'chart':
                 draw_chart();
+                toggle_income_line();
                 break;
             case 'stacked_bar':
                 transition_chart_type();
                 draw_stacked_bar_chart();
+                toggle_income_line();
                 break;
             case 'line_chart':
                 transition_chart_type();
                 draw_line_chart();
+                toggle_income_line();
                 break;
             case 'stacked':
                 transition_chart_type();
                 draw_stacked_chart();
+                toggle_income_line();
                 break;
             case 'pie':
                 transition_chart_type();
                 draw_pie_chart();
+                toggle_income_line();
                 break;
             case 'balvspend':
                 transition_chart_type();
                 draw_bal_v_spend();
+                toggle_income_line();
                 break;
 
 
             default:
                 draw_chart();
+                toggle_income_line();
             }
 
 
@@ -785,7 +791,6 @@ function create_transaction_plot(t_indicator, plot_style) {
                 draw_bal_v_spend();
                 break;
 
-
             default:
                 draw_chart();
             }
@@ -805,7 +810,7 @@ function create_transaction_plot(t_indicator, plot_style) {
 
 //        var $j = jQuery.noConflict();
 
-        $('.input-daterange').datepicker('setStartDate', new_start_date);  //this is not setting startdate properly..
+        $('.input-daterange').datepicker('setStartDate', new_start_date);  //this is not setting start date properly..
         $('.input-daterange').datepicker('setStartDate', new Date(2014, 10, 3));
         $('#date_start').attr("value", '03/10/2014');
         $('.date').datepicker('setStartDate', new_start_date);
