@@ -31,7 +31,6 @@ def before_request_happens():
     logger.info('current user is: {0}'.format(g.user))
 
 
-
 #####
 # Functions for handling user login:
 #####
@@ -83,12 +82,7 @@ def after_login_function(resp):
 
     login_user(user, remember=True)
 
-    # return redirect(oid.get_next_url())
-
-    # return jsonify({'success': True})
-    #
     return redirect(request.args.get('next') or url_for('index'))
-    # return redirect(request.args.get('next'))
 
 
 @app.route('/logout')
@@ -109,8 +103,6 @@ def logout_view():
 @oid.loginhandler
 def build_index():
 
-    # if g.user is None or not g.user.is_authenticated():
-    #     pass
     user = g.user
 
     rates = get_current_rates(user)
@@ -329,12 +321,6 @@ def get_spending_data():
 
     filters = request.args.get('filters', '')
     filter_array = [str(x) for x in filters.split(',')]
-
-    # if len(filter_array):
-    #     print('getting daily summary with filter array')
-    # daily_summary = get_filtered_summary(user, filter_array)
-    # else:
-    #     daily_summary = get_daily_summary(user)
 
     # filtered daily summary can just do it all now.
     daily_summary = get_filtered_summary(user, filter_array)

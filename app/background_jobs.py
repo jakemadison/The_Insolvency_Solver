@@ -47,8 +47,6 @@ if __name__ == "__main__":
     users = get_all_users()
 
     for u in users:
-        # if u.id == 1:
-        #     continue
 
         logger.info('increasing daily amounts for user: {0}'.format(u))
         # increase current rates:
