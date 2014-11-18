@@ -35,8 +35,8 @@ def before_request_happens():
 # Functions for handling user login:
 #####
 @lm.user_loader
-def load_user(id):
-    return User.query.get(int(id))
+def load_user(u_id):
+    return User.query.get(int(u_id))
 
 
 @app.route('/login_user', methods=['GET', 'POST'])
@@ -124,16 +124,6 @@ def get_settings():
     return render_template('settings.html', rates=rates, u=user)
 
 
-@app.route('/change_info_display', methods=['POST'])
-def show_hide_info():
-    hiding = request.form['hidden']
-    user = g.user
-    logger.info("hiding: {0}, user: {1}".format(hiding, user))
-    change_info_view(user, hiding)
-
-    return jsonify({'success': True})
-
-
 @app.route('/daily_summary')
 def get_daily_summary_view():
 
@@ -174,6 +164,21 @@ def calendar():
 
 
 # POST ROUTES:
+@app.route('/change_info_display', methods=['POST'])
+def show_hide_info():
+    hiding = request.form['hidden']
+    user = g.user
+
+    #guests can't permanently hide info, because I say so.
+    if user.is_guest():
+        return jsonify({'success': False})
+
+    logger.info("hiding: {0}, user: {1}".format(hiding, user))
+    change_info_view(user, hiding)
+
+    return jsonify({'success': True})
+
+
 @app.route('/submit_monthly', methods=['POST'])
 def submit_monthly():
 
@@ -188,6 +193,10 @@ def submit_monthly():
 
     updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems() if k and v}
     logger.info('update received with values: {0}'.format(updates_rates_dict))
+
+    for v in updates_rates_dict.values():
+        if v > 100000:
+            return jsonify({'message': "what are you tryin' to pull here, buddy?"})
 
     current_rates = get_current_rates(user)
 
@@ -237,6 +246,10 @@ def submit_savings():
     updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems() if k and v}
     logger.info('update received with values: {0}'.format(updates_rates_dict))
 
+    for v in updates_rates_dict.values():
+        if v > 100000:
+            return jsonify({'message': "what are you tryin' to pull here, buddy?"})
+
     current_rates = get_current_rates(user)
     # fill out missing values in update_rates:
     for rate, value in current_rates.iteritems():
@@ -260,6 +273,13 @@ def submit_spending():
 
     updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems()}
     logger.info('update received with values: {0}'.format(updates_rates_dict))
+
+    for v in updates_rates_dict.values():
+        if v > 100000:
+            return jsonify({'message': "what are you tryin' to pull here, buddy?"})
+
+
+
     result = update_rates(user, updates_rates_dict)
 
     return redirect(url_for('settings'))
@@ -281,6 +301,9 @@ def submit_transaction():
             transaction_amount = 0
         else:
             transaction_amount = int(transaction_amount)
+
+        if transaction_amount > 100000:
+            raise ValueError
 
         purchase_type = request.form['purchase']
         transaction_date = request.form['transaction_date']
