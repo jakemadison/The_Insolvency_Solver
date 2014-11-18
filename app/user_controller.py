@@ -11,7 +11,6 @@ logger.setLevel(logging.INFO)
 
 
 def get_all_users():
-
     users = db.session.query(User).all()
     return users
 
@@ -51,6 +50,6 @@ def change_info_view(user, show_or_hide):
 
 
 if __name__ == "__main__":
-    users = get_all_users()
-    for u in users:
+    user_list = get_all_users()
+    for u in user_list:
         logger.info(u)

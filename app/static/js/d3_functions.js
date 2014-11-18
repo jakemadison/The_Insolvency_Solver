@@ -724,7 +724,9 @@ function create_transaction_plot(t_indicator, plot_style) {
                 break;
             case 'stacked_bar':
                 transition_chart_type();
+                console.log("finished transitioning chart, drawing stacked bar now...?");
                 draw_stacked_bar_chart();
+                console.log("finished drawing chart, toggling income line...?");
                 toggle_income_line();
                 break;
             case 'line_chart':
@@ -774,25 +776,32 @@ function create_transaction_plot(t_indicator, plot_style) {
         switch (current_chart_type) {
             case 'chart':
                 draw_chart();
+                toggle_income_line();
                 break;
             case 'stacked_bar':
                 draw_stacked_bar_chart();
+                toggle_income_line();
                 break;
             case 'line_chart':
                 draw_line_chart();
+                toggle_income_line();
                 break;
             case 'stacked':
                 draw_stacked_chart();
+                toggle_income_line();
                 break;
             case 'pie':
                 draw_pie_chart();
+                toggle_income_line();
                 break;
             case 'balvspend':
                 draw_bal_v_spend();
+                toggle_income_line();
                 break;
 
             default:
                 draw_chart();
+                toggle_income_line();
             }
 
     }, false);

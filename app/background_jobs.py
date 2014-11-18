@@ -31,7 +31,6 @@ def create_new_day(user):
         logger.info('no existing record found.  Inserting a new day.')
         insert_new_day(user, today)
         return True
-
     else:
         return False
 
