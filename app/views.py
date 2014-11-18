@@ -303,7 +303,7 @@ def submit_transaction():
             transaction_amount = int(transaction_amount)
 
         if transaction_amount > 100000:
-            raise ValueError
+            return redirect(url_for('build_index'))
 
         purchase_type = request.form['purchase']
         transaction_date = request.form['transaction_date']
