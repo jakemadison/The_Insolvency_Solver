@@ -8,5 +8,6 @@
 #ignore local db
 app.db
 
+#
 #ignore logging
 insolvency_logger.log
