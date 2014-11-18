@@ -589,8 +589,9 @@ function create_transaction_plot(t_indicator, plot_style) {
         var line_state = $("#income_toggle")[0].checked;
         console.log(line_state);
 
+        d3.select(".income_line").remove();
+
         if (line_state === false) {
-            d3.select(".line").remove();  //this might end up being too broad of a remove()...
             return;
         }
 
@@ -606,7 +607,7 @@ function create_transaction_plot(t_indicator, plot_style) {
 
         svg.append("path")
             .datum(data)
-            .attr("class", "line")
+            .attr("class", "income_line")
             .style("stroke-dasharray", ("3, 4"))
             .attr("d", line)
             .attr("stroke", "black");
@@ -724,9 +725,7 @@ function create_transaction_plot(t_indicator, plot_style) {
                 break;
             case 'stacked_bar':
                 transition_chart_type();
-                console.log("finished transitioning chart, drawing stacked bar now...?");
                 draw_stacked_bar_chart();
-                console.log("finished drawing chart, toggling income line...?");
                 toggle_income_line();
                 break;
             case 'line_chart':
@@ -844,31 +843,38 @@ function create_transaction_plot(t_indicator, plot_style) {
         switch (current_chart_type) {
             case 'chart':
                 draw_chart();
+                toggle_income_line();
                 break;
             case 'stacked_bar':
                 transition_chart_type();
                 draw_stacked_bar_chart();
+                toggle_income_line();
                 break;
             case 'line_chart':
                 transition_chart_type();
                 draw_line_chart();
+                toggle_income_line();
                 break;
             case 'stacked':
                 transition_chart_type();
                 draw_stacked_chart();
+                toggle_income_line();
                 break;
             case 'pie':
                 transition_chart_type();
                 draw_pie_chart();
+                toggle_income_line();
                 break;
             case 'balvspend':
                 transition_chart_type();
                 draw_bal_v_spend();
+                toggle_income_line();
                 break;
 
 
             default:
                 draw_chart();
+                toggle_income_line();
             }
 
 //        draw_chart();
