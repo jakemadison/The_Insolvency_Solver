@@ -667,10 +667,6 @@ function create_transaction_plot(t_indicator, plot_style) {
 
 
 
-
-//    get_parse_data(0, 0, 0, t_indicator, true, ret_filters);
-
-
     function change_date_range_of_data(dates) {
 
         console.log("changing date range is active now", dates);
