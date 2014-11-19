@@ -12,12 +12,13 @@ def get_recent_commit():
 
     try:
         with open(basedir+'/.git/logs/HEAD', 'rb') as h_file:
-            line = None
+            current_line = None
             for line in h_file:
-                pass
+                if ' commit ' in line:
+                    current_line = line.strip()
 
-        line = line.split(' ')
-        date = line[5]
+        current_line = current_line.split(' ')
+        date = current_line[5]
 
         translated_date = datetime.fromtimestamp(int(date)).strftime('%Y-%m-%d %H:%M:%S')
 
