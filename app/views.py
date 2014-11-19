@@ -12,11 +12,8 @@ from flask.ext.login import login_user, logout_user, current_user
 from models import User
 from app import lm, oid
 
-import logging
-from app import setup_logger
-logger = logging.getLogger(__name__)
-setup_logger(logger)
-logger.setLevel(logging.INFO)
+from logger_controller import get_logger
+logger = get_logger()
 
 
 @app.before_request

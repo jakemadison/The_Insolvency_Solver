@@ -3,12 +3,8 @@ from app.models import User, CurrentRates, DailyHistory
 from app import db
 from datetime import datetime
 
-import logging
-from app import setup_logger
-logger = logging.getLogger(__name__)
-setup_logger(logger)
-logger.setLevel(logging.INFO)
-
+from logger_controller import get_logger
+logger = get_logger()
 
 def get_all_users():
     users = db.session.query(User).all()

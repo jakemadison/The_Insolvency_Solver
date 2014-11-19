@@ -1,34 +1,15 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
-
+import app as a
 import os
 from flask.ext.login import LoginManager
 from flask.ext.openid import OpenID
 from config import basedir
 import logging
 
+from logger_controller import get_logger
+logger = get_logger()
 
-def setup_logger(logger_instance):
-
-    if logger.handlers:  # prevents the loading of duplicate handlers/log output
-        return
-
-    formatter = logging.Formatter('(%(asctime)s: %(name)s: %(levelname)s): %(message)s')
-
-    if app.debug:
-        ch = logging.StreamHandler()
-        ch.setFormatter(formatter)
-        logger_instance.addHandler(ch)
-    else:
-        ch = logging.FileHandler('./insolvency_logger.log')
-        ch.setLevel(logging.INFO)
-        ch.setFormatter(formatter)
-        logger.addHandler(ch)
-
-
-logger = logging.getLogger(__name__)
-setup_logger(logger)
-logger.setLevel(logging.DEBUG)
 logger.info('completed logger config. beginning to load application.')
 
 app = Flask(__name__)

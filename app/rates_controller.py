@@ -2,11 +2,8 @@ from __future__ import print_function
 from app import db
 from app.models import CurrentRates
 
-import logging
-from app import setup_logger
-logger = logging.getLogger(__name__)
-setup_logger(logger)
-logger.setLevel(logging.INFO)
+from logger_controller import get_logger
+logger = get_logger()
 
 
 def get_current_rates(user):

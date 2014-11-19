@@ -4,12 +4,8 @@ from controller import get_day_rows, insert_new_day
 from rates_controller import get_current_rates, update_rates
 from datetime import datetime
 
-import logging
-from app import setup_logger
-logger = logging.getLogger(__name__)
-setup_logger(logger)
-logger.setLevel(logging.INFO)
-
+from logger_controller import get_logger
+logger = get_logger()
 
 def daily_increase(user):
     current_rates = get_current_rates(user)

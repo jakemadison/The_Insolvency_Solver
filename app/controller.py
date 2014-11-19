@@ -3,11 +3,8 @@ from app import db
 from app.models import DailyHistory
 from datetime import datetime
 
-import logging
-from app import setup_logger
-logger = logging.getLogger(__name__)
-setup_logger(logger)
-logger.setLevel(logging.INFO)
+from logger_controller import get_logger
+logger = get_logger()
 
 
 def get_daily_summary(user, start_date=None, end_date=None):

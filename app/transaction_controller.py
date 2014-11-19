@@ -6,11 +6,8 @@ from rates_controller import update_rates, get_current_rates
 from app import db
 from sqlalchemy import func
 
-import logging
-from app import setup_logger
-logger = logging.getLogger(__name__)
-setup_logger(logger)
-logger.setLevel(logging.INFO)
+from logger_controller import get_logger
+logger = get_logger()
 
 
 def execute_transaction(user, amount, purchase_type, date=None):
