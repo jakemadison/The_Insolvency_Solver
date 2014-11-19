@@ -1,6 +1,5 @@
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
-
 import os
 from flask.ext.login import LoginManager
 from flask.ext.openid import OpenID
@@ -19,7 +18,7 @@ def setup_logger(logger_instance):
     ch.setFormatter(formatter)
     logger_instance.addHandler(ch)
 
-    ch = logging.FileHandler('./insolvency_logger.log')
+    ch = logging.FileHandler(basedir+'/insolvency_logger.log')
     ch.setLevel(logging.INFO)
     ch.setFormatter(formatter)
     logger.addHandler(ch)
