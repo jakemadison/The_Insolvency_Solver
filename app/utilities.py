@@ -4,15 +4,20 @@ from app import basedir
 
 
 def get_recent_commit():
-    with open(basedir+'/.git/logs/HEAD', 'rb') as h_file:
-        line = None
-        for line in h_file:
-            pass
 
-    line = line.split(' ')
-    date = line[5]
+    try:
+        with open(basedir+'/.git/logs/HEAD', 'rb') as h_file:
+            line = None
+            for line in h_file:
+                pass
 
-    translated_date = datetime.fromtimestamp(int(date)).strftime('%Y-%m-%d %H:%M:%S')
+        line = line.split(' ')
+        date = line[5]
+
+        translated_date = datetime.fromtimestamp(int(date)).strftime('%Y-%m-%d %H:%M:%S')
+
+    except Exception, e:
+        translated_date = 'unknown'
 
     return translated_date
 
