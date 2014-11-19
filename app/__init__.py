@@ -15,15 +15,14 @@ def setup_logger(logger_instance):
 
     formatter = logging.Formatter('(%(asctime)s: %(name)s: %(levelname)s): %(message)s')
 
-    if app.debug:
-        ch = logging.StreamHandler()
-        ch.setFormatter(formatter)
-        logger_instance.addHandler(ch)
-    else:
-        ch = logging.FileHandler('./insolvency_logger.log')
-        ch.setLevel(logging.INFO)
-        ch.setFormatter(formatter)
-        logger.addHandler(ch)
+    ch = logging.StreamHandler()
+    ch.setFormatter(formatter)
+    logger_instance.addHandler(ch)
+
+    ch = logging.FileHandler('./insolvency_logger.log')
+    ch.setLevel(logging.INFO)
+    ch.setFormatter(formatter)
+    logger.addHandler(ch)
 
 
 logger = logging.getLogger(__name__)
