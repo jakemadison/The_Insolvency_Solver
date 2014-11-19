@@ -22,14 +22,13 @@ logger.setLevel(logging.INFO)
 
 @app.before_request
 def before_request_happens():
-    logger.info("NEW REQUEST:")
     g.user = current_user
 
     if g.user.is_anonymous():
         user = User.query.filter_by(email='guest@guest.com').first()
         g.user = user
 
-    logger.info('current user is: {0}'.format(g.user))
+    logger.info('NEW REQUEST: current user is: {0}.  From Ip: {1}'.format(g.user, request.remote_addr))
 
     g.commit = get_recent_commit()
 
