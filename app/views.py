@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from flask.ext.login import login_user, logout_user, current_user
 from models import User
 from app import lm, oid
+from utilities import get_recent_commit
 
 import logging
 from app import setup_logger
@@ -29,6 +30,8 @@ def before_request_happens():
         g.user = user
 
     logger.info('current user is: {0}'.format(g.user))
+
+    g.commit = get_recent_commit()
 
 
 #####
