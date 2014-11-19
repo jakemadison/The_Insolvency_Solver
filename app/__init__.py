@@ -12,13 +12,18 @@ def setup_logger(logger_instance):
 
     if logger.handlers:  # prevents the loading of duplicate handlers/log output
         return
-    ch = logging.StreamHandler()
+
     formatter = logging.Formatter('(%(asctime)s: %(name)s: %(levelname)s): %(message)s')
-    ch.setFormatter(formatter)
-    logger_instance.addHandler(ch)
-    hdlr = logging.FileHandler('./insolvency_logger.log')
-    hdlr.setFormatter(formatter)
-    logger.addHandler(hdlr)
+
+    if app.debug:
+        ch = logging.StreamHandler()
+        ch.setFormatter(formatter)
+        logger_instance.addHandler(ch)
+    else:
+        ch = logging.FileHandler('./insolvency_logger.log')
+        ch.setLevel(logging.INFO)
+        ch.setFormatter(formatter)
+        logger.addHandler(ch)
 
 
 logger = logging.getLogger(__name__)
