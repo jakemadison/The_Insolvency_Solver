@@ -32,13 +32,20 @@ def get_recent_commit():
 
 def execute_git_log():
 
-    history = check_output(["git", "log", "--no-merges", basedir])
+    try:
+        history = check_output(["git", "log", "--no-merges", basedir])
 
-    history = history.split("\n")[0:3]
+        history = history.split("\n")[0:3]
 
-    commit = {"commit": history[0],
-              "author": history[1],
-              "date": history[2]}
+        commit = {"commit": history[0],
+                  "author": history[1],
+                  "date": history[2]}
+
+    except Exception, e:
+        logger.error(e)
+        commit = {"commit": "unknown",
+                  "author": "unknown",
+                  "date": "unknown"}
 
     return commit
 
