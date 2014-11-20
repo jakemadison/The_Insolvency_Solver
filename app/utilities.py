@@ -1,6 +1,7 @@
 from __future__ import print_function
 from datetime import datetime
 from app import basedir
+from subprocess import check_output
 import logging
 from app import setup_logger
 logger = logging.getLogger(__name__)
@@ -28,5 +29,19 @@ def get_recent_commit():
 
     return translated_date
 
+
+def execute_git_log():
+
+    history = check_output(["git", "log", "--no-merges", basedir])
+
+    history = history.split("\n")[0:3]
+
+    commit = {"commit": history[0],
+              "author": history[1],
+              "date": history[2]}
+
+    return commit
+
+
 if __name__ == "__main__":
-    print(get_recent_commit())
+    execute_git_log()

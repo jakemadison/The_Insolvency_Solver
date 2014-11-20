@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from flask.ext.login import login_user, logout_user, current_user
 from models import User
 from app import lm, oid
-from utilities import get_recent_commit
+from utilities import get_recent_commit, execute_git_log
 
 import logging
 from app import setup_logger
@@ -30,7 +30,7 @@ def before_request_happens():
 
     logger.info('NEW REQUEST: current user is: {0}.  From Ip: {1}'.format(g.user, request.remote_addr))
 
-    g.commit = get_recent_commit()
+    g.commit = execute_git_log()
 
 
 #####
