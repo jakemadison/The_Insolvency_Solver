@@ -49,6 +49,13 @@ def execute_git_log():
                   "date": "unknown",
                   "message": "unknown"}
 
+        try:
+            out = check_output(["git", "status", basedir], stderr=STDOUT)
+            logger.info("this was out: {0}".format(out))
+
+        except Exception, e:
+            logger.error("there was another error! {0}".format(e))
+
     return commit
 
 
