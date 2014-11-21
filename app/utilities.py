@@ -1,7 +1,7 @@
 from __future__ import print_function
 from datetime import datetime
 from app import basedir
-from subprocess import check_output
+from subprocess import check_output, STDOUT
 import logging
 from app import setup_logger
 logger = logging.getLogger(__name__)
@@ -33,7 +33,7 @@ def get_recent_commit():
 def execute_git_log():
 
     try:
-        history = check_output(["git", "log", "--no-merges", basedir])
+        history = check_output(["git", "log", "--no-merges", basedir], stderr=STDOUT)
 
         history = history.split("\n")[0:3]
 
