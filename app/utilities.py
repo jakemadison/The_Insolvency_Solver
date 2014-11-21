@@ -33,7 +33,7 @@ def get_recent_commit():
 def execute_git_log():
 
     try:
-        history = check_output(["git", "log", "--no-merges", basedir], stderr=STDOUT)
+        history = check_output(["git", "--git-dir ", basedir + '/.git', "log", "--no-merges"], stderr=STDOUT)
 
         history = history.split("\n")[0:6]
 
@@ -50,7 +50,7 @@ def execute_git_log():
                   "message": "unknown"}
 
         try:
-            out = check_output(["git", "-git-dir " + basedir+'/.git', "status", basedir], stderr=STDOUT)
+            out = check_output(["git", "--git-dir ", basedir + '/.git', "status"], stderr=STDOUT)
             logger.info("this was out: {0}".format(out))
 
         except Exception, e:
