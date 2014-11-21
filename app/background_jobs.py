@@ -35,6 +35,10 @@ def create_new_day(user):
         return False
 
 
+def backfill_missing_days(user):
+    pass
+
+
 def _set_direct_balance(amt, user):
     current_rates = get_current_rates(user)
     current_rates['balance'] = amt

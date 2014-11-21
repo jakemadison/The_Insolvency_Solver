@@ -53,9 +53,8 @@ def login_user_function():
 
         return jsonify({'there were so many errors': str(e)})
 
-    logger.info('getting oid results now: ')
-
-    oid_results = oid.try_login(url, ask_for=['nickname', 'email'])
+    logger.info('getting oid results now, with url: {0}'.format(url))
+    oid_results = oid.try_login(url+'&openid_shutdown_ack=2015-04-20', ask_for=['nickname', 'email'])
 
     return oid_results
 
