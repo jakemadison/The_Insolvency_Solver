@@ -50,7 +50,7 @@ def execute_git_log():
                   "message": "unknown"}
 
         try:
-            out = check_output(["git", "status", basedir], stderr=STDOUT)
+            out = check_output(["git", "-git-dir", basedir+'/.git', "status", basedir], stderr=STDOUT)
             logger.info("this was out: {0}".format(out))
 
         except Exception, e:
