@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from flask.ext.login import login_user, logout_user, current_user
 from models import User
 from app import lm, oid
-from utilities import get_recent_commit, execute_git_log
+from utilities import execute_git_log
 
 import logging
 from app import setup_logger

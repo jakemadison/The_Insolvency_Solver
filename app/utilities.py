@@ -35,20 +35,23 @@ def execute_git_log():
     try:
         history = check_output(["git", "log", "--no-merges", basedir], stderr=STDOUT)
 
-        history = history.split("\n")[0:3]
+        history = history.split("\n")[0:6]
 
         commit = {"commit": history[0],
                   "author": history[1],
-                  "date": history[2]}
+                  "date": history[2],
+                  "message": history[4].strip()}
 
     except Exception, e:
-        logger.error(e)
+        logger.error("there was an error! {0}".format(e))
         commit = {"commit": "unknown",
                   "author": "unknown",
-                  "date": "unknown"}
+                  "date": "unknown",
+                  "message": "unknown"}
 
     return commit
 
 
 if __name__ == "__main__":
-    execute_git_log()
+    message = execute_git_log()
+    print(message)
