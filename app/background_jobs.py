@@ -1,8 +1,8 @@
 from __future__ import print_function
 from user_controller import get_all_users
-from controller import get_day_rows, insert_new_day
+from controller import get_day_rows, insert_new_day, get_days_missing
 from rates_controller import get_current_rates, update_rates
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import logging
 from app import setup_logger
@@ -28,8 +28,26 @@ def create_new_day(user):
     logger.info('check for existence of day revealed: {0}'.format(existing))
 
     if not existing:
-        logger.info('no existing record found.  Inserting a new day.')
-        insert_new_day(user, today)
+        logger.info('no existing record found.  finding days missing...')
+
+        most_recent_day = get_days_missing(user)[0]
+
+        number_of_missing_days = today - most_recent_day
+        number_of_missing_days = number_of_missing_days.days
+
+        print('most recent day: {0}, '
+              'no missing days: {1}'.format(most_recent_day,
+                                            number_of_missing_days))
+
+        for each_date in range(number_of_missing_days):
+
+            current_date = most_recent_day + timedelta(days=each_date+1)
+
+            print('current date number: {0}, date: {1}'.format(each_date, current_date))
+
+            # insert_new_day(user, today)
+            insert_new_day(user, current_date)
+
         return True
     else:
         return False
@@ -59,3 +77,4 @@ if __name__ == "__main__":
         # insert a new day row in daily summary:
         create_new_day(u)
         logger.info('------')
+        # break

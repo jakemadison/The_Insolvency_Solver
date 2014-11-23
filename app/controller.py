@@ -64,6 +64,13 @@ def get_day_rows(user, start_date):
     return day_rows
 
 
+def get_days_missing(user):
+    most_recent_day = db.session.query(DailyHistory.day).filter(DailyHistory.user_id == user.id)
+    most_recent_day = most_recent_day.order_by(DailyHistory.day.desc()).first()
+
+    return most_recent_day
+
+
 def insert_new_day(user, date=None):
     """insert a new day row at specified date. Used for creating a new day"""
 
