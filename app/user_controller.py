@@ -2,6 +2,7 @@ from __future__ import print_function
 from app.models import User, CurrentRates, DailyHistory
 from app import db
 from datetime import datetime
+from sqlalchemy import exc
 
 import logging
 from app import setup_logger
@@ -25,22 +26,33 @@ def add_user(resp):
 
     # Add a new user to the user table:
     user = User(nickname=nickname, email=resp.email)
-    db.session.add(user)
-    db.session.commit()
 
-    # Add a line in rates table for our new user:
-    current_rates_init = [('rent', 500, user.id), ('bills', 500, user.id), ('balance', 30, user.id),
-                          ('daily', 30, user.id), ('income_per_month', 2000, user.id),
-                          ('other_costs', 0, user.id), ('savings_per_month', 1000, user.id)]
+    try:
 
-    for each_rate in current_rates_init:
-        db.session.add(CurrentRates(each_rate[0], each_rate[1], each_rate[2]))
+        db.session.add(user)
+        db.session.commit()
 
-    db.session.commit()
+        # Add a line in rates table for our new user:
+        current_rates_init = [('rent', 500, user.id), ('bills', 500, user.id), ('balance', 30, user.id),
+                              ('daily', 30, user.id), ('income_per_month', 2000, user.id),
+                              ('other_costs', 0, user.id), ('savings_per_month', 1000, user.id)]
 
-    # add a line in Daily History for new user:
-    db.session.add(DailyHistory(datetime.now(), user.id))
-    db.session.commit()
+        for each_rate in current_rates_init:
+            db.session.add(CurrentRates(each_rate[0], each_rate[1], each_rate[2]))
+
+        db.session.commit()
+
+        # add a line in Daily History for new user:
+        db.session.add(DailyHistory(datetime.now(), user.id))
+        db.session.commit()
+
+    except exc.SQLAlchemyError, e:
+        logger.error('sql error! : {0}'.format(e))
+        db.session.rollback()
+        return False
+
+    else:
+        return True
 
 
 def change_info_view(user, show_or_hide):
@@ -49,7 +61,7 @@ def change_info_view(user, show_or_hide):
         qry = db.session.query(User).filter_by(id=user.id)
         qry.update({"hidden_info_pref": show_or_hide})
 
-    except Exception, e:
+    except exc.SQLAlchemyError, e:
         logger.error('shit went wonky: {0}'.format(e))
         db.session.rollback()
         return False
@@ -64,7 +76,7 @@ def update_user_nickname(user, nickname):
         qry.update({"nickname": nickname})
         db.session.commit()
 
-    except Exception, e:
+    except exc.SQLAlchemyError, e:
         logger.error('shit went wonky: {0}'.format(e))
         return False
 
