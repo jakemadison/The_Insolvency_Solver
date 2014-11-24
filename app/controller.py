@@ -90,8 +90,8 @@ def insert_new_day(user, date=None):
         return False
 
     else:
+        logger.info('successfully created a new day row for user: {0}'.format(user.nickname))
         return True
-
 
 
 if __name__ == "__main__":
