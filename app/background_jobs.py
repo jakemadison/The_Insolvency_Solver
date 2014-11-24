@@ -42,19 +42,18 @@ def create_new_day(user):
         for each_date in range(number_of_missing_days):
 
             current_date = most_recent_day + timedelta(days=each_date+1)
-
             print('current date number: {0}, date: {1}'.format(each_date, current_date))
 
             # insert_new_day(user, today)
             insert_new_day(user, current_date)
 
+            print('inserting of day record is done... updating daily amounts..')
+            daily_increase(user)
+
         return True
     else:
+        print('___existing day was already found for this user: {0}'.format(existing[0].day))
         return False
-
-
-def backfill_missing_days(user):
-    pass
 
 
 def _set_direct_balance(amt, user):
@@ -66,15 +65,10 @@ def _set_direct_balance(amt, user):
 if __name__ == "__main__":
 
     users = get_all_users()
-
     for u in users:
 
-        logger.info('increasing daily amounts for user: {0}'.format(u))
-        # increase current rates:
-        daily_increase(u)
-
         logger.info('creating new day row for user: {0}'.format(u))
+        print('checking existence of day for user: {0}'.format(u))
         # insert a new day row in daily summary:
         create_new_day(u)
         logger.info('------')
-        # break
