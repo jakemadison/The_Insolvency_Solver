@@ -2,6 +2,7 @@ from __future__ import print_function
 from app import db
 from app.models import DailyHistory
 from datetime import datetime
+from sqlalchemy import exc
 
 import logging
 from app import setup_logger
@@ -77,10 +78,20 @@ def insert_new_day(user, date=None):
     if date is None:
         date = datetime.now()  # this might need to be .date() as well..
 
-    new_day = DailyHistory(date, user.id)
-    db.session.add(new_day)
-    db.session.commit()
-    logger.info('created new row for day: {0}'.format(new_day))
+    try:
+        new_day = DailyHistory(date, user.id)
+        db.session.add(new_day)
+        db.session.commit()
+        logger.info('created new row for day: {0}'.format(new_day))
+
+    except exc.SQLAlchemyError, e:
+        logger.error('sql error!: {0}'.format(e))
+        db.session.rollback()
+        return False
+
+    else:
+        return True
+
 
 
 if __name__ == "__main__":
