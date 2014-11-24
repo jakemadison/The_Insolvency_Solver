@@ -49,6 +49,17 @@ def change_info_view(user, show_or_hide):
     db.session.commit()
 
 
+def update_user_nickname(user, nickname):
+
+    if len(nickname) > 50:
+        return False
+
+    qry = db.session.quer(User).filter_by(id=user.id)
+    qry.update({"nickname": nickname})
+    db.session.commit()
+    return True
+
+
 if __name__ == "__main__":
     user_list = get_all_users()
     for u in user_list:

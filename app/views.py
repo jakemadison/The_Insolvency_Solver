@@ -3,7 +3,7 @@ from app import app
 from flask import render_template, request, jsonify, redirect, url_for
 from flask import g
 from rates_controller import get_current_rates, update_rates
-from user_controller import add_user, change_info_view
+from user_controller import add_user, change_info_view, update_user_nickname
 from controller import get_daily_summary
 from transaction_controller import get_recent_transactions, get_filtered_summary
 from transaction_controller import execute_transaction, get_sum_category_per_day
@@ -165,6 +165,17 @@ def calendar():
 
 
 # POST ROUTES:
+@app.route('/change_nickname', methods=['POST'])
+def change_nickname():
+    user = g.user
+    nickname = request.form['nickname']
+    if len(nickname) == 0 or len(nickname) > 50:
+        return jsonify({'message': 'noooooope'})
+
+    result = update_user_nickname(user, nickname)
+    return jsonify({'message': result})
+
+
 @app.route('/change_info_display', methods=['POST'])
 def show_hide_info():
     hiding = request.form['hidden']

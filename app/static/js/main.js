@@ -127,7 +127,6 @@ console.log("setting start and end date");
 $('#date_start').attr("value", get_todays_date(-14));
 $('#date_end').attr("value", get_todays_date());
 
-//$("#changeChartType")
 
 function switchChartType(type) {
 
