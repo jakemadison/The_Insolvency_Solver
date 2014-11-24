@@ -44,20 +44,32 @@ def add_user(resp):
 
 
 def change_info_view(user, show_or_hide):
-    qry = db.session.query(User).filter_by(id=user.id)
-    qry.update({"hidden_info_pref": show_or_hide})
-    db.session.commit()
+
+    try:
+        qry = db.session.query(User).filter_by(id=user.id)
+        qry.update({"hidden_info_pref": show_or_hide})
+
+    except Exception, e:
+        logger.error('shit went wonky: {0}'.format(e))
+        db.session.rollback()
+        return False
+
+    else:
+        db.session.commit()
 
 
 def update_user_nickname(user, nickname):
+    try:
+        qry = db.session.quer(User).filter_by(id=user.id)
+        qry.update({"nickname": nickname})
+        db.session.commit()
 
-    if len(nickname) > 50:
+    except Exception, e:
+        logger.error('shit went wonky: {0}'.format(e))
         return False
 
-    qry = db.session.quer(User).filter_by(id=user.id)
-    qry.update({"nickname": nickname})
-    db.session.commit()
-    return True
+    else:
+        return True
 
 
 if __name__ == "__main__":
