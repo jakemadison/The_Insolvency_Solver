@@ -1,7 +1,7 @@
 from __future__ import print_function
-from user_controller import get_all_users
-from controller import get_day_rows, insert_new_day, get_days_missing
-from rates_controller import get_current_rates, update_rates
+from app.user_controller import get_all_users
+from app.controller import get_day_rows, insert_new_day, get_days_missing
+from app.rates_controller import get_current_rates, update_rates
 from datetime import datetime, timedelta
 
 import logging
