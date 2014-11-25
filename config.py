@@ -7,3 +7,4 @@ SQLALCHEMY_MIGRATE_REPO = os.path.join(basedir, 'db_repository')
 OPENID_PROVIDER = {'name': 'Google', 'url': 'https://www.google.com/accounts/o8/id'}
 
 SECRET_KEY = 'you-will-never-guess'
+

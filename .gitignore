@@ -12,3 +12,6 @@ app.db
 #
 #ignore logging
 insolvency_logger.log
+
+#ignore local_settings
+local_settings.py
