@@ -2,6 +2,7 @@ from __future__ import print_function
 from app import db
 from datetime import timedelta
 from sqlalchemy import func
+from flask.ext.login import UserMixin
 
 import logging
 from app import setup_logger
@@ -107,7 +108,7 @@ class TransactionHistory(db.Model):
         self.purchase_type = purchase_type
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
 
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
@@ -116,8 +117,6 @@ class User(db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     openid = db.Column(db.String(64), index=True, unique=True)
     hidden_info_pref = db.Column(db.Boolean, default=False)
-
-    SOCIAL_AUTH_USER_MODEL = 'app.models.User'
 
     def is_guest(self):
         if self.email == 'guest@guest.com':

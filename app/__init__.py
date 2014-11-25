@@ -45,11 +45,12 @@ from app import views, models
 from social.apps.flask_app.routes import social_auth
 
 app.register_blueprint(social_auth)
-SOCIAL_AUTH_USER_MODEL = 'app.models'
+
 
 # failing here;
 try:
     from social.apps.flask_app.default.models import init_social
+    from social.apps.flask_app.template_filters import backends
     init_social(app, db)
 except KeyError, e:
     logger.error('key error again: {0}'.format(e))

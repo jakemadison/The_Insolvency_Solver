@@ -109,6 +109,8 @@ def build_index():
 
     user = g.user
 
+    # rates and transactions should get placed in a context processor...
+    # probably the same with our commit object?
     rates = get_current_rates(user)
     transactions = get_recent_transactions(user)
     return render_template('index.html', title='Insolvency_Solver',
