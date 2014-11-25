@@ -3,15 +3,13 @@ from app import db
 from datetime import timedelta
 from sqlalchemy import func
 from flask.ext.login import UserMixin
+from social.apps.flask_app.default import models
 
 import logging
 from app import setup_logger
 logger = logging.getLogger(__name__)
 setup_logger(logger)
 logger.setLevel(logging.INFO)
-
-
-SOCIAL_AUTH_USER_MODEL = 'app.models'
 
 
 class CurrentRates(db.Model):
@@ -140,7 +138,7 @@ class User(db.Model, UserMixin):
             return str(self.id)  # python 3
 
     def __repr__(self):
-        return '<User %r>' % (self.email)
+        return '<User {0}>'.format(self.email)
 
 
 
