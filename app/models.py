@@ -1,6 +1,6 @@
 from __future__ import print_function
 from app import db
-from datetime import datetime, timedelta
+from datetime import timedelta
 from sqlalchemy import func
 
 import logging
@@ -8,6 +8,9 @@ from app import setup_logger
 logger = logging.getLogger(__name__)
 setup_logger(logger)
 logger.setLevel(logging.INFO)
+
+
+SOCIAL_AUTH_USER_MODEL = 'app.models'
 
 
 class CurrentRates(db.Model):
@@ -110,8 +113,11 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), index=True, unique=True)
     nickname = db.Column(db.String(64), index=True, unique=True)
+    username = db.Column(db.String(64), index=True, unique=True)
     openid = db.Column(db.String(64), index=True, unique=True)
     hidden_info_pref = db.Column(db.Boolean, default=False)
+
+    SOCIAL_AUTH_USER_MODEL = 'app.models.User'
 
     def is_guest(self):
         if self.email == 'guest@guest.com':
@@ -136,3 +142,6 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % (self.email)
+
+
+

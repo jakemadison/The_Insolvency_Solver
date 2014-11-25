@@ -41,5 +41,17 @@ oid = OpenID(app, os.path.join(basedir, 'tmp'))
 
 from app import views, models
 
+# register social blueprint:
+from social.apps.flask_app.routes import social_auth
+
+app.register_blueprint(social_auth)
+SOCIAL_AUTH_USER_MODEL = 'app.models'
+
+try:
+    from social.apps.flask_app.default.models import init_social
+    init_social(app, db)
+except KeyError, e:
+    logger.error('key error again: {0}'.format(e))
+
 
 

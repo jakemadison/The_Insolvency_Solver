@@ -35,6 +35,9 @@ def before_request_happens():
 
 #####
 # Functions for handling user login:
+#
+# ----> This needs to be completely replaced because google does not like openid anymore.
+# ----> Attempting to work off of this guy: http://psa.matiasaguirre.net/docs/configuration/flask.html
 #####
 @lm.user_loader
 def load_user(u_id):
