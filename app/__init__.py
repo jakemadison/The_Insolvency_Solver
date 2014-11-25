@@ -32,6 +32,14 @@ logger.info('completed logger config. beginning to load application.')
 app = Flask(__name__)
 app.config.from_object('config')
 
+
+try:
+    from local_settings import LOCAL_SECRET_KEY
+    app.config['SECRET_KEY'] = LOCAL_SECRET_KEY
+
+except ImportError, e:
+    pass
+
 db = SQLAlchemy(app)
 
 

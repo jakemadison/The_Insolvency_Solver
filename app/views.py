@@ -28,7 +28,10 @@ def before_request_happens():
         user = User.query.filter_by(email='guest@guest.com').first()
         g.user = user
 
-    logger.info('NEW REQUEST: current user is: {0}.  From Ip: {1}'.format(g.user, request.remote_addr))
+    remote_address = request.remote_addr
+
+    if app.debug or (not app.debug and remote_address != '127.0.0.1'):
+        logger.info('NEW REQUEST: current user is: {0}.  From Ip: {1}'.format(g.user, remote_address))
 
     g.commit = execute_git_log()
 
@@ -101,75 +104,63 @@ def logout_view():
     return jsonify({'message': 'look how logged out you are!'})
 
 
-# Main Page Building Routes:
-@app.route('/')
-@app.route('/index')
-@oid.loginhandler
-def build_index():
+# let's put all of this rates crap in an app.context_processor as available functions
+# then change the templates to just use those when they need them.
+#
+#
+@app.context_processor
+def template_functions():
 
     user = g.user
 
     # rates and transactions should get placed in a context processor...
     # probably the same with our commit object?
     rates = get_current_rates(user)
+    rates['monthly_balance'] = rates['income_per_month'] - (rates['rent'] + rates['bills'] + rates['other_costs'])
+    rates['max_spending'] = rates['monthly_balance']/30
+
     transactions = get_recent_transactions(user)
-    return render_template('index.html', title='Insolvency_Solver',
-                           rates=rates, transactions=transactions, u=user)
+    transaction_categories = list(set([t['purchase_type'] for t in transactions]))
+    transaction_categories.sort()
+
+    return dict(rates=rates, transactions=transactions, u=user, transaction_categories=transaction_categories)
+
+
+# Main Page Building Routes:
+@app.route('/')
+@app.route('/index')
+@oid.loginhandler
+def build_index():
+    return render_template('index.html', title='Insolvency_Solver')
 
 
 @app.route('/settings')
 def get_settings():
-
-    user = g.user
-
-    rates = get_current_rates(user)
-
-    rates['monthly_balance'] = rates['income_per_month'] - (rates['rent'] + rates['bills'] + rates['other_costs'])
-    rates['max_spending'] = rates['monthly_balance']/30
-
-    return render_template('settings.html', rates=rates, u=user)
+    return render_template('settings.html')
 
 
 @app.route('/daily_summary')
 def get_daily_summary_view():
 
     user = g.user
-
-    rates = get_current_rates(user)
     daily_summary = get_daily_summary(user)
 
-    return render_template('daily_summary.html', rates=rates, daily_summary=daily_summary, u=user)
+    return render_template('daily_summary.html', daily_summary=daily_summary)
 
 
 @app.route('/transaction_metrics')
 def transaction_metrics():
-    user = g.user
-    rates = get_current_rates(user)
-    transactions = get_recent_transactions(user)
-
-    transaction_categories = list(set([t['purchase_type'] for t in transactions]))
-    transaction_categories.sort()
-
-    return render_template('transaction_metrics.html', rates=rates,
-                           transactions=transactions,
-                           transaction_categories=transaction_categories, u=user)
-
-
-@app.route('/metrics')
-def metrics():
-    user = g.user
-    rates = get_current_rates(user)
-    return render_template('metrics.html', rates=rates, u=user)
+    return render_template('transaction_metrics.html')
 
 
 @app.route('/calendar')
 def calendar():
-    user = g.user
-    rates = get_current_rates(user)
-    return render_template('calendar.html', rates=rates, u=user)
+    return render_template('calendar.html')
 
 
+###############
 # POST ROUTES:
+###############
 @app.route('/change_nickname', methods=['POST'])
 def change_nickname():
     user = g.user
@@ -186,7 +177,7 @@ def show_hide_info():
     hiding = request.form['hidden']
     user = g.user
 
-    #guests can't permanently hide info, because I say so.
+    # guests can't permanently hide info, because I say so.
     if user.is_guest():
         return jsonify({'success': False})
 
