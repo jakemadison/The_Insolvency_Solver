@@ -47,6 +47,7 @@ from social.apps.flask_app.routes import social_auth
 app.register_blueprint(social_auth)
 SOCIAL_AUTH_USER_MODEL = 'app.models'
 
+# failing here;
 try:
     from social.apps.flask_app.default.models import init_social
     init_social(app, db)
