@@ -28,7 +28,10 @@ def before_request_happens():
         user = User.query.filter_by(email='guest@guest.com').first()
         g.user = user
 
-    logger.info('NEW REQUEST: current user is: {0}.  From Ip: {1}'.format(g.user, request.remote_addr))
+    remote_address = request.remote_addr
+
+    if app.debug or (not app.debug and remote_address != '127.0.0.1'):
+        logger.info('NEW REQUEST: current user is: {0}.  From Ip: {1}'.format(g.user, remote_address))
 
     g.commit = execute_git_log()
 
