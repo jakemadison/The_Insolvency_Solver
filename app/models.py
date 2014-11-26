@@ -11,6 +11,9 @@ logger = logging.getLogger(__name__)
 setup_logger(logger)
 logger.setLevel(logging.INFO)
 
+# Base = declarative_base()
+# Base.query = db_session.query_property()
+
 
 class CurrentRates(db.Model):
 

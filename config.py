@@ -11,6 +11,7 @@ SECRET_KEY = 'you-will-never-guess'
 SOCIAL_AUTH_LOGIN_URL = '/'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/done/'
 SOCIAL_AUTH_USER_MODEL = 'app.models.User'
+
 SOCIAL_AUTH_AUTHENTICATION_BACKENDS = (
     'social.backends.google.GoogleOpenId',
     'social.backends.google.GoogleOAuth2',
