@@ -7,7 +7,6 @@ from config import basedir
 import logging
 
 
-
 def setup_logger(logger_instance):
 
     if logger.handlers:  # prevents the loading of duplicate handlers/log output
@@ -47,10 +46,10 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 
 
 # Attempting to set up engine here:
-engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
-Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-db_session = scoped_session(Session)
+
 db = SQLAlchemy(app)
+engine = db.engine
+db_session = db.session
 
 lm = LoginManager()
 lm.init_app(app)
@@ -66,16 +65,16 @@ app.register_blueprint(social_auth)
 
 # failing here;
 try:
-
-
-    from social.apps.flask_app.default.models import init_social
+    # from social.apps.flask_app.default.models import init_social
     from social.apps.flask_app.template_filters import backends
+    app.context_processor(backends)
     # init_social(app, db)
 
-    from app.models import User
-    from social.apps.flask_app.default import models
-    # User.Base.metadata.create_all(engine)
-    # models.PSABase.metadata.create_all(engine)
+    # from app.models import User
+    # from social.apps.flask_app.default import models as social_models
+
+    # User.Base.metadata.create_all(engine)  # create all tables using metadata
+    # social_models.PSABase.metadata.create_all(engine)
 
 except KeyError, e:
     logger.error('key error again: {0}'.format(e))

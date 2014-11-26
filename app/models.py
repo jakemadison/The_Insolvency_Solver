@@ -2,7 +2,14 @@ from __future__ import print_function
 from app import db
 from datetime import timedelta
 from sqlalchemy import func
+from sqlalchemy.ext.declarative import declarative_base
 from flask.ext.login import UserMixin
+from social.storage.sqlalchemy_orm import SQLAlchemyUserMixin, \
+                                          SQLAlchemyAssociationMixin, \
+                                          SQLAlchemyNonceMixin, \
+                                          SQLAlchemyCodeMixin, \
+                                          BaseSQLAlchemyStorage
+
 from social.apps.flask_app.default import models
 
 import logging
@@ -12,7 +19,73 @@ setup_logger(logger)
 logger.setLevel(logging.INFO)
 
 # Base = declarative_base()
-# Base.query = db_session.query_property()
+# Base.query = db.session.query_property()
+
+
+class User(db.Model, UserMixin):
+
+    __tablename__ = 'user'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), index=True, unique=True)
+    nickname = db.Column(db.String(64), index=True, unique=True)
+    username = db.Column(db.String(64), index=True, unique=True)
+    openid = db.Column(db.String(64), index=True, unique=True)
+    hidden_info_pref = db.Column(db.Boolean, default=False)
+
+    def is_guest(self):
+        if self.email == 'guest@guest.com':
+            return True
+        else:
+            return False
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        try:
+            return unicode(self.id)  # python 2
+        except NameError:
+            return str(self.id)  # python 3
+
+    def __repr__(self):
+        return '<User {0}>'.format(self.email)
+
+
+class UserSocialAuth(db.Model, SQLAlchemyUserMixin):
+        """Social Auth association model"""
+        uid = db.Column(db.String(255))
+        user_id = db.Column(db.Integer, db.ForeignKey("user.id"),
+                            nullable=False, index=True)
+        user = db.relationship(User, backref=db.backref('social_auth',
+                                                          lazy='dynamic'))
+
+        @classmethod
+        def username_max_length(cls):
+            return User.__table__.columns.get('username').type.length
+
+        @classmethod
+        def user_model(cls):
+            return User
+
+
+class Nonce(db.Model, SQLAlchemyNonceMixin):
+    """One use numbers"""
+    pass
+
+
+class Association(db.Model, SQLAlchemyAssociationMixin):
+    """OpenId account association"""
+    pass
+
+
+class Code(db.Model, SQLAlchemyCodeMixin):
+    pass
 
 
 class CurrentRates(db.Model):
@@ -109,39 +182,18 @@ class TransactionHistory(db.Model):
         self.purchase_type = purchase_type
 
 
-class User(db.Model, UserMixin):
+class FlaskStorage(BaseSQLAlchemyStorage):
+    user = None
+    nonce = None
+    association = None
+    code = None
 
-    __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), index=True, unique=True)
-    nickname = db.Column(db.String(64), index=True, unique=True)
-    username = db.Column(db.String(64), index=True, unique=True)
-    openid = db.Column(db.String(64), index=True, unique=True)
-    hidden_info_pref = db.Column(db.Boolean, default=False)
 
-    def is_guest(self):
-        if self.email == 'guest@guest.com':
-            return True
-        else:
-            return False
 
-    def is_authenticated(self):
-        return True
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        try:
-            return unicode(self.id)  # python 2
-        except NameError:
-            return str(self.id)  # python 3
-
-    def __repr__(self):
-        return '<User {0}>'.format(self.email)
-
+# Set the references in the storage class
+FlaskStorage.user = UserSocialAuth
+FlaskStorage.nonce = Nonce
+FlaskStorage.association = Association
+FlaskStorage.code = Code
 
 
