@@ -104,6 +104,11 @@ period that's on record.  Make that another check box next to toggle line. Also,
 some shifty stuff to get that to actually work properly, since the front end calculating it is a shitty idea.
 
 
+- It would be cool if we could play it out as an animation:
+keep the timeframe the same (or change it/increase it?) and keep pushing new data onto the stack, so it looks to be
+scrolling.
+
+
 
 
 
