@@ -186,7 +186,7 @@ def get_filtered_summary(user, filter_list):
         x['day'] = x['day'].strftime("%d/%m")
 
     for each in transformed_data:
-        logger.info(each)
+        logger.debug(each)
 
     return transformed_data
 
