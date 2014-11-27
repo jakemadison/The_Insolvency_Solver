@@ -2,12 +2,26 @@ from __future__ import print_function
 from app import db
 from datetime import datetime, timedelta
 from sqlalchemy import func
+from flask.ext.security import UserMixin, RoleMixin
 
 import logging
 from app import setup_logger
 logger = logging.getLogger(__name__)
 setup_logger(logger)
 logger.setLevel(logging.INFO)
+
+
+roles_users = db.Table('roles_users', db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+                       db.Column('role_id', db.Integer(), db.ForeignKey('roles.id')))
+
+
+class Role(db.Model, RoleMixin):
+
+    __tablename__ = "roles"
+
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))
 
 
 class CurrentRates(db.Model):
@@ -104,7 +118,7 @@ class TransactionHistory(db.Model):
         self.purchase_type = purchase_type
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
 
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
@@ -112,6 +126,18 @@ class User(db.Model):
     nickname = db.Column(db.String(64), index=True, unique=True)
     openid = db.Column(db.String(64), index=True, unique=True)
     hidden_info_pref = db.Column(db.Boolean, default=False)
+    last_login_at = db.Column(db.DateTime())
+    current_login_at = db.Column(db.DateTime())
+    last_login_ip = db.Column(db.String(100))
+    current_login_ip = db.Column(db.String(100))
+    login_count = db.Column(db.Integer)
+
+    connections = db.relationship('Connection',
+                                  backref=db.backref('user', lazy='joined'),
+                                  cascade="all")
+
+    roles = db.relationship('Role', secondary=roles_users,
+                            backref=db.backref('user', lazy='dynamic'))
 
     def is_guest(self):
         if self.email == 'guest@guest.com':
@@ -136,3 +162,20 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % (self.email)
+
+
+class Connection(db.Model):
+
+    __tablename__ = "connections"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    provider_id = db.Column(db.String(255))
+    provider_user_id = db.Column(db.String(255))
+    access_token = db.Column(db.String(255))
+    secret = db.Column(db.String(255))
+    display_name = db.Column(db.String(255))
+    full_name = db.Column(db.String(255))
+    profile_url = db.Column(db.String(512))
+    image_url = db.Column(db.String(512))
+    rank = db.Column(db.Integer)

@@ -1,7 +1,7 @@
 from __future__ import print_function
 from app import app
 from flask import render_template, request, jsonify, redirect, url_for
-from flask import g
+from flask import g, current_app
 from rates_controller import get_current_rates, update_rates
 from user_controller import add_user, change_info_view, update_user_nickname
 from controller import get_daily_summary
@@ -121,10 +121,23 @@ def template_functions():
     return dict(rates=rates, transactions=transactions, u=user, transaction_categories=transaction_categories)
 
 
+# @login_failed.connect_via(app):
+# def on_login_failed(sender, provider, oauth_response):
+#     connection_values = get_connection_values_from_oauth_response(provider, oauth_response)
+#     ds = current_app.security.datastore
+#     user = ds.create_user( ... ) #fill in relevant stuff here
+#     ds.commit()
+#     connection_values['user_id'] = user.id
+#     connect_handler(connection_values, provider)
+#     login_user(user)
+#     db.commit()
+#     return render_template('success.html')
+
+
+
 # Main Page Building Routes:
 @app.route('/')
 @app.route('/index')
-@oid.loginhandler
 def build_index():
     return render_template('index.html', title='Insolvency_Solver')
 
