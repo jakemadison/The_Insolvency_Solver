@@ -1,4 +1,6 @@
 
+var global_data;
+
 function get_filter_list() {
 
         var filter_list = [];
@@ -13,9 +15,9 @@ function get_filter_list() {
     }
 
 
-var global_data;
-
 function load_data(reload) {
+
+//    loads or reloads data and fires a newData event when done.
 
     var filters = get_filter_list();
     console.log("loading data now");
@@ -46,7 +48,6 @@ function load_data(reload) {
         }); //end of json request.
 
 
-
 }
 
 
@@ -54,15 +55,16 @@ function create_transaction_plot(t_indicator, plot_style) {
 
     var current_chart_type;
 
-    function draw_calendar() {
-        console.log("calendar is a go!");
-    }
+//    function draw_calendar() {
+//        console.log("calendar is a go!");
+//    }
+
     console.log("transaction plot!");
 
-    var json_data = [];  //what the server originally sent us
+//    var json_data = [];  //what the server originally sent us
     var data = [];  //data that is parsed for
     // daily metrics calculations, includes daily amounts (-N -> N)
-    var transaction_data = [];  //data that is parsed for transactions/day (0 -> N)
+//    var transaction_data = [];  //data that is parsed for transactions/day (0 -> N)
 
 
 
@@ -105,11 +107,11 @@ function create_transaction_plot(t_indicator, plot_style) {
             .tickFormat(function(d) {return '$' + d;});
 
 
-    //get the list of currently active filters
-    var ret_filters = get_filter_list();
+    //get the list of currently active filters; handled in load data section now.
+//    var ret_filters = get_filter_list();
 
 
-    if (t_indicator) {
+    if (t_indicator) {  //indicates if this is a transition or not.
         d3.select(".y.axis").remove();
         d3.select(".x.axis").remove();
         clear_chart();
@@ -119,9 +121,7 @@ function create_transaction_plot(t_indicator, plot_style) {
     var max_val = function () {
             return d3.max(data, function (d) {
                 return Math.abs(d.balance);
-//
 //                return d.balance;
-
             });
         };
 
@@ -528,7 +528,6 @@ function create_transaction_plot(t_indicator, plot_style) {
 
     }
 
-
     function draw_pie_chart() {
         console.log('draw pie chart is a go!!');
 
@@ -799,7 +798,6 @@ function create_transaction_plot(t_indicator, plot_style) {
             }
 
     }, false);
-
 
     document.addEventListener("newData", function(e) {
 
