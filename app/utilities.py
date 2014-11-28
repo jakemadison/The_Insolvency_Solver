@@ -9,28 +9,9 @@ setup_logger(logger)
 logger.setLevel(logging.INFO)
 
 
-def get_recent_commit():
-
-    try:
-        with open(basedir+'/.git/logs/HEAD', 'rb') as h_file:
-            current_line = None
-            for line in h_file:
-                if ' commit ' in line:
-                    current_line = line.strip()
-
-        current_line = current_line.split(' ')
-        date = current_line[5]
-
-        translated_date = datetime.fromtimestamp(int(date)).strftime('%Y-%m-%d %H:%M:%S')
-
-    except Exception, e:
-        logger.error(e)
-        translated_date = 'unknown'
-
-    return translated_date
-
-
 def execute_git_log():
+
+    """run git log and parse it to get our most recent commit and display it"""
 
     try:
         history = check_output(["git", "--git-dir", basedir + '/.git', "log", "--no-merges"], stderr=STDOUT)

@@ -101,10 +101,4 @@ if __name__ == "__main__":
     # print(get_filtered_summary(['Booze', 'Smokes', 'Cab', 'Dinning Out', 'Groceries', 'Coffee', 'Bar']))
     logger.info('testing.....')
 
-    # transaction = TransactionHistory(10, 'Booze')
-    # print(func.DATE(transaction.timestamp).execute())
-
-    # t_list = db.session.query(TransactionHistory).order_by(TransactionHistory.timestamp.desc()).all()
-    # for t in t_list:
-    #     update_daily_history(t)
 
