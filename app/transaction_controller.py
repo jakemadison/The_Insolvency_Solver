@@ -5,6 +5,7 @@ from controller import update_daily_history
 from rates_controller import update_rates, get_current_rates
 from app import db
 from sqlalchemy import func
+from sqlalchemy.exc import SQLAlchemyError
 
 import logging
 from app import setup_logger
@@ -33,11 +34,13 @@ def execute_transaction(user, amount, purchase_type, date=None):
     new_transaction = TransactionHistory(user.id, amount, timestamp, purchase_type)
     logger.info('new transaction created: {0}, {1}'.format(new_transaction.amount, new_transaction.timestamp))
 
-    # print('dying now....')
-    # return True
+    try:
+        db.session.add(new_transaction)
+        db.session.commit()
 
-    db.session.add(new_transaction)
-    db.session.commit()
+    except SQLAlchemyError, e:
+        logger.error('sql error executing transaction: {0}'.format(e))
+        db.session.rollback()
 
     # this will need to change if the day is not today...
     update_daily_history(user, new_transaction, start_date=timestamp.date())
@@ -90,14 +93,14 @@ def get_sum_category_per_day():
     return sum_transactions
 
 
-def generate_summary_on_transactions(transaction_list):
-    pay_rate = 30
-    start_date = transaction_list[-1]["timestamp"]
-    end_date = transaction_list[0]["timestamp"]
-
-    logger.info("{0}, {1}".format(start_date, end_date))
-
-    return transaction_list
+# def generate_summary_on_transactions(transaction_list):
+#     pay_rate = 30
+#     start_date = transaction_list[-1]["timestamp"]
+#     end_date = transaction_list[0]["timestamp"]
+#
+#     logger.info("{0}, {1}".format(start_date, end_date))
+#
+#     return transaction_list
 
 
 def get_filtered_summary(user, filter_list):
@@ -138,10 +141,6 @@ def get_filtered_summary(user, filter_list):
 
     full_query = full_query.order_by(DailyHistory.day).order_by(transaction_subquery.c.transaction_day)
 
-    # print('full query results:')
-    # for x in full_query.all():
-    #     print(x)
-
     # full_query = db.session.query(DailyHistory.day, DailyHistory.credits, transaction_subquery)
     # full_query = full_query.filter(DailyHistory.user_id == user.id)  # this might break things...
     # full_query = full_query.filter(DailyHistory.user_id == user.id, TransactionHistory.user_id == user.id)
@@ -150,8 +149,8 @@ def get_filtered_summary(user, filter_list):
 
     # The following wonky code will transpose our row-wise data into a
     # more usable column-wise format based on filters
-        #Output Data Model:
-    #datum = {day: date, cat1: amount1, cat2: amount2, total: amount1 + amount2, balance: prev_bal - total}
+        # Output Data Model:
+    # datum = {day: date, cat1: amount1, cat2: amount2, total: amount1 + amount2, balance: prev_bal - total}
 
     transformed_data = []
     prev_balance = result[0][1]
