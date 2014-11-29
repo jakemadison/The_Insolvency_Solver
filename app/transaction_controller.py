@@ -93,16 +93,6 @@ def get_sum_category_per_day():
     return sum_transactions
 
 
-# def generate_summary_on_transactions(transaction_list):
-#     pay_rate = 30
-#     start_date = transaction_list[-1]["timestamp"]
-#     end_date = transaction_list[0]["timestamp"]
-#
-#     logger.info("{0}, {1}".format(start_date, end_date))
-#
-#     return transaction_list
-
-
 def get_filtered_summary(user, filter_list):
     """recreate a daily summary with certain transactions filtered out."""
 

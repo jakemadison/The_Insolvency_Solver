@@ -59,7 +59,7 @@ class DailyHistory(db.Model):
         prev_balance = db.session.query(DailyHistory).filter(DailyHistory.day == func.DATE(prev_day)).first()
 
         if prev_balance is None:
-            #then this is our first day ever!
+            # then this is our first day ever!
             self.balance = 0
         else:
             prev_balance = prev_balance.balance
@@ -135,4 +135,4 @@ class User(db.Model):
             return str(self.id)  # python 3
 
     def __repr__(self):
-        return '<User %r>' % (self.email)
+        return '<User {0}>'.format(self.email)
