@@ -12,6 +12,7 @@ from flask.ext.login import login_user, logout_user, current_user
 from models import User
 from app import lm, oid
 from utilities import execute_git_log
+from oauth import OAuthSignIn
 
 import logging
 from app import setup_logger
@@ -42,6 +43,37 @@ def before_request_happens():
 # ----> This needs to be completely replaced because google does not like openid anymore.
 # ----> Attempting to work off of this guy: http://psa.matiasaguirre.net/docs/configuration/flask.html
 #####
+@app.route('/authorize/<provider>')
+def oauth_authorize(provider):
+    if not current_user.is_anonymous():
+        return redirect(url_for('index'))
+    oauth = OAuthSignIn.get_provider(provider)
+    return oauth.authorize()
+
+
+@app.route('/callback/<provider>')
+def oauth_callback(provider):
+    if not current_user.is_anonymous():
+        return redirect(url_for('index'))
+
+    oauth = OAuthSignIn.get_provider(provider)
+    social_id, username, email = oauth.callback()
+
+    if social_id is None:
+        logger.error('Authentication failed.')
+        return redirect(url_for('index'))
+
+    user = User.query.filter_by(social_id=social_id).first()
+    if not user:
+        pass
+        # user = User(social_id=social_id, nickname=username, email=email)
+        # db.session.add(user)
+        # db.session.commit()
+    login_user(user, True)
+    return redirect(url_for('index'))
+
+
+
 @lm.user_loader
 def load_user(u_id):
     return User.query.get(int(u_id))

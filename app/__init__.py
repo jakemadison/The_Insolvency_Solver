@@ -34,8 +34,8 @@ app.config.from_object('config')
 
 
 try:
-    from local_settings import LOCAL_SECRET_KEY
-    app.config['SECRET_KEY'] = LOCAL_SECRET_KEY
+    from local_settings import OAUTH_CREDS
+    app.config['OAUTH_CREDENTIALS'] = OAUTH_CREDS
 
 except ImportError, e:
     pass
