@@ -336,7 +336,7 @@ def submit_transaction():
     return redirect(url_for('build_index'))
 
 
-#ROUTES FOR METRICS:
+# ROUTES FOR METRICS:
 @app.route('/get_spending_data')
 def get_spending_data():
 
@@ -357,76 +357,4 @@ def get_spending_data():
     return jsonify({'transaction_summary': transaction_summary,
                     'daily_summary': daily_summary,
                     'categories': transaction_categories})
-
-
-
-# TO BE DEPRECATED:
-
-# @app.route('/get_transaction_summary')
-# def get_transaction_summary():
-#     """This returns a daily list of sum(amount) per category"""
-#
-#     transaction_summary = get_sum_category_per_day()
-#     return jsonify({'transaction_summary': transaction_summary})
-
-#
-# @app.route('/get_transaction_metrics')
-# def get_transaction_metrics():
-#
-#     start_date = request.args.get('start_date', None)
-#     end_date = request.args.get('end_date', None)
-#
-#     if start_date != '0' and end_date != '0':
-#
-#         logger.info("got it!")
-#         start = datetime.strptime(start_date, '%d/%m/%Y')
-#         # delta = timedelta(days=1)
-#         # start = start - delta
-#         end = datetime.strptime(end_date, '%d/%m/%Y')
-#     else:
-#         start = None
-#         end = None
-#
-#     transaction_list = get_recent_transactions(start, end)
-#
-#     transaction_categories = list(set([t['purchase_type'] for t in transaction_list]))
-#     transaction_categories.sort()
-#
-#     return jsonify({"transactions": transaction_list, "categories": transaction_categories, "success": True})
-
-
-#
-# @app.route('/get_daily_metrics')
-# def get_daily_metrics():
-#
-#     """this is used by main metrics page, and is set to get nixed."""
-#
-#     start_date = request.args.get('start_date', None)
-#     end_date = request.args.get('end_date', None)
-#     filters = request.args.get('filters', None)
-#
-#     logger.info('hey guess what???? I received: {0}, {1}'.format(start_date, end_date))
-#     logger.info('hey guess what???? I received: {0}'.format(filters))
-#
-#     filter_array = [str(x) for x in filters.split(',')]
-#
-#     if len(filter_array):
-#         logger.info('yerrrrp {0}'.format(filter_array))
-#
-#     if start_date != '0' and end_date != '0':
-#         start = datetime.strptime(start_date, '%d/%m/%Y')
-#         delta = timedelta(days=1)
-#         start = start - delta
-#         end = datetime.strptime(end_date, '%d/%m/%Y')
-#     else:
-#         start = None
-#         end = None
-#
-#     if len(filter_array) and False:
-#         daily_summary = get_filtered_summary(filter_array)
-#     else:
-#         daily_summary = get_daily_summary(start, end)
-#
-#     return jsonify({"summary": daily_summary, "success": True})
-
 
