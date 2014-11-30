@@ -96,7 +96,7 @@ def get_sum_category_per_day():
 def get_filtered_summary(user, filter_list):
     """recreate a daily summary with certain transactions filtered out."""
 
-    #ORMify this:
+    # ORMify this:
 # select * from daily_history d
 # left outer join (select date(timestamp) as transaction_day, purchase_type, sum(amount)
 # from transaction_history
@@ -139,7 +139,8 @@ def get_filtered_summary(user, filter_list):
 
     # The following wonky code will transpose our row-wise data into a
     # more usable column-wise format based on filters
-        # Output Data Model:
+
+    #  Output Data Model:
     # datum = {day: date, cat1: amount1, cat2: amount2, total: amount1 + amount2, balance: prev_bal - total}
 
     transformed_data = []
