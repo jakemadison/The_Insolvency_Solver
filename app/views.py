@@ -93,11 +93,6 @@ def after_login_function(resp):
 def logout_view():
     logout_user()
     logger.info("successful logout for user: {0}".format(g.user))
-
-    # rates = get_current_rates()
-    # transactions = get_recent_transactions()
-    # return render_template('index.html', title='Insolvency_Solver',
-    #                        rates=rates, transactions=transactions)
     return jsonify({'message': 'look how logged out you are!'})
 
 
@@ -245,6 +240,8 @@ def submit_monthly():
 @app.route('/submit_savings', methods=['POST'])
 def submit_savings():
 
+    """this deals with changes from the settings page to amount of savings vs daily rate"""
+
     user = g.user
     updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems() if k and v}
     logger.info('update received with values: {0}'.format(updates_rates_dict))
@@ -268,24 +265,6 @@ def submit_savings():
     result = update_rates(user, updates_rates_dict)
 
     return redirect(url_for('get_settings'))
-
-
-@app.route('/submit_spending', methods=['POST'])
-def submit_spending():
-    user = g.user
-
-    updates_rates_dict = {str(k): int(str(v)) for (k, v) in request.form.iteritems()}
-    logger.info('update received with values: {0}'.format(updates_rates_dict))
-
-    for v in updates_rates_dict.values():
-        if v > 100000:
-            return jsonify({'message': "what are you tryin' to pull here, buddy?"})
-
-
-
-    result = update_rates(user, updates_rates_dict)
-
-    return redirect(url_for('settings'))
 
 
 @app.route('/submit_transaction', methods=['POST'])
@@ -314,9 +293,8 @@ def submit_transaction():
         logger.warn('value error on input: {0}'.format(str(e)))
         return redirect(url_for('build_index'))
 
-    logger.info('received a new transaction, amount: {0}, type: {1}, date: {2}'.format(transaction_amount,
-                                                                                       purchase_type,
-                                                                                       transaction_date))
+    logger.info('received a new transaction, '
+                'amount: {0}, type: {1}, date: {2}'.format(transaction_amount, purchase_type, transaction_date))
 
     if purchase_type:
         purchase_type = purchase_type.title()
