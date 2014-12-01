@@ -30,16 +30,16 @@ def update_rates(user, new_rates_dict):
             db.session.commit()
             db.session.flush()
 
-            cr = get_current_rates(user)
-            logger.info('current values should be: {0}'.format(cr))
         except exc.SQLAlchemyError, e:
             logger.error('sql error with updating rates: {0}'.format(e))
             db.session.rollback()
             return False
 
-        else:
-            logger.info('updating rates was successful for user: {0}'.format(user.nickname))
-            return True
+    cr = get_current_rates(user)
+    logger.info('updating rates was successful '
+                'for user: {0}, current rates: {1}'.format(user.nickname, cr))
+
+    return True
 
 
 if __name__ == "__main__":
