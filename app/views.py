@@ -39,10 +39,12 @@ def before_request_happens():
 
 #####
 # Functions for handling user login:
-#
-# ----> This needs to be completely replaced because google does not like openid anymore.
-# ----> Attempting to work off of this guy: http://psa.matiasaguirre.net/docs/configuration/flask.html
 #####
+@lm.user_loader
+def load_user(u_id):
+    return User.query.get(int(u_id))
+
+
 @app.route('/authorize/<provider>')
 def oauth_authorize(provider):
     if not current_user.is_anonymous():
@@ -74,57 +76,6 @@ def oauth_callback(provider):
     return redirect(url_for('build_index'))
 
 
-
-@lm.user_loader
-def load_user(u_id):
-    return User.query.get(int(u_id))
-
-
-@app.route('/login_user', methods=['GET', 'POST'])
-@oid.loginhandler
-def login_user_function():
-
-    logger.info('I am attempting to login now...')
-
-    try:
-        url = request.form["url"]
-    except Exception, e:
-
-        return jsonify({'there were so many errors': str(e)})
-
-    logger.info('getting oid results now, with url: {0}'.format(url))
-    oid_results = oid.try_login(url, ask_for=['nickname', 'email'])
-
-    return oid_results
-
-
-@oid.after_login
-def after_login_function(resp):
-
-    logger.info('running after_login function now...')
-
-    # user = g.user
-
-    if resp.email is None or resp.email == "":
-        logger.warn('Invalid login. Please try again.')
-        return redirect(url_for('build_index'))
-
-    user = User.query.filter_by(email=resp.email).first()
-
-    # if totally new user:
-    # if user is None or user.is_authenticated() is False:
-    if user is None:
-        logger.info('response: {0}'.format(resp))
-        add_user(resp)
-        user = User.query.filter_by(email=resp.email).first()
-
-    logger.info('Now attempting to log in now: {0}'.format(user))
-
-    login_user(user, remember=True)
-
-    return redirect(request.args.get('next') or url_for('build_index'))
-
-
 @app.route('/logout')
 def logout_view():
     logout_user()
@@ -134,13 +85,12 @@ def logout_view():
     # transactions = get_recent_transactions()
     # return render_template('index.html', title='Insolvency_Solver',
     #                        rates=rates, transactions=transactions)
-    return jsonify({'message': 'look how logged out you are!'})
+    # return jsonify({'message': 'look how logged out you are!'})
+    return redirect(url_for('build_index'))
 
 
 # let's put all of this rates crap in an app.context_processor as available functions
 # then change the templates to just use those when they need them.
-#
-#
 @app.context_processor
 def template_functions():
 
