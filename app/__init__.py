@@ -58,18 +58,18 @@ oid = OpenID(app, os.path.join(basedir, 'tmp'))
 from app import views, models
 
 # register social blueprint:
-from social.apps.flask_app.routes import social_auth
+# from social.apps.flask_app.routes import social_auth
 
-app.register_blueprint(social_auth)
+# app.register_blueprint(social_auth)
 
 
 # failing here;
 try:
     # from social.apps.flask_app.default.models import init_social
-    from social.apps.flask_app.template_filters import backends
-    app.context_processor(backends)
+    # from social.apps.flask_app.template_filters import backends
+    # app.context_processor(backends)
     # init_social(app, db)
-
+    pass
     # from app.models import User
     # from social.apps.flask_app.default import models as social_models
 

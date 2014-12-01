@@ -16,16 +16,14 @@ def get_all_users():
     return users
 
 
-def add_user(resp):
+def add_user(social_id, username, email):
 
-    logger.info('new user found! {0}'.format(resp))
-    # some auths contain a nick, some don't, use first portion of email if not
-    nickname = resp.nickname
-    if nickname is None or nickname == "":
-        nickname = resp.email.split('@')[0]
+    logger.info('new user found! {0}, {1}, {2}'.format(social_id, username, email))
+
+    nickname = email.split('@')[0]
 
     # Add a new user to the user table:
-    user = User(nickname=nickname, email=resp.email)
+    user = User(social_id=social_id, username=username, nickname=nickname, email=email)
 
     try:
 
@@ -52,7 +50,7 @@ def add_user(resp):
         return False
 
     else:
-        return True
+        return user
 
 
 def change_info_view(user, show_or_hide):
@@ -85,6 +83,15 @@ def update_user_nickname(user, nickname):
 
 
 if __name__ == "__main__":
-    user_list = get_all_users()
-    for u in user_list:
-        logger.info(u)
+
+    test_user = User(social_id="blah", username="whu", nickname='w', email='w@w.com')
+
+    try:
+        db.session.add(test_user)
+        db.session.commit()
+    except Exception, e:
+        print('sql sql!!! {0}'.format(e))
+
+    # user_list = get_all_users()
+    # for u in user_list:
+    #     logger.info(u)

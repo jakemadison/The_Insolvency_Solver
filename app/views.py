@@ -46,7 +46,7 @@ def before_request_happens():
 @app.route('/authorize/<provider>')
 def oauth_authorize(provider):
     if not current_user.is_anonymous():
-        return redirect(url_for('index'))
+        return redirect(url_for('build_index'))
     oauth = OAuthSignIn.get_provider(provider)
     return oauth.authorize()
 
@@ -54,23 +54,24 @@ def oauth_authorize(provider):
 @app.route('/callback/<provider>')
 def oauth_callback(provider):
     if not current_user.is_anonymous():
-        return redirect(url_for('index'))
+        return redirect(url_for('build_index'))
 
     oauth = OAuthSignIn.get_provider(provider)
     social_id, username, email = oauth.callback()
 
     if social_id is None:
         logger.error('Authentication failed.')
-        return redirect(url_for('index'))
+        return redirect(url_for('build_index'))
 
     user = User.query.filter_by(social_id=social_id).first()
+
     if not user:
-        pass
-        # user = User(social_id=social_id, nickname=username, email=email)
-        # db.session.add(user)
-        # db.session.commit()
-    login_user(user, True)
-    return redirect(url_for('index'))
+        user = add_user(social_id, username, email)
+
+    if user:
+        login_user(user, True)
+
+    return redirect(url_for('build_index'))
 
 
 
@@ -106,7 +107,7 @@ def after_login_function(resp):
 
     if resp.email is None or resp.email == "":
         logger.warn('Invalid login. Please try again.')
-        return redirect(url_for('/index'))
+        return redirect(url_for('build_index'))
 
     user = User.query.filter_by(email=resp.email).first()
 
@@ -121,7 +122,7 @@ def after_login_function(resp):
 
     login_user(user, remember=True)
 
-    return redirect(request.args.get('next') or url_for('index'))
+    return redirect(request.args.get('next') or url_for('build_index'))
 
 
 @app.route('/logout')

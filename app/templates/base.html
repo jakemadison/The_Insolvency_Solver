@@ -59,12 +59,15 @@
       <div class="modal-body">
         <p>Login to the Insolvency Solver using your gmail account, or continue to browse the site</p>
 
-        <a href="{{ url_for("social.auth", backend="google-oauth2") }}">Google OAuth2</a> <br />
-        <a href="{{ url_for("social.auth", backend="google-oauth") }}">Google OAuth</a> <br />
-        <a href="{{ url_for("social.auth", backend="google") }}">Google OpenId</a> <br />
-        <a href="{{ url_for("social.auth", backend="twitter") }}">Twitter OAuth</a> <br />
-        <a href="{{ url_for("social.auth", backend="facebook") }}">Facebook OAuth2</a> <br />
-        <a href="{{ url_for("social.auth", backend="facebook-app") }}">Facebook App</a> <br />
+       <p><a href="{{ url_for('oauth_authorize', provider='facebook') }}">Login with Facebook</a></p>
+        <p><a href="{{ url_for('oauth_authorize', provider='twitter') }}">Login with Twitter</a></p>
+
+{#        <a href="{{ url_for("social.auth", backend="google-oauth2") }}">Google OAuth2</a> <br />#}
+{#        <a href="{{ url_for("social.auth", backend="google-oauth") }}">Google OAuth</a> <br />#}
+{#        <a href="{{ url_for("social.auth", backend="google") }}">Google OpenId</a> <br />#}
+{#        <a href="{{ url_for("social.auth", backend="twitter") }}">Twitter OAuth</a> <br />#}
+{#        <a href="{{ url_for("social.auth", backend="facebook") }}">Facebook OAuth2</a> <br />#}
+{#        <a href="{{ url_for("social.auth", backend="facebook-app") }}">Facebook App</a> <br />#}
 
       </div>
       <div class="modal-footer">
