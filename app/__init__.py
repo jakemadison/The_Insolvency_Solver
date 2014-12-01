@@ -40,11 +40,6 @@ try:
 except ImportError, e:
     pass
 
-
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
-
-
 # Attempting to set up engine here:
 
 db = SQLAlchemy(app)

@@ -11,9 +11,6 @@ logger = logging.getLogger(__name__)
 setup_logger(logger)
 logger.setLevel(logging.INFO)
 
-# Base = declarative_base()
-# Base.query = db.session.query_property()
-
 
 class User(db.Model, UserMixin):
 
