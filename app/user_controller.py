@@ -20,7 +20,10 @@ def add_user(social_id, username, email):
 
     logger.info('new user found! {0}, {1}, {2}'.format(social_id, username, email))
 
-    nickname = email.split('@')[0]
+    if email is None:
+        nickname = username
+    else:
+        nickname = email.split('@')[0]
 
     # Add a new user to the user table:
     user = User(social_id=social_id, username=username, nickname=nickname, email=email)
