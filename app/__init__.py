@@ -34,20 +34,45 @@ app.config.from_object('config')
 
 
 try:
-    from local_settings import LOCAL_SECRET_KEY
-    app.config['SECRET_KEY'] = LOCAL_SECRET_KEY
+    from local_settings import OAUTH_CREDS
+    app.config['OAUTH_CREDENTIALS'] = OAUTH_CREDS
 
 except ImportError, e:
     pass
 
-db = SQLAlchemy(app)
+# Attempting to set up engine here:
 
+db = SQLAlchemy(app)
+engine = db.engine
+db_session = db.session
 
 lm = LoginManager()
 lm.init_app(app)
 oid = OpenID(app, os.path.join(basedir, 'tmp'))
 
 from app import views, models
+
+# register social blueprint:
+# from social.apps.flask_app.routes import social_auth
+
+# app.register_blueprint(social_auth)
+
+
+# failing here;
+try:
+    # from social.apps.flask_app.default.models import init_social
+    # from social.apps.flask_app.template_filters import backends
+    # app.context_processor(backends)
+    # init_social(app, db)
+    pass
+    # from app.models import User
+    # from social.apps.flask_app.default import models as social_models
+
+    # User.Base.metadata.create_all(engine)  # create all tables using metadata
+    # social_models.PSABase.metadata.create_all(engine)
+
+except KeyError, e:
+    logger.error('key error again: {0}'.format(e))
 
 
 

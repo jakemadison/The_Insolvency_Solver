@@ -12,6 +12,7 @@ from flask.ext.login import login_user, logout_user, current_user
 from models import User
 from app import lm, oid
 from utilities import execute_git_log
+from oauth import OAuthSignIn
 
 import logging
 from app import setup_logger
@@ -44,67 +45,59 @@ def load_user(u_id):
     return User.query.get(int(u_id))
 
 
-@app.route('/login_user', methods=['GET', 'POST'])
-@oid.loginhandler
-def login_user_function():
-
-    logger.info('I am attempting to login now...')
-
-    try:
-        url = request.form["url"]
-    except Exception, e:
-
-        return jsonify({'there were so many errors': str(e)})
-
-    logger.info('getting oid results now, with url: {0}'.format(url))
-    oid_results = oid.try_login(url, ask_for=['nickname', 'email'])
-
-    return oid_results
+@app.route('/authorize/<provider>')
+def oauth_authorize(provider):
+    if not current_user.is_anonymous():
+        return redirect(url_for('build_index'))
+    oauth = OAuthSignIn.get_provider(provider)
+    return oauth.authorize()
 
 
-@oid.after_login
-def after_login_function(resp):
+@app.route('/callback/<provider>')
+def oauth_callback(provider):
+    if not current_user.is_anonymous():
+        return redirect(url_for('build_index'))
 
-    logger.info('running after_login function now...')
+    oauth = OAuthSignIn.get_provider(provider)
+    social_id, username, email = oauth.callback()
 
-    # user = g.user
+    if social_id is None:
+        logger.error('Authentication failed.')
+        return redirect(url_for('build_index'))
 
-    if resp.email is None or resp.email == "":
-        logger.warn('Invalid login. Please try again.')
-        return redirect(url_for('/index'))
+    user = User.query.filter_by(social_id=social_id).first()
 
-    user = User.query.filter_by(email=resp.email).first()
+    if not user:
+        user = add_user(social_id, username, email)
 
-    # if totally new user:
-    # if user is None or user.is_authenticated() is False:
-    if user is None:
-        logger.info('response: {0}'.format(resp))
-        add_user(resp)
-        user = User.query.filter_by(email=resp.email).first()
+    if user:
+        login_user(user, True)
 
-    logger.info('Now attempting to log in now: {0}'.format(user))
-
-    login_user(user, remember=True)
-
-    return redirect(request.args.get('next') or url_for('index'))
+    return redirect(url_for('build_index'))
 
 
 @app.route('/logout')
 def logout_view():
     logout_user()
     logger.info("successful logout for user: {0}".format(g.user))
-    return jsonify({'message': 'look how logged out you are!'})
+
+    # rates = get_current_rates()
+    # transactions = get_recent_transactions()
+    # return render_template('index.html', title='Insolvency_Solver',
+    #                        rates=rates, transactions=transactions)
+    # return jsonify({'message': 'look how logged out you are!'})
+    return redirect(url_for('build_index'))
 
 
 # let's put all of this rates crap in an app.context_processor as available functions
 # then change the templates to just use those when they need them.
-#
-#
 @app.context_processor
 def template_functions():
 
     user = g.user
 
+    # rates and transactions should get placed in a context processor...
+    # probably the same with our commit object?
     rates = get_current_rates(user)
     rates['monthly_balance'] = rates['income_per_month'] - (rates['rent'] + rates['bills'] + rates['other_costs'])
     rates['max_spending'] = rates['monthly_balance']/30

@@ -1,13 +1,50 @@
 from __future__ import print_function
 from app import db
-from datetime import datetime, timedelta
+from datetime import timedelta
 from sqlalchemy import func
+from flask.ext.login import UserMixin
+
 
 import logging
 from app import setup_logger
 logger = logging.getLogger(__name__)
 setup_logger(logger)
 logger.setLevel(logging.INFO)
+
+
+class User(db.Model, UserMixin):
+
+    __tablename__ = 'user'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), index=True, unique=True)
+    nickname = db.Column(db.String(64), index=True, unique=True)
+    username = db.Column(db.String(64), index=True, unique=True)
+    hidden_info_pref = db.Column(db.Boolean, default=False)
+    social_id = db.Column(db.String(64), unique=True)
+
+    def is_guest(self):
+        if self.email == 'guest@guest.com':
+            return True
+        else:
+            return False
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
+
+    def is_anonymous(self):
+        return False
+
+    def get_id(self):
+        try:
+            return unicode(self.id)  # python 2
+        except NameError:
+            return str(self.id)  # python 3
+
+    def __repr__(self):
+        return '<User {0}>'.format(self.email)
 
 
 class CurrentRates(db.Model):
@@ -104,35 +141,4 @@ class TransactionHistory(db.Model):
         self.purchase_type = purchase_type
 
 
-class User(db.Model):
 
-    __tablename__ = 'user'
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), index=True, unique=True)
-    nickname = db.Column(db.String(64), index=True, unique=True)
-    openid = db.Column(db.String(64), index=True, unique=True)
-    hidden_info_pref = db.Column(db.Boolean, default=False)
-
-    def is_guest(self):
-        if self.email == 'guest@guest.com':
-            return True
-        else:
-            return False
-
-    def is_authenticated(self):
-        return True
-
-    def is_active(self):
-        return True
-
-    def is_anonymous(self):
-        return False
-
-    def get_id(self):
-        try:
-            return unicode(self.id)  # python 2
-        except NameError:
-            return str(self.id)  # python 3
-
-    def __repr__(self):
-        return '<User {0}>'.format(self.email)
