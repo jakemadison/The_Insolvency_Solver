@@ -57,17 +57,9 @@
         <h4 class="modal-title">Log in to the app why not?</h4>
       </div>
       <div class="modal-body">
-          <img src="../static/assets/zoid_log_in.jpg" class="pull-right" style="width: 30%; height: 20%; margin: 5px">
+          <img src="../static/assets/zoid_log_in.jpg" class="pull-right" style="width: 30%; margin: 5px">
         <p>Log in to the Insolvency Solver using your Facebook or Twitter account,
             or continue to screw around on the site.</p>
-
-
-{#        <a href="{{ url_for("social.auth", backend="google-oauth2") }}">Google OAuth2</a> <br />#}
-{#        <a href="{{ url_for("social.auth", backend="google-oauth") }}">Google OAuth</a> <br />#}
-{#        <a href="{{ url_for("social.auth", backend="google") }}">Google OpenId</a> <br />#}
-{#        <a href="{{ url_for("social.auth", backend="twitter") }}">Twitter OAuth</a> <br />#}
-{#        <a href="{{ url_for("social.auth", backend="facebook") }}">Facebook OAuth2</a> <br />#}
-{#        <a href="{{ url_for("social.auth", backend="facebook-app") }}">Facebook App</a> <br />#}
 
       </div>
       <div class="modal-footer btn-group">
@@ -109,7 +101,7 @@
 
         </div>
         <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
+          <ul class="nav navbar-nav navbar-left">
 
               {% if not g.user.hidden_info_pref %}
 
@@ -118,14 +110,36 @@
 
               {%  else %}
 
-              <li><a href="#" id="about_link" title="What the hell is this thing?" style="">
+              <li><a class="settings_panel" href="#" id="about_link" title="What the hell is this thing?" style="">
                   <span class="glyphicon glyphicon-info-sign"></span></a></li>
+                  <li class="settings_panel">
+                  <a class="settings_panel" href="#" id="settings_link" title="settings?" style="float: right">
+                      <span class="glyphicon glyphicon-cog"></span></a></li>
             <!--<li><a href="#"></a></li>-->
             <!--<li><a href="#"></a></li>-->
 
               {% endif %}
-          <li><a id="logout_button"><span class="glyphicon glyphicon-off" title="Log In or Out, as the case may be"
+
+          </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+         {% if u.email == 'guest@guest.com' %}
+
+          <li><a id="logout_button" style="cursor: pointer;">Start Insolvency Solving &nbsp; <span class="glyphicon glyphicon-off" title="Log In here..."
                         style="cursor: pointer"></span></a></li>
+
+          {% else %}
+
+
+
+              <li><a id="logout_button" style="cursor: pointer">{{ u.username }} &nbsp; <span class="glyphicon glyphicon-off" title="Log Out here..."
+                        style="cursor: pointer"></span></a>
+
+          </li>
+
+
+          {% endif %}
+
           </ul>
           <!--<form class="navbar-form navbar-right">-->
             <!--<input type="text" class="form-control" placeholder="Search...">-->
@@ -172,7 +186,15 @@
     <h6 class="pull-right version_number" title="{{g.commit.commit}} -
             {{g.commit.author}} -
             {{g.commit.date}} -
-            message: {{ g.commit.message }}"><b>Commit Version: </b> {{ g.commit.date }}</h6>
+            message: {{ g.commit.message }}">
+        <b>Commit Version: </b>
+          <a href="https://github.com/jakemadison/The_Insolvency_Solver" target="_blank"
+                  title="{{g.commit.commit}} -
+            {{g.commit.author}} -
+            {{g.commit.date}} -
+            message: {{ g.commit.message }}">
+            {{ g.commit.label }}</a>
+    &nbsp;</h6>
 
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 

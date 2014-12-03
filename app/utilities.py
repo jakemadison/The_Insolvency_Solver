@@ -23,6 +23,9 @@ def execute_git_log():
                   "date": history[2],
                   "message": history[4].strip()}
 
+        label = ' '.join(commit['date'].split(' ')[3:7])
+        commit['label'] = label
+
     except Exception, e:
         logger.error("there was an error! {0}".format(e))
         commit = {"commit": "unknown",
