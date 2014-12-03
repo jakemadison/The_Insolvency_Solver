@@ -29,7 +29,7 @@ def execute_transaction(user, amount, purchase_type, date=None):
     logger.info('received transaction for timestamp: {0}'.format(timestamp))
 
     # insert a transaction & update balance.
-    #This should include adding system time when button was pressed, which can then be gathered for Daily View
+    # This should include adding system time when button was pressed, which can then be gathered for Daily View
 
     new_transaction = TransactionHistory(user.id, amount, timestamp, purchase_type)
     logger.info('new transaction created: {0}, {1}'.format(new_transaction.amount, new_transaction.timestamp))

@@ -2,12 +2,13 @@
 {% block content %}
 {#          <h2 class="sub-header">Recent Transactions</h2>#}
 
-    <legend>Recent Transactions</legend>
+    <legend>Recent Transactions
+        <a onclick="beginEdits();" class="btn btn-xs btn-default pull-right edit_trans_btn">edit</a></legend>
+
     <div class="table-responsive">
             <table class="table table-striped">
               <thead>
                 <tr class="info">
-{#                  <th>#</th>#}
                   <th>Timestamp</th>
                   <th>Amount</th>
                   <th>Type</th>
@@ -20,11 +21,24 @@
 {#                  <td>{{ transaction.id }}</td>#}
                   <td>{{ transaction.timestamp }}</td>
                   <td>{{ transaction.amount }}</td>
-                  <td>{{ transaction.purchase_type }}</td>
+                  <td>{{ transaction.purchase_type }}
+                            <button style="display: none;"
+                                    class="close edit_trans_close"
+                                    type="button">×</button></td>
+
                 </tr>
               {% endfor %}
               </tbody>
             </table>
           </div>
+
+    <script type="application/javascript">
+        function beginEdits() {
+            console.log('beginning to edit transactions');
+            $(".edit_trans_close").show();
+        }
+
+
+    </script>
 
 {% endblock %}
