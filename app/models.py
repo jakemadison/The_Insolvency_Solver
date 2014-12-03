@@ -87,13 +87,15 @@ class DailyHistory(db.Model):
         self.day = day
         self.user_id = user_id
 
-        current_rate = db.session.query(CurrentRates).filter(CurrentRates.type == 'daily').first().amount
+        current_rate = db.session.query(CurrentRates).filter(CurrentRates.type == 'daily',
+                                                             CurrentRates.user_id == user_id).first().amount
         self.credits = current_rate
 
         prev_day = day - timedelta(days=1)
         logger.info(prev_day)
         logger.info(current_rate)
-        prev_balance = db.session.query(DailyHistory).filter(DailyHistory.day == func.DATE(prev_day)).first()
+        prev_balance = db.session.query(DailyHistory).filter(DailyHistory.day == func.DATE(prev_day),
+                                                             DailyHistory.user_id == user_id).first()
 
         if prev_balance is None:
             # then this is our first day ever!

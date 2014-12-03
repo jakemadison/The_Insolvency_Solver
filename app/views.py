@@ -99,6 +99,7 @@ def template_functions():
     # rates and transactions should get placed in a context processor...
     # probably the same with our commit object?
     rates = get_current_rates(user)
+
     rates['monthly_balance'] = rates['income_per_month'] - (rates['rent'] + rates['bills'] + rates['other_costs'])
     rates['max_spending'] = rates['monthly_balance']/30
 
@@ -127,6 +128,8 @@ def get_daily_summary_view():
 
     user = g.user
     daily_summary = get_daily_summary(user)
+
+    print('daily summary: {0}'.format(daily_summary))
 
     return render_template('daily_summary.html', daily_summary=daily_summary)
 
@@ -322,10 +325,7 @@ def get_spending_data():
     # filtered daily summary can just do it all now.
     daily_summary = get_filtered_summary(user, filter_array)
 
-    transaction_summary = get_sum_category_per_day()
-    transaction_categories = list(set([t['purchase_type'] for t in transaction_summary]))
+    return jsonify({'daily_summary': daily_summary})
 
-    return jsonify({'transaction_summary': transaction_summary,
-                    'daily_summary': daily_summary,
-                    'categories': transaction_categories})
+
 

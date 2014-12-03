@@ -92,8 +92,8 @@ if __name__ == "__main__":
     try:
         db.session.add(test_user)
         db.session.commit()
-    except Exception, e:
-        print('sql sql!!! {0}'.format(e))
+    except Exception, err:
+        print('sql sql!!! {0}'.format(err))
 
     # user_list = get_all_users()
     # for u in user_list:
