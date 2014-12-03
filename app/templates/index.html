@@ -1,12 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-{#          <h2 class="sub-header">Recent Transactions</h2>#}
 
     <legend>Recent Transactions
-        <a onclick="beginEdits();" class="btn btn-xs btn-default pull-right edit_trans_btn">edit</a></legend>
+        <a onclick="beginEdits();"
+           class="btn btn-xs btn-default pull-right edit_trans_btn">
+            <span class="glyphicon glyphicon-pencil"></span>
+            edit
+         </a></legend>
 
     <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped" id="transaction_table">
               <thead>
                 <tr class="info">
                   <th>Timestamp</th>
@@ -18,15 +21,17 @@
               {% for transaction in transactions %}
 
                 <tr>
-{#                  <td>{{ transaction.id }}</td>#}
                   <td>{{ transaction.timestamp }}</td>
                   <td>{{ transaction.amount }}</td>
-                  <td>{{ transaction.purchase_type }}
+                  <td>{{ transaction.purchase_type }} <span class="close_placeholder close">&nbsp;</span>
                             <button style="display: none;"
                                     class="close edit_trans_close"
-                                    type="button">×</button></td>
-
+                                    type="button"
+                                    id="{{ transaction.id }}"
+                                    onclick="console.log('detected click on ', this.id);">×</button>
+                  </td>
                 </tr>
+
               {% endfor %}
               </tbody>
             </table>
@@ -35,9 +40,15 @@
     <script type="application/javascript">
         function beginEdits() {
             console.log('beginning to edit transactions');
+            $(".close_placeholder").hide();
             $(".edit_trans_close").show();
         }
 
+            //I should add a thing that changes class to "danger" on hover, instead of adding table-hover
+{#        $('#elm').hover(#}
+{#              function(){ $(this).addClass('hover') },#}
+{#              function(){ $(this).removeClass('hover') }#}
+{#            )#}
 
     </script>
 
