@@ -28,7 +28,7 @@
                                     class="close edit_trans_close"
                                     type="button"
                                     id="{{ transaction.id }}"
-                                    onclick="console.log('detected click on ', this.id);">×</button>
+                                    onclick="sendDeleteTransaction(this.id)">×</button>
                   </td>
                 </tr>
 
@@ -42,6 +42,14 @@
             console.log('beginning to edit transactions');
             $(".close_placeholder").hide();
             $(".edit_trans_close").show();
+        }
+
+        function sendDeleteTransaction(transaction_id) {
+            console.log("attempting to send delete for: ", transaction_id);
+
+            $.post("/delete_transaction", {transaction_id: transaction_id}, function(data) {
+                console.log("result of delete post: ", data);
+            })
         }
 
             //I should add a thing that changes class to "danger" on hover, instead of adding table-hover

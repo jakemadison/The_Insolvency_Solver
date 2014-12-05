@@ -309,6 +309,13 @@ def submit_transaction():
 
     return redirect(url_for('build_index'))
 
+@app.route('/delete_transaction', methods=['POST'])
+def receive_delete_transaction():
+
+    transaction_id = request.form['transaction_id']
+    print('received delete transaction: {0}'.format(transaction_id))
+    return jsonify({'message': 'success!'})
+
 
 # ROUTES FOR METRICS:
 @app.route('/get_spending_data')
