@@ -27,6 +27,7 @@
                             <button style="display: none;"
                                     class="close edit_trans_close"
                                     type="button"
+                                    title="delete this transaction"
                                     id="{{ transaction.id }}"
                                     onclick="sendDeleteTransaction(this.id)">×</button>
                   </td>
@@ -49,6 +50,9 @@
 
             $.post("/delete_transaction", {transaction_id: transaction_id}, function(data) {
                 console.log("result of delete post: ", data);
+            }).success(function(data) {
+                console.log("success!: ", data);
+                $('.edit_trans_close#'+transaction_id).parent().parent().hide();
             })
         }
 

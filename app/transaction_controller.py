@@ -14,6 +14,17 @@ setup_logger(logger)
 logger.setLevel(logging.INFO)
 
 
+def recreate_daily_history(user):
+
+    """at a small cost to performance, we can generalize transaction edits -> daily history updates
+    by pulling the entire transaction history for the user, and recreating the daily history...
+    use: first date in daily history (in case there were no transactions on the first day), iterate
+    until the present day using 'credits' section of daily history for our rate (in case rate changed at some point)
+    and update daily history balance."""
+
+    pass
+
+
 def execute_transaction(user, amount, purchase_type, date=None):
 
     # transaction needs to take in a date param optionally, and modify model defaults.
