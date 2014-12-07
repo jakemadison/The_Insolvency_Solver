@@ -22,7 +22,56 @@ def recreate_daily_history(user):
     until the present day using 'credits' section of daily history for our rate (in case rate changed at some point)
     and update daily history balance."""
 
-    pass
+    try:
+        # create our new days based on Transaction history
+        new_summary = get_filtered_summary(user, [])  # we need to keep daily history to build that list..
+
+    except Exception, e:  # if there is any problem at all making that list, don't delete our existing rows
+        logger.error('there was an error getting the new summary! e: {0}'. format(e))
+        return 'failed!'
+
+    # delete our existing days:
+    old_daily_history = db.session.query(DailyHistory).filter(DailyHistory.user_id == user.id).all()
+
+    for each_day in old_daily_history:
+        db.session.delete(each_day)
+    db.session.commit()
+
+    # Now insert our new summary into the table.
+    for each in new_summary:
+        print(each)
+        insert_day = DailyHistory(each['day'], user.id, each['balance'],
+                                  each['credits'], each['total'], historical=True)
+        print(insert_day)
+        db.session.add(insert_day)
+        db.session.commit()
+
+    return 'Success!!!'
+
+
+def delete_transaction_record(user, transaction_id):
+    logger.info('deleting transaction record for user: {0}, t_id: {1}'.format(user, transaction_id))
+
+    target_transaction = db.session.query(TransactionHistory).filter(TransactionHistory.id == transaction_id,
+                                                                     TransactionHistory.user_id == user.id).first()
+
+    # we probably shouldn't trust the ids that are getting sent from the client.  Check to make sure this transaction
+    # actually belongs to the current user before you delete it:
+    if target_transaction:
+        print(target_transaction.id)
+    else:
+        logger.error('something is very wrong, this id {0} '
+                     'is not associated with this user: {1}'.format(transaction_id, user))
+        return 'failed!'
+
+    db.session.delete(target_transaction)
+    db.session.commit()
+
+    # now we need to recalculate the daily history:
+    function_success_result = recreate_daily_history(user)
+
+    # assuming that's all gone well, let's head back to the front end.
+    return function_success_result
 
 
 def execute_transaction(user, amount, purchase_type, date=None):
@@ -157,7 +206,7 @@ def get_filtered_summary(user, filter_list):
     transformed_data = []
     prev_balance = result[0][1]
 
-    datum = {'day': result[0][0], 'balance': prev_balance, 'total': 0}
+    datum = {'day': result[0][0], 'balance': prev_balance, 'total': 0, 'credits': result[0][1]}
     for f in filter_list:
         datum[f] = 0
 
@@ -172,7 +221,7 @@ def get_filtered_summary(user, filter_list):
             prev_bal = datum['balance']  # carry our prev balance forward
             transformed_data.append(datum)  # add record to our stack and start a new one
 
-            datum = {'balance': prev_bal + x[1], 'total': 0, 'day': x[0]}  # init a new record
+            datum = {'balance': prev_bal + x[1], 'total': 0, 'day': x[0], 'credits': x[1]}  # init a new record
             for f in filter_list:
                 datum[f] = 0
 
@@ -184,10 +233,8 @@ def get_filtered_summary(user, filter_list):
     transformed_data.append(datum)  # add our final record
 
     for x in transformed_data:
-        x['day'] = x['day'].strftime("%d/%m")
-
-    for each in transformed_data:
-        logger.debug(each)
+        # x['day'] = x['day'].strftime("%d/%m")
+        logger.debug(x)
 
     return transformed_data
 
