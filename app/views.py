@@ -47,9 +47,15 @@ def load_user(u_id):
 
 @app.route('/authorize/<provider>')
 def oauth_authorize(provider):
-    if not current_user.is_anonymous():
+
+    try:
+        if not current_user.is_anonymous():
+            return redirect(url_for('build_index'))
+        oauth = OAuthSignIn.get_provider(provider)
+    except Exception, e:
+        logger.error('some error happened: {0}'.format(e))
         return redirect(url_for('build_index'))
-    oauth = OAuthSignIn.get_provider(provider)
+
     return oauth.authorize()
 
 
