@@ -279,15 +279,15 @@ function create_transaction_plot(t_indicator, plot_style) {
 //        var color = d3.scale.category10();
         var color = d3.scale.category20c();
 
+        var ignoreVars = ['day', 'total', 'balance', 'mapping', 'credits'];
         var labelVar = 'day';
-        var labelVar2 = 'total';
-        var labelVar3 = 'balance';
-        var labelVar4 = 'mapping';
+        //var labelVar2 = 'total';
+        //var labelVar3 = 'balance';
+        //var labelVar4 = 'mapping';
 
         var varNames = d3.keys(data[0])
                     .filter(function (key) {
-                return (key !== labelVar && key !== labelVar2
-                    && key !== labelVar3 && key !== labelVar4);
+                return (ignoreVars.indexOf(key)==-1);
 
             }); //B
 
@@ -377,12 +377,14 @@ function create_transaction_plot(t_indicator, plot_style) {
         var color = d3.scale.category10();
 
         var labelVar = 'day';
-        var labelVar2 = 'mapping';
-        var labelVar3 = 'balance';
+        //var labelVar2 = 'mapping';
+        //var labelVar3 = 'balance';
+
+        var ignoreVars = ['day', 'total', 'balance', 'mapping', 'credits'];
 
         var varNames = d3.keys(data[0])
                     .filter(function (key) {
-                return (key !== labelVar && key !== labelVar3 && key !== labelVar2);
+                return (ignoreVars.indexOf(key)==-1);
 
             }); //B
 
@@ -464,12 +466,14 @@ function create_transaction_plot(t_indicator, plot_style) {
         var color = d3.scale.category10();
 
         var labelVar = 'day';
-        var labelVar2 = 'total';
-        var labelVar3 = 'balance';
+        //var labelVar2 = 'total';
+        //var labelVar3 = 'balance';
+        var ignoreVars = ['day', 'total', 'balance', 'mapping', 'credits'];
+
 
         var varNames = d3.keys(data[0])
                     .filter(function (key) {
-                return (key !== labelVar && key !== labelVar2 && key !== labelVar3);
+                return (ignoreVars.indexOf(key)==-1);
 
             }); //B
 

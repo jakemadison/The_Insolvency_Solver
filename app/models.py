@@ -82,18 +82,30 @@ class DailyHistory(db.Model):
     balance = db.Column(db.Integer, default=0)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
 
-    def __init__(self, day, user_id):
+    def __repr__(self):
+        return ('DailyHistory Object: id: {0}, day: {1}, credits: {2}, '
+                'debits: {3}, balance: {4}, user_id: {5}'.format(self.id, self.day, self.credits,
+                                                                 self.debits, self.balance, self.user_id))
+
+    def __init__(self, day, user_id, balance=None, credit=None, debit=None, historical=False):
 
         self.day = day
         self.user_id = user_id
 
+        if historical:
+            self.credits = credit
+            self.debits = debit
+            self.balance = balance
+            return
+
         current_rate = db.session.query(CurrentRates).filter(CurrentRates.type == 'daily',
-                                                             CurrentRates.user_id == user_id).first().amount
+                                                                 CurrentRates.user_id == user_id).first().amount
         self.credits = current_rate
+        logger.info(current_rate)
 
         prev_day = day - timedelta(days=1)
         logger.info(prev_day)
-        logger.info(current_rate)
+
         prev_balance = db.session.query(DailyHistory).filter(DailyHistory.day == func.DATE(prev_day),
                                                              DailyHistory.user_id == user_id).first()
 
@@ -105,7 +117,6 @@ class DailyHistory(db.Model):
             self.balance = prev_balance
 
         logger.info(prev_balance)
-
         self.balance += current_rate
 
     def update_day(self, amount):

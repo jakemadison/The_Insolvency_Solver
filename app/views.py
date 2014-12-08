@@ -5,7 +5,7 @@ from flask import g
 from rates_controller import get_current_rates, update_rates
 from user_controller import add_user, change_info_view, update_user_nickname
 from controller import get_daily_summary
-from transaction_controller import get_recent_transactions, get_filtered_summary
+from transaction_controller import get_recent_transactions, get_filtered_summary, delete_transaction_record
 from transaction_controller import execute_transaction, get_sum_category_per_day
 from datetime import datetime, timedelta
 from flask.ext.login import login_user, logout_user, current_user
@@ -47,9 +47,15 @@ def load_user(u_id):
 
 @app.route('/authorize/<provider>')
 def oauth_authorize(provider):
-    if not current_user.is_anonymous():
+
+    try:
+        if not current_user.is_anonymous():
+            return redirect(url_for('build_index'))
+        oauth = OAuthSignIn.get_provider(provider)
+    except Exception, e:
+        logger.error('some error happened: {0}'.format(e))
         return redirect(url_for('build_index'))
-    oauth = OAuthSignIn.get_provider(provider)
+
     return oauth.authorize()
 
 
@@ -309,11 +315,25 @@ def submit_transaction():
 
     return redirect(url_for('build_index'))
 
+
 @app.route('/delete_transaction', methods=['POST'])
 def receive_delete_transaction():
 
-    transaction_id = request.form['transaction_id']
+    user = g.user
+    transaction_id = None
+
+    try:
+        transaction_id = int(request.form['transaction_id'])
+
+    except ValueError, e:
+        logger.error('there was a problem getting transaction id,'
+                     ' user: {0}, id: {1}, e: {2}'.format(user, transaction_id, e))
+        return jsonify({'message': 'failed'})
+
     print('received delete transaction: {0}'.format(transaction_id))
+
+    delete_transaction_record(user, transaction_id)
+
     return jsonify({'message': 'success!'})
 
 
@@ -331,6 +351,9 @@ def get_spending_data():
 
     # filtered daily summary can just do it all now.
     daily_summary = get_filtered_summary(user, filter_array)
+
+    for d in daily_summary:
+        d['day'] = d['day'].strftime("%d/%m")
 
     return jsonify({'daily_summary': daily_summary})
 
