@@ -23,7 +23,13 @@
                 <tr>
                   <td>{{ transaction.timestamp }}</td>
                   <td>{{ transaction.amount }}</td>
-                  <td>{{ transaction.purchase_type }} <span class="close_placeholder close">&nbsp;</span>
+                    {%  if transaction.purchase_type %}
+                  <td>{{ transaction.purchase_type }}
+                      {%  else %}
+                      <td>-
+                    {%  endif %}
+
+                      <span class="close_placeholder close">&nbsp;</span>
                             <button style="display: none;"
                                     class="close edit_trans_close"
                                     type="button"
