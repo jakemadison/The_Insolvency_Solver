@@ -303,7 +303,7 @@ def submit_transaction():
 
     # parse transaction_date here.
     if transaction_date:
-        parsed_date = datetime.strptime(transaction_date, '%d/%m/%Y')
+        parsed_date = datetime.strptime(transaction_date, '%m/%d/%Y')
     else:
         parsed_date = datetime.today()
 
