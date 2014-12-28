@@ -272,3 +272,29 @@ function increment_balance(increase) {
 //setInterval('increment_balance(increase_amount)', 1000);
 
 
+
+$('#reset_btn').on('click', function(){
+    console.log('uh oh... reset button was clicked... ');
+    var $this = $(this);
+
+    if ($this.hasClass('btn-warning')) {
+        $this.text('Are you Sure?');
+        $this.addClass('btn-danger').removeClass('btn-warning');
+        return
+    }
+
+    if ($this.hasClass('btn-danger')) {
+        $this.text("Oops.  It isn't implemented yet. Sawry.");
+        $this.addClass('btn-success').removeClass('btn-danger');
+        return
+    }
+
+    if ($this.hasClass('btn-success')) {
+        $this.text('Reset My Account');
+        $this.addClass('btn-warning').removeClass('btn-success');
+        return
+    }
+
+
+
+});
