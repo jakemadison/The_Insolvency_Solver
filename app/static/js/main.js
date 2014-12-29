@@ -292,9 +292,11 @@ $('#reset_btn').on('click', function(){
         $.post('/reset_account', function (result) {
             console.log('received result: ', result);
             $this.text("Done!");
+            $this.attr("disabled", true);
             $this.addClass('btn-success').removeClass('btn-danger');
 
             setTimeout(function () {
+                $this.attr("disabled", false);
                 $this.text('Reset My Account');
                 $this.addClass('btn-warning').removeClass('btn-success');
             }, 2000);

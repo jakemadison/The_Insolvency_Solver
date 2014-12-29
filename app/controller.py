@@ -1,6 +1,6 @@
 from __future__ import print_function
 from app import db
-from app.models import DailyHistory
+from app.models import DailyHistory, TransactionHistory, CurrentRates
 from datetime import datetime
 from sqlalchemy import exc
 
@@ -95,13 +95,30 @@ def insert_new_day(user, date=None):
 
 
 def reset_user_account(user):
-    logger.info('now resetting this user"s account: {0}'.format(user))
+    logger.info('now resetting this user"s account: {0}, id: {1}'.format(user, user.id))
 
-    # okay... so what does this need to do?
+    # okay... so what does this need to done?
+
     # Set balance = daily.
-    # delete all transactions on user
-    # delete all daily history for user.
+    current_daily = db.session.query(CurrentRates).filter(CurrentRates.user_id == user.id,
+                                                          CurrentRates.type == 'daily').first()
 
+    user_balance = db.session.query(CurrentRates).filter(CurrentRates.user_id == user.id,
+                                                         CurrentRates.type == 'balance')
+
+    user_balance.update({CurrentRates.amount: current_daily.amount})
+
+    # delete all transactions on user
+    transactions = db.session.query(TransactionHistory).filter(TransactionHistory.user_id == user.id)
+    transactions.delete()
+
+    # delete all daily history for user.
+    daily_history = db.session.query(DailyHistory).filter(DailyHistory.user_id == user.id)
+    daily_history.delete()
+
+    # create today's entry on Daily History
+    db.session.add(DailyHistory(datetime.now(), user.id))
+    db.session.commit()
 
 
     return 'success!'
@@ -111,7 +128,8 @@ if __name__ == "__main__":
     # rates = get_current_rates()
     # update_rates(rates)
     # execute_transaction(13)
-    # print(get_filtered_summary(['Booze', 'Smokes', 'Cab', 'Dinning Out', 'Groceries', 'Coffee', 'Bar']))
+    # print(get_filtered_summary(['Booze', 'Smokes', 'Cab',
+    # 'Dinning Out', 'Groceries', 'Coffee', 'Bar']))
     logger.info('testing.....')
 
 

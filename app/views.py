@@ -347,6 +347,7 @@ def reset_account():
 
     return jsonify({'message': result})
 
+
 # ROUTES FOR METRICS:
 @app.route('/get_spending_data')
 def get_spending_data():
