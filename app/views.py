@@ -4,7 +4,7 @@ from flask import render_template, request, jsonify, redirect, url_for
 from flask import g
 from rates_controller import get_current_rates, update_rates
 from user_controller import add_user, change_info_view, update_user_nickname
-from controller import get_daily_summary
+from controller import get_daily_summary, reset_user_account
 from transaction_controller import get_recent_transactions, get_filtered_summary, delete_transaction_record
 from transaction_controller import execute_transaction, get_sum_category_per_day
 from datetime import datetime, timedelta
@@ -13,6 +13,7 @@ from models import User
 from app import lm, oid
 from utilities import execute_git_log
 from oauth import OAuthSignIn
+import time
 
 import logging
 from app import setup_logger
@@ -336,6 +337,15 @@ def receive_delete_transaction():
 
     return jsonify({'message': 'success!'})
 
+
+@app.route('/reset_account', methods=['POST'])
+def reset_account():
+    print('received a request to reset and account')
+    user = g.user
+
+    result = reset_user_account(user)
+
+    return jsonify({'message': result})
 
 # ROUTES FOR METRICS:
 @app.route('/get_spending_data')

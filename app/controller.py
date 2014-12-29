@@ -94,6 +94,19 @@ def insert_new_day(user, date=None):
         return True
 
 
+def reset_user_account(user):
+    logger.info('now resetting this user"s account: {0}'.format(user))
+
+    # okay... so what does this need to do?
+    # Set balance = daily.
+    # delete all transactions on user
+    # delete all daily history for user.
+
+
+
+    return 'success!'
+
+
 if __name__ == "__main__":
     # rates = get_current_rates()
     # update_rates(rates)

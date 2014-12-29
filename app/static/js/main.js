@@ -284,17 +284,23 @@ $('#reset_btn').on('click', function(){
     }
 
     if ($this.hasClass('btn-danger')) {
-        $this.text("Oops.  It isn't implemented yet. Sawry.");
-        $this.addClass('btn-success').removeClass('btn-danger');
-        return
-    }
 
-    if ($this.hasClass('btn-success')) {
-        $this.text('Reset My Account');
-        $this.addClass('btn-warning').removeClass('btn-success');
-        return
-    }
+        $this.text('working....');
+        console.log('sending off a reset account message');
 
+
+        $.post('/reset_account', function (result) {
+            console.log('received result: ', result);
+            $this.text("Done!");
+            $this.addClass('btn-success').removeClass('btn-danger');
+
+            setTimeout(function () {
+                $this.text('Reset My Account');
+                $this.addClass('btn-warning').removeClass('btn-success');
+            }, 2000);
+
+        });
+    }
 
 
 });
