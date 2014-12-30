@@ -6,7 +6,20 @@
            class="btn btn-xs btn-default pull-right edit_trans_btn">
             <span class="glyphicon glyphicon-pencil"></span>
             edit
-         </a></legend>
+         </a>
+        <a onclick="saveEdits();" style="display: none;"
+           class="btn btn-xs btn-success pull-right save_trans_btn">
+            <span class="glyphicon glyphicon-ok"></span>
+            save
+         </a>
+        <a onclick="cancelEdits();" style="display: none;"
+           class="btn btn-xs btn-danger pull-right cancel_trans_btn">
+            <span class="glyphicon glyphicon-remove"></span>
+            cancel
+         </a>
+
+
+    </legend>
 
     <div class="table-responsive">
             <table class="table table-striped" id="transaction_table">
@@ -35,7 +48,7 @@
                                     type="button"
                                     title="delete this transaction"
                                     id="{{ transaction.id }}"
-                                    onclick="sendDeleteTransaction(this.id)">×</button>
+                                    onclick="addDeletesToQueue(this.id)">×</button>
                   </td>
                 </tr>
 
@@ -45,11 +58,54 @@
           </div>
 
     <script type="application/javascript">
+        var delete_array = [];
+
         function beginEdits() {
             console.log('beginning to edit transactions');
             $(".close_placeholder").hide();
             $(".edit_trans_close").show();
+            $('.edit_trans_btn').hide();
+            $('.save_trans_btn').show();
+            $('.cancel_trans_btn').show();
         }
+
+        function cancelEdits(){
+            for (var i=0; i < delete_array.length; i++) {
+                $('.edit_trans_close#'+delete_array[i]).parent().parent().show();
+            }
+            while (delete_array.length > 0) {
+                delete_array.pop();
+            }
+            $('.edit_trans_btn').show();
+            $('.save_trans_btn').hide();
+            $('.cancel_trans_btn').hide();
+        }
+
+
+        function saveEdits() {
+            console.log("attempting to send delete for: ", delete_array);
+
+            $.post("/delete_transaction", {transaction_ids: delete_array}, function(data) {
+                console.log("result of delete post: ", data);
+            }).success(function(data) {
+                console.log("success!: ", data);
+                while (delete_array.length > 0) {
+                    delete_array.pop();
+                }
+                $('.edit_trans_btn').show();
+                $('.save_trans_btn').hide();
+                $('.cancel_trans_btn').hide();
+            })
+        }
+
+
+        function addDeletesToQueue(transaction_id) {
+            delete_array.push(transaction_id);
+            console.log(delete_array);
+            $('.edit_trans_close#'+transaction_id).parent().parent().hide();
+        }
+
+
 
         function sendDeleteTransaction(transaction_id) {
             console.log("attempting to send delete for: ", transaction_id);

@@ -321,19 +321,20 @@ def submit_transaction():
 def receive_delete_transaction():
 
     user = g.user
-    transaction_id = None
+    transaction_ids = None
 
     try:
-        transaction_id = int(request.form['transaction_id'])
+        transaction_ids = [int(x) for x in list(request.args.get('transaction_ids'))]
 
     except ValueError, e:
-        logger.error('there was a problem getting transaction id,'
-                     ' user: {0}, id: {1}, e: {2}'.format(user, transaction_id, e))
+        logger.error('there was a problem getting transaction ids,'
+                     ' user: {0}, id: {1}, e: {2}'.format(user, transaction_ids, e))
         return jsonify({'message': 'failed'})
 
-    print('received delete transaction: {0}'.format(transaction_id))
+    print('received delete transactions: {0}'.format(transaction_ids))
 
-    delete_transaction_record(user, transaction_id)
+    for transaction_id in transaction_ids:
+        delete_transaction_record(user, transaction_id)
 
     return jsonify({'message': 'success!'})
 
