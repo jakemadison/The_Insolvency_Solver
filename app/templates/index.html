@@ -7,22 +7,18 @@
             <span class="glyphicon glyphicon-pencil"></span>
             edit
          </a>
-
         <a onclick="cancelEdits();" style="display: none;"
            class="btn btn-xs btn-warning pull-right cancel_trans_btn">
             <span class="glyphicon glyphicon-remove"></span>
             cancel
          </a>
-
         <a onclick="saveEdits();" style="display: none;"
            class="btn btn-xs btn-success pull-right save_trans_btn">
             <span class="glyphicon glyphicon-ok"></span>
             save
          </a>
-
-
-
     </legend>
+
 
     <div class="table-responsive">
             <table class="table table-striped" id="transaction_table">
@@ -105,7 +101,6 @@
             })
         }
 
-
         function addDeletesToQueue(transaction_id) {
             delete_array.push(transaction_id);
             console.log(delete_array);
@@ -113,17 +108,17 @@
         }
 
 
-
-        function sendDeleteTransaction(transaction_id) {
-            console.log("attempting to send delete for: ", transaction_id);
-
-            $.post("/delete_transaction", {transaction_id: transaction_id}, function(data) {
-                console.log("result of delete post: ", data);
-            }).success(function(data) {
-                console.log("success!: ", data);
-                $('.edit_trans_close#'+transaction_id).parent().parent().hide();
-            })
-        }
+        //this should be deprecated now...
+{#        function sendDeleteTransaction(transaction_id) {#}
+{#            console.log("attempting to send delete for: ", transaction_id);#}
+{##}
+{#            $.post("/delete_transaction", {transaction_id: transaction_id}, function(data) {#}
+{#                console.log("result of delete post: ", data);#}
+{#            }).success(function(data) {#}
+{#                console.log("success!: ", data);#}
+{#                $('.edit_trans_close#'+transaction_id).parent().parent().hide();#}
+{#            })#}
+{#        }#}
 
             //I should add a thing that changes class to "danger" on hover, instead of adding table-hover
 {#        $('#elm').hover(#}
