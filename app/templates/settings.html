@@ -16,7 +16,8 @@
 <form action="/submit_savings" method="post" class="form-horizontal">
 <input type="range" min="0" max="{{rates.max_spending}}" value="{{rates.daily}}" id="spending_slider" name="daily">
       <!--<span class="input-group-btn">-->
-                <button class="btn btn-primary btn-sm pull-right" type="submit" onclick="submit_credit_change()">Submit</button>
+                <button class="btn btn-primary btn-sm pull-right" type="submit"
+                        onclick="submit_credit_change()">Submit</button>
      <!--</span>-->
 </form>
 
@@ -115,7 +116,8 @@ and start over again from scratch?</span>
 
 {#    <div id="direct_balance_form">#}
 {#        <form action="/direct_balance" method="post">#}
-{#            <p>Directly Update my Running Balance to:  $ <input type="text" name="balance" value="{{ rates.balance }}">#}
+{#            <p>Directly Update my Running Balance to:  $ <input type="text" name=
+"balance" value="{{ rates.balance }}">#}
 {#            <input type="submit" value="Update"></p>#}
 {#        </form>#}
 {#    </div>#}

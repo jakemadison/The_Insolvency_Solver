@@ -14,6 +14,7 @@ from app import lm, oid
 from utilities import execute_git_log
 from oauth import OAuthSignIn
 import time
+import json
 
 import logging
 from app import setup_logger
@@ -323,17 +324,23 @@ def receive_delete_transaction():
     user = g.user
     transaction_ids = None
 
+    print('made it to delete... ')
+
     try:
-        transaction_ids = [int(x) for x in list(request.args.get('transaction_ids'))]
+        transaction_array = json.loads(request.form.getlist('transaction_ids')[0])
+        print(transaction_array)
+        # transaction_array = json.loads(request.args.get('transaction_ids'))
+        # print(transaction_array)
+        parsed_array = [int(x) for x in transaction_array]
 
     except ValueError, e:
         logger.error('there was a problem getting transaction ids,'
                      ' user: {0}, id: {1}, e: {2}'.format(user, transaction_ids, e))
         return jsonify({'message': 'failed'})
 
-    print('received delete transactions: {0}'.format(transaction_ids))
+    print('received delete transactions: {0}'.format(parsed_array))
 
-    for transaction_id in transaction_ids:
+    for transaction_id in parsed_array:
         delete_transaction_record(user, transaction_id)
 
     return jsonify({'message': 'success!'})

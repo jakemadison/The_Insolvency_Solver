@@ -84,8 +84,12 @@
 
         function saveEdits() {
             console.log("attempting to send delete for: ", delete_array);
+            var processed_array = JSON.stringify(delete_array);
 
-            $.post("/delete_transaction", {transaction_ids: delete_array}, function(data) {
+            $('.cancel_trans_btn').hide();
+            $('.save_trans_btn').text('working...');
+
+            $.post("/delete_transaction", {transaction_ids: processed_array}, function(data) {
                 console.log("result of delete post: ", data);
             }).success(function(data) {
                 console.log("success!: ", data);
@@ -93,8 +97,8 @@
                     delete_array.pop();
                 }
                 $('.edit_trans_btn').show();
-                $('.save_trans_btn').hide();
-                $('.cancel_trans_btn').hide();
+                $('.save_trans_btn').hide().text('save');
+
             })
         }
 
