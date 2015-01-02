@@ -108,9 +108,11 @@
                 $('.edit_trans_btn').show();
                 $('.save_trans_btn').hide().text('save');
 
-                $('.transaction_row').unbind('mouseenter mouseleave');
 
-            })
+
+            });
+
+            $('.transaction_row').unbind('mouseenter mouseleave');
         }
 
         function addDeletesToQueue(transaction_id) {
