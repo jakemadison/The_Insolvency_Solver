@@ -32,7 +32,7 @@
               <tbody>
               {% for transaction in transactions %}
 
-                <tr>
+                <tr class="transaction_row">
                   <td>{{ transaction.timestamp }}</td>
                   <td>{{ transaction.amount }}</td>
                     {%  if transaction.purchase_type %}
@@ -57,10 +57,16 @@
           </div>
 
     <script type="application/javascript">
+
         var delete_array = [];
 
         function beginEdits() {
             console.log('beginning to edit transactions');
+                    $('.transaction_row').hover(
+                        function(){ $(this).addClass('danger') },
+                        function(){ $(this).removeClass('danger') }
+                    );
+
             $(".close_placeholder").hide();
             $(".edit_trans_close").show();
             $('.edit_trans_btn').hide();
@@ -78,6 +84,10 @@
             $('.edit_trans_btn').show();
             $('.save_trans_btn').hide();
             $('.cancel_trans_btn').hide();
+
+
+            console.log('cancelling edits...');
+            $('.transaction_row').unbind('mouseenter mouseleave');
         }
 
 
@@ -97,6 +107,8 @@
                 }
                 $('.edit_trans_btn').show();
                 $('.save_trans_btn').hide().text('save');
+
+                $('.transaction_row').unbind('mouseenter mouseleave');
 
             })
         }

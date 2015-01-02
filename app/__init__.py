@@ -11,7 +11,6 @@ def setup_logger(logger_instance):
 
     if logger.handlers:  # prevents the loading of duplicate handlers/log output
         return
-
     formatter = logging.Formatter('(%(asctime)s: %(name)s: %(levelname)s): %(message)s')
 
     ch = logging.StreamHandler()
