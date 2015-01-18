@@ -27,6 +27,7 @@
                   <th>Timestamp</th>
                   <th>Amount</th>
                   <th>Type</th>
+                    <th>&nbsp;</th>
                 </tr>
               </thead>
               <tbody>
@@ -41,7 +42,9 @@
                       <td>-
                     {%  endif %}
 
-                      <span class="close_placeholder close">&nbsp;</span>
+                </td>
+                <td>
+                      <span class="close_placeholder close">&bull;</span>
                             <button style="display: none;"
                                     class="close edit_trans_close"
                                     type="button"
@@ -85,6 +88,7 @@
             $('.save_trans_btn').hide();
             $('.cancel_trans_btn').hide();
             $(".edit_trans_close").hide();
+            $(".close_placeholder").show();
 
 
             console.log('cancelling edits...');
@@ -108,7 +112,7 @@
                 }
                 $('.edit_trans_btn').show();
                 $('.save_trans_btn').hide().text('save');
-
+                $(".close_placeholder").show();
 
 
             });
@@ -121,25 +125,6 @@
             console.log(delete_array);
             $('.edit_trans_close#'+transaction_id).parent().parent().hide();
         }
-
-
-        //this should be deprecated now...
-{#        function sendDeleteTransaction(transaction_id) {#}
-{#            console.log("attempting to send delete for: ", transaction_id);#}
-{##}
-{#            $.post("/delete_transaction", {transaction_id: transaction_id}, function(data) {#}
-{#                console.log("result of delete post: ", data);#}
-{#            }).success(function(data) {#}
-{#                console.log("success!: ", data);#}
-{#                $('.edit_trans_close#'+transaction_id).parent().parent().hide();#}
-{#            })#}
-{#        }#}
-
-            //I should add a thing that changes class to "danger" on hover, instead of adding table-hover
-{#        $('#elm').hover(#}
-{#              function(){ $(this).addClass('hover') },#}
-{#              function(){ $(this).removeClass('hover') }#}
-{#            )#}
 
     </script>
 
