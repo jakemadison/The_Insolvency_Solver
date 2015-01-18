@@ -110,6 +110,13 @@ scrolling.
 
 
 
+====
+
+
+- change nick should display a modal that actually changes your nickname...
+- there should be some actual options listed under the cog
+- ugh, so much work on the transaction metrics needs to be done
+- clicking the photo should change the photo displayed (just for fun)
 
 
 
