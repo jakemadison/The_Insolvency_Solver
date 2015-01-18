@@ -117,7 +117,7 @@ scrolling.
 - there should be some actual options listed under the cog
 - ugh, so much work on the transaction metrics needs to be done
 - clicking the photo should change the photo displayed (just for fun)
-
+- make favicon blue to match theme (requires PS or Gimp).
 
 
 

@@ -115,7 +115,10 @@ def template_functions():
     transaction_categories = list(set([t['purchase_type'] for t in transactions]))
     transaction_categories.sort()
 
-    return dict(rates=rates, transactions=transactions, u=user, transaction_categories=transaction_categories)
+    title = 'Insolvency_Solver'
+
+    return dict(rates=rates, transactions=transactions, u=user,
+                transaction_categories=transaction_categories, title=title)
 
 
 # Main Page Building Routes:
@@ -157,12 +160,17 @@ def calendar():
 ###############
 @app.route('/change_nickname', methods=['POST'])
 def change_nickname():
+
     user = g.user
     nickname = request.form['nickname']
+
+    logger.info("entered change nickname function".format(nickname, user))
+
     if len(nickname) == 0 or len(nickname) > 50:
         return jsonify({'message': 'noooooope'})
 
-    result = update_user_nickname(user, nickname)
+    result = None
+    # result = update_user_nickname(user, nickname)
     return jsonify({'message': result})
 
 
