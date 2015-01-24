@@ -233,7 +233,11 @@ document.getElementById('logout_button').onclick = function(){
 };
 
 
+document.getElementById('change_nick').onclick = function() {
 
+  console.log('ZOMG FINAAAALLLLLYYYY');
+    $('#nick_modal').modal('show');
+};
 
 
 //this needs to remember an actual float, otherwise we will never increase.

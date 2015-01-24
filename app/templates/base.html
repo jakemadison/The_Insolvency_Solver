@@ -82,6 +82,35 @@
 {% endif %}
 
 
+{#change nick modal...#}
+<div class="modal" id="nick_modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+{#        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>#}
+        <h4 class="modal-title">This will be the nick change modal....</h4>
+      </div>
+      <div class="modal-body">
+          <img src="../static/assets/zoid_log_in.jpg" class="pull-right" style="width: 30%; margin: 5px">
+        <p>Change your nick, hey?</p>
+
+      </div>
+      <div class="modal-footer btn-group">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Browse Site</button>
+
+<a class="btn btn-primary" style="display: inline;" href="{{ url_for('oauth_authorize', provider='facebook') }}">Login with Facebook</a>
+<a class="btn btn-primary" style="display: inline;" href="{{ url_for('oauth_authorize', provider='twitter') }}">Login with Twitter</a>
+
+
+{#        <button type="button" class="btn btn-primary"#}
+{#                onclick="gmail_login('https://www.google.com/accounts/o8/id')" id="gmail_login">Login With Gmail</button>#}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
 
 
@@ -175,7 +204,7 @@
               {% if g.user.is_authenticated() %}
                   <div class="alert alert-dismissable alert-success">
                     <button type="button" class="close" data-dismiss="alert">×</button>
-              <p>Hi, <a href="#" class="alert-link" title="Change your Nickname?">{{ g.user.nickname }}</a>!</p></div>
+              <p>Hi, <a href="#" class="alert-link" id='change_nick' title="Change your Nickname?">{{ g.user.nickname }}</a>!</p></div>
               {% endif %}
 
               <li>
