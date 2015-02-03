@@ -313,7 +313,11 @@ def submit_transaction():
 
     # parse transaction_date here.
     if transaction_date:
-        parsed_date = datetime.strptime(transaction_date, '%m/%d/%Y')
+        try:
+            parsed_date = datetime.strptime(transaction_date, '%d/%m/%Y')
+        except ValueError, val:
+            logger.error('dammit there was a value error for some reason: {v}'.format(v=val))
+            return redirect(url_for('build_index'))
     else:
         parsed_date = datetime.today()
 

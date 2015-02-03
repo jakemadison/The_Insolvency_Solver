@@ -15,3 +15,4 @@ insolvency_logger.log
 
 #ignore local_settings
 local_settings.py
+app_prod.db
